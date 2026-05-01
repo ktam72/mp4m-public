@@ -72,11 +72,10 @@ targets:
       WARNING_CFLAGS: -Wall -Wextra
       CLANG_ENABLE_OBJC_ARC: YES
       SWIFT_OBJC_BRIDGING_HEADER: MP4M/Bridge/MP4M-Bridging-Header.h
+      FRAMEWORK_SEARCH_PATHS: $(inherited)
+      LINK_FLAGS: -framework AVFoundation -framework AppKit -framework CoreGraphics
 
-    dependencies:
-      - framework: AVFoundation
-      - framework: AppKit
-      - framework: CoreGraphics
+    dependencies: []
 
     resources:
       - path: MP4M/Resources
@@ -84,4 +83,3 @@ targets:
           - "*.ttf"
           - "*.dat"
           - "*.xcassets"
-          - "*.entitlements"

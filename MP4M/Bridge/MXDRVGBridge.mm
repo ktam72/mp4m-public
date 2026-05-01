@@ -5,7 +5,7 @@
 
 #import "MXDRVGBridge.h"
 #include "../Vendor/gamdx/jni/mxdrvg/mxdrvg.h"
-#include "../Vendor/lzx/lzx042.h"
+#include "../Vendor/lzx/lzx.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -18,23 +18,23 @@ static int g_totalPlayTimeMs = 0;
 static NSData* decompressIfLZX(NSData* data) {
     if (!data) return nil;
     
-    const unsigned char* ptr = data.bytes;
-    int lzxlen = lzx042check(ptr);
+    const unsigned char* ptr = (const unsigned char*)data.bytes;
+    int lzxlen = lzx::check(ptr, data.length);
     
     if (lzxlen <= 0) {
         // LZX 圧縮されていない
         return data;
     }
     
-    void* lzxbuf = malloc(lzxlen);
-    unsigned int retval = lzx042decode(lzxbuf, lzxlen, ptr, (unsigned int)data.length);
+    unsigned char* lzxbuf = (unsigned char*)malloc(lzxlen);
+    unsigned int retval = lzx::decompress(lzxbuf, lzxlen, ptr, data.length);
     
     if (retval == 0) {
         free(lzxbuf);
         return nil;  // デコード失敗
     }
     
-    NSData* result = [NSData dataWithBytes:lzxbuf length:lzxlen];
+    NSData* result = [NSData dataWithBytes:lzxbuf length:retval];
     free(lzxbuf);
     return result;
 }
@@ -81,7 +81,7 @@ static NSData* wrapPDX(NSData* body) {
 static NSString* getTitleFromData(NSData* data) {
     if (!data) return nil;
     
-    const unsigned char* ptr = data.bytes;
+    const unsigned char* ptr = (const unsigned char*)data.bytes;
     
     // タイトル終端を探す (CR+LF)
     int pos;
@@ -124,7 +124,7 @@ static NSString* getTitleFromData(NSData* data) {
 + (nullable NSString *)loadMDXData:(NSData *)mdxData pdxData:(nullable NSData *)pdxData {
     if (!mdxData) return nil;
     
-    const unsigned char* ptr = mdxData.bytes;
+    const unsigned char* ptr = (const unsigned char*)mdxData.bytes;
     
     // タイトル終端を探す
     int titleEndPos;
