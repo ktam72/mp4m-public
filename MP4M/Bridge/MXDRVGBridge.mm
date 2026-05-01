@@ -4,8 +4,8 @@
 //
 
 #import "MXDRVGBridge.h"
-#include "mxdrvg.h"
-#include "lzx042.h"
+#include "../Vendor/gamdx/jni/mxdrvg/mxdrvg.h"
+#include "../Vendor/lzx/lzx042.h"
 #include <stdlib.h>
 #include <string.h>
 

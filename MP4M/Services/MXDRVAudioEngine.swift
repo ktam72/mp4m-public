@@ -33,7 +33,7 @@ final class MXDRVAudioEngine: AudioEngineService {
     }
 
     func playWithLoopCount(_ loopCount: Int32) -> Int {
-        MXDRVGBridge.playWithLoopCount(loopCount)
+        MXDRVGBridge.play(withLoopCount: loopCount)
         return Int(MXDRVGBridge.totalPlayTimeMs())
     }
 
@@ -51,11 +51,11 @@ final class MXDRVAudioEngine: AudioEngineService {
     }
 
     func isTerminated() -> Bool {
-        MXDRVGBridge.isTerminated()
+        return MXDRVGBridge.isTerminated()
     }
 
     func currentPlayTimeMs() -> Int {
-        Int(MXDRVGBridge.currentPlayTimeMs())
+        return Int(MXDRVGBridge.currentPlayTimeMs())
     }
 
     func getChannelStates() -> [ChannelDisplayState] {

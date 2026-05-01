@@ -525,8 +525,13 @@ void OpmDeviceImpl::Mix(Sample* buffer, size_t num_samples) {
         }
 
         // Clip and store
-        buffer[i * 2 + 0] = static_cast<Sample>(std::clamp(left, -32768, 32767));
-        buffer[i * 2 + 1] = static_cast<Sample>(std::clamp(right, -32768, 32767));
+        // std::clamp is C++17; manual clamp for compatibility
+        if (left < -32768) left = -32768;
+        if (left > 32767) left = 32767;
+        if (right < -32768) right = -32768;
+        if (right > 32767) right = 32767;
+        buffer[i * 2 + 0] = static_cast<Sample>(left);
+        buffer[i * 2 + 1] = static_cast<Sample>(right);
     }
 }
 
