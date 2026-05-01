@@ -262,9 +262,6 @@ int MXDRVG_Start(
 ) {
 	int ret;
 	
-	printf("[MXDRVG_Start] samprate=%d, mdxbufsize=%d, pdxbufsize=%d\n", samprate, mdxbufsize, pdxbufsize);
-	fflush(stdout);
-
 	memset( (void *)&G, 0, sizeof(G) );
 	memset( (void *)&KEY, 0, sizeof(KEY) );
 	G.MEASURETIMELIMIT = (1000*(60*20-2))*(LONGLONG)4000/1024; // 20min-2sec
@@ -315,11 +312,7 @@ int MXDRVG_Start(
 	OPM.SetVolumeWrapper(-12);
 	PCM8.SetVolume(0);
 
-	printf("[MXDRVG_Start] About to call Initialize, mdxbufsize=%d\n", mdxbufsize);
-	fflush(stdout);
 	ret = Initialize( mdxbufsize, pdxbufsize );
-	printf("[MXDRVG_Start] Initialize returned %d\n", ret);
-	fflush(stdout);
 	if ( ret != 0 ) {
 		return (-2);
 	}
@@ -371,36 +364,14 @@ int MXDRVG_GetPCM(
 	int rest_len = len;
 	Sample *outerbuf = (Sample *)buf;
 
-	static int getPCMCallCount = 0;
-	static struct timeval tv_prev = {0, 0};
-	getPCMCallCount++;
-	if (getPCMCallCount <= 3 || getPCMCallCount % 100 == 0) {
-		struct timeval tv_now;
-		gettimeofday(&tv_now, NULL);
-		if (tv_prev.tv_sec != 0) {
-			long elapsed_us = (tv_now.tv_sec - tv_prev.tv_sec) * 1000000 + (tv_now.tv_usec - tv_prev.tv_usec);
-			printf("[MXDRVG] GetPCM call#%d, len=%d, SAMPRATE=%d, interval_us=%ld, FATALERROR=%u, L001e13=%d\n",
-				   getPCMCallCount, len, G.SAMPRATE, elapsed_us, (unsigned)G.FATALERROR, G.L001e13);
-		} else {
-			printf("[MXDRVG] GetPCM call#%d, len=%d, SAMPRATE=%d, FATALERROR=%u, L001e13=%d\n",
-				   getPCMCallCount, len, G.SAMPRATE, (unsigned)G.FATALERROR, G.L001e13);
-		}
-		tv_prev = tv_now;
-	}
-
 	if (len > 1024) return (0);
 
 	rest_us = (SLONG)(len*1000000)/G.SAMPRATE;
 	rest_len = len;
 
-	static ULONG getPCM_total_create_len = 0;
-
 	while (rest_len > 0) {
 		ULONG create_len = (ULONG)rest_len;
 		ULONG event_us = OPM.GetNextEventWrapper();
-		if (getPCMCallCount <= 3) {
-			printf("[YMFMOpm] GetNextEvent returned: %lu\n", event_us);
-		}
 		if (event_us == 0) {
 			// タイマー未設定時は OPMINTFUNC を1回呼んでシーケンスを進める
 			if (OPMINT_FUNC) OPMINT_FUNC();
@@ -420,11 +391,6 @@ int MXDRVG_GetPCM(
 			//
 		}
 		if (create_len == 0) break;
-		getPCM_total_create_len += create_len;
-		if (getPCMCallCount <= 3) {
-			printf("[YMFMOpm] create_len=%lu, event_us=%lu, rest_us=%ld, rest_len=%d, total_cl=%u\n",
-				create_len, event_us, rest_us, rest_len, getPCM_total_create_len);
-		}
 		ULONG create_len2 = DS.GetInSamplesForDownSample(create_len);
 		if (innerbuflen < create_len2) {
 			if (innerbuf) free(innerbuf);
@@ -455,25 +421,6 @@ int MXDRVG_GetPCM(
 		OPM.CountWrapper(use_us);
 		rest_us -= use_us;
 		rest_len -= create_len;
-	}
-
-	// 診断: 累積サンプル数と経過時間から実効レートを計測
-	{
-		static struct timeval tv_rate_start = {0, 0};
-		static ULONG total_rate_samples = 0;
-		total_rate_samples += len;
-		if (tv_rate_start.tv_sec == 0) {
-			gettimeofday(&tv_rate_start, NULL);
-		} else if (total_rate_samples >= 44100) {
-			struct timeval tv_now;
-			gettimeofday(&tv_now, NULL);
-			long elapsed_us = (tv_now.tv_sec - tv_rate_start.tv_sec) * 1000000 + (tv_now.tv_usec - tv_rate_start.tv_usec);
-			double actual_rate = (double)total_rate_samples * 1000000.0 / elapsed_us;
-			printf("[MXDRVG] DIAG: total_samples=%lu, elapsed_us=%ld, actual_rate=%.1f Hz (expected 44100)\n",
-				   total_rate_samples, elapsed_us, actual_rate);
-			total_rate_samples = 0;
-			tv_rate_start = tv_now;
-		}
 	}
 
 	return (len);
@@ -526,30 +473,22 @@ void MXDRVG_SetData(
 ) {
 	X68REG reg;
 
-	printf("[MXDRVG] SetData: mdxsize=%u, pdxsize=%u, pdx=%p\n", (unsigned)mdxsize, (unsigned)pdxsize, pdx);
-
 	reg.d0 = 0x02;
 	reg.d1 = mdxsize;
 	reg.a1 = (UBYTE *)mdx;
-	printf("[MXDRVG] SetData: calling MXDRVG(0x02) L_SETMDX\n");
 	MXDRVG( &reg );
 
 	if ( pdx ) {
 		reg.d0 = 0x03;
 		reg.d1 = pdxsize;
 		reg.a1 = (UBYTE *)pdx;
-		printf("[MXDRVG] SetData: calling MXDRVG(0x03) L_SETPDX\n");
 		MXDRVG( &reg );
 	} else {
 		G.L002231 = CLR;
-		printf("[MXDRVG] SetData: no PDX, L002231=0\n");
 	}
-
-	printf("[MXDRVG] SetData: L002230=%d, L002231=%d, L001e12=%d\n", G.L002230, G.L002231, G.L001e12);
 
 	reg.d0 = 0x0f;
 	reg.d1 = 0x00;
-	printf("[MXDRVG] SetData: calling MXDRVG(0x0f) L_0F\n");
 	MXDRVG( &reg );
 
 	// L_0F() は再生準備状態にするが、OPM レジスタ設定は行わない。
@@ -657,9 +596,6 @@ ULONG MXDRVG_MeasurePlayTime(
 	X68REG reg;
 	void (MXDRVG_CALLBACK *opmintback)(void);
 
-	printf("[MXDRVG] MeasurePlayTime: loop=%d, fadeout=%d\n", loop, fadeout);
-	printf("[MXDRVG] MeasurePlayTime: L002230=%d, L002231=%d, L001e12=%d\n", G.L002230, G.L002231, G.L001e12);
-
 	SETOPMINT( NULL );
 
 	MeasurePlayTime = TRUE;
@@ -689,7 +625,6 @@ ULONG MXDRVG_MeasurePlayTime(
 	SETOPMINT( L_OPMINT );
 
 	ULONG result = (ULONG)(G.PLAYTIME*(LONGLONG)1024/4000+(1-DBL_EPSILON))+2000;
-	printf("[MXDRVG] MeasurePlayTime: returning %u ms, FATALERROR=%u\n", (unsigned)result, (unsigned)G.FATALERROR);
 	return result;
 }
 
@@ -706,9 +641,6 @@ void MXDRVG_PlayAt(
 	MXDRVG_CALLBACK_OPMINTFUNC *opmintback;
 	UWORD chmaskback;
 
-	printf("[MXDRVG] PlayAt: playat=%u, loop=%d, fadeout=%d\n", (unsigned)playat, loop, fadeout);
-	printf("[MXDRVG] PlayAt: L002230=%d, L002231=%d, L001e12=%d\n", G.L002230, G.L002231, G.L001e12);
-
 	SETOPMINT( NULL );
 
 	TerminatePlay = FALSE;
@@ -723,9 +655,7 @@ void MXDRVG_PlayAt(
 	reg.d1 = -1;
 	MXDRVG( &reg );
 	
-	printf("[MXDRVG] PlayAt: calling L_PLAY() after MXDRVG init\n");
 	L_PLAY();
-	printf("[MXDRVG] PlayAt: L_PLAY() returned\n");
 
 	playat = (ULONG)(playat*(LONGLONG)4000/1024);
 
@@ -825,24 +755,6 @@ static void OPM_SUB(
 		LOG_D(s);
 	}
 #endif
-	static uint32_t opm_write_count = 0;
-	opm_write_count++;
-	if ((D1 == 0x14) && (opm_write_count <= 20 || opm_write_count % 50 == 0)) {
-		printf("[OPM] write #%u: addr=%02X data=%02X (timer ctrl), MeasurePlayTime=%d, L001e08=%d\n",
-			   opm_write_count, D1&0xff, D2&0xff, MeasurePlayTime, G.L001e08);
-	} else if ((D1 == 0x10) && (opm_write_count <= 20)) {
-		// Timer A 上位
-		printf("[OPM] write #%u: addr=%02X data=%02X (timer A hi)\n", opm_write_count, D1&0xff, D2&0xff);
-	} else if ((D1 == 0x11) && (opm_write_count <= 20)) {
-		// Timer A 下位
-		printf("[OPM] write #%u: addr=%02X data=%02X (timer A lo)\n", opm_write_count, D1&0xff, D2&0xff);
-	} else if ((D1 == 0x12) && (opm_write_count <= 20)) {
-		// Timer B
-		printf("[OPM] write #%u: addr=%02X data=%02X (timer B)\n", opm_write_count, D1&0xff, D2&0xff);
-	} else if (opm_write_count <= 20) {
-		printf("[OPM] write #%u: addr=%02X data=%02X, MeasurePlayTime=%d\n", opm_write_count, D1&0xff, D2&0xff, MeasurePlayTime);
-	}
-
 	if ( MeasurePlayTime ) return;
 
 	OPM.SetRegWrapper( (UBYTE)D1, (UBYTE)D2 );
@@ -873,12 +785,6 @@ static void ADPCMMOD_END(
 static void OPMINTFUNC(
 	void
 ) {
-	static uint32_t opmint_call_count = 0;
-	opmint_call_count++;
-	if (opmint_call_count <= 5) {
-		printf("[OPMINT] call#%u, MeasurePlayTime=%d, STOPMUSICTIMER=%d, L001e08=%d\n",
-			   opmint_call_count, MeasurePlayTime, G.STOPMUSICTIMER, G.L001e08);
-	}
 	if ( OPMINT_FUNC ) OPMINT_FUNC();
 	if ( !G.STOPMUSICTIMER ) {
 		G.PLAYTIME += 256-G.MUSICTIMER; // OPMBUF[0x12];
@@ -2603,8 +2509,7 @@ static void L0005f8(
 													lsr.l   #2,d1
 													swap.w  d1
 */
-	printf("[L0005f8] D1(data size)=%lu, D0(buffer size)=%lu\n", (ULONG)D1, (ULONG)D0);
-	if ( D1 > D0 ) { printf("[L0005f8] ERROR: D1 > D0, goto L000630\n"); goto L000630; }
+	if ( D1 > D0 ) { goto L000630; }
 	d1 = D1, a0 = A0, a1 = A1, a2 = A2;
 	L00063e();
 	A2 = a2, A1 = a1, A0 = a0, D1 = d1;
@@ -3151,17 +3056,17 @@ L0007f4:;
 	G.L002246 = CLR;
 	G.L001ba6 = CLR;
 	D0 = G.L002230;
-	if ( D0 == 0 ) { printf("[MXDRVG] L0007f4: L002230==0, L_ERROR\n"); L_ERROR(); return; }
+	if ( D0 == 0 ) { L_ERROR(); return; }
 	L00063e();
 	A2 = G.L002218;
 	D1 = GETBWORD( A2+2 );
 	if ( (SWORD)D1 < 0 ) goto L000848;
-	if ( G.L002231 == 0 ) { printf("[MXDRVG] L0007f4: L002231==0, L_ERROR\n"); L_ERROR(); return; }
+	if ( G.L002231 == 0 ) { L_ERROR(); return; }
 	A0 = G.L00221c;
 	goto L00083c;
 
 L000834:;
-	if ( GETBLONG( A0 ) == 0 ) { printf("[MXDRVG] L000834: GETBLONG(A0)==0, L_ERROR\n"); L_ERROR(); return; }
+	if ( GETBLONG( A0 ) == 0 ) { L_ERROR(); return; }
 	A0 += GETBLONG( A0 );
 
 L00083c:;
@@ -7136,12 +7041,8 @@ static int Initialize(
 	int mdxbufsize,
 	int pdxbufsize
 ) {
-	printf("[Initialize] mdxbufsize=%d, pdxbufsize=%d\n", mdxbufsize, pdxbufsize);
-	fflush(stdout);
 	G.MDXSIZE = ( mdxbufsize ? mdxbufsize : 0x10000 );
 	G.PDXSIZE = ( pdxbufsize ? pdxbufsize : 0x100000 );
-	printf("[Initialize] G.MDXSIZE set to %u\n", (unsigned)G.MDXSIZE);
-	fflush(stdout);
 	G.L001ba8 = 0x600;
 	G.MDXBUF = (UBYTE *)malloc( G.MDXSIZE );
 	if ( !G.MDXBUF ) {

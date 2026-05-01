@@ -63,7 +63,7 @@ private:
 
     // Timer A: 10-bit prescaler, counts down
     uint16_t timer_a_value_;   // Load value (10-bit)
-    uint16_t timer_a_count_;   // Current counter
+    uint32_t timer_a_count_;   // Current counter (µs単位、uint16_t/uint8_tではオーバーフローする)
     bool timer_a_load_;       // Load enable
     bool timer_a_enable_;     // Interrupt enable
     bool timer_a_flag_;       // Interrupt flag
@@ -71,7 +71,7 @@ private:
 
     // Timer B: 8-bit, counts down
     uint8_t timer_b_value_;    // Load value (8-bit)
-    uint8_t timer_b_count_;    // Current counter
+    uint32_t timer_b_count_;   // Current counter (µs単位、uint8_tではオーバーフローする)
     bool timer_b_load_;       // Load enable
     bool timer_b_enable_;     // Interrupt enable
     bool timer_b_flag_;       // Interrupt flag

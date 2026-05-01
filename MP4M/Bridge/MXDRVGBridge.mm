@@ -117,8 +117,15 @@ static NSString* getTitleFromData(NSData* data) {
 + (nullable NSString *)loadMDXFile:(NSString *)mdxPath {
     NSData* fileData = [NSData dataWithContentsOfFile:mdxPath];
     if (!fileData) return nil;
-    
-    return [MXDRVGBridge loadMDXData:fileData pdxData:nil];
+
+    // 同じディレクトリから PDX を探してロード（大文字小文字両方試す）
+    NSString* basePath = [mdxPath stringByDeletingPathExtension];
+    NSData* pdxData = [NSData dataWithContentsOfFile:[basePath stringByAppendingPathExtension:@"pdx"]];
+    if (!pdxData) {
+        pdxData = [NSData dataWithContentsOfFile:[basePath stringByAppendingPathExtension:@"PDX"]];
+    }
+
+    return [MXDRVGBridge loadMDXData:fileData pdxData:pdxData];
 }
 
 + (nullable NSString *)loadMDXData:(NSData *)mdxData pdxData:(nullable NSData *)pdxData {
@@ -167,7 +174,14 @@ static NSString* getTitleFromData(NSData* data) {
     // グローバル変数に保存
     g_mdxData = (NSMutableData*)mdxWrapped;
     g_pdxData = (NSMutableData*)pdxWrapped;
-    
+
+    // MDX/PDX データをエンジンに登録（必須: これをしないとシーケンスポインタがNULLのままクラッシュ）
+    MXDRVG_SetData(
+        (void*)g_mdxData.bytes, (unsigned long)g_mdxData.length,
+        g_pdxData ? (void*)g_pdxData.bytes : NULL,
+        g_pdxData ? (unsigned long)g_pdxData.length : 0
+    );
+
     // タイトル抽出
     NSString* title = getTitleFromData(mdxData);
     return title;
@@ -175,12 +189,18 @@ static NSString* getTitleFromData(NSData* data) {
 
 + (void)playWithLoopCount:(int)loopCount {
     if (!g_mdxData) return;
-    
-    // 総再生時間計測
+
+    // 総再生時間計測（内部状態を曲終端まで進めるため、直後に SetData で再初期化が必要）
     g_totalPlayTimeMs = MXDRVG_MeasurePlayTime(loopCount, 0);
-    
-    // 直後に PlayAt を呼ぶ（SetData は再度呼ばない）
-    MXDRVG_PlayAt(0, loopCount, 1);  // 3番目パラメータ = 1 (フェードアウト ON)
+
+    // MeasurePlayTime でシーケンスが終端まで進んだため SetData で冒頭へリセット
+    MXDRVG_SetData(
+        (void*)g_mdxData.bytes, (unsigned long)g_mdxData.length,
+        g_pdxData ? (void*)g_pdxData.bytes : NULL,
+        g_pdxData ? (unsigned long)g_pdxData.length : 0
+    );
+
+    MXDRVG_PlayAt(0, loopCount, 1);
 }
 
 + (void)stop {

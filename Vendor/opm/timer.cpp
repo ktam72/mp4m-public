@@ -83,32 +83,34 @@ uint32_t Timer::GetTimerAPeriod() const {
 }
 
 uint32_t Timer::GetTimerBPeriod() const {
-    if (timer_b_value_ >= 256 || clock_freq_ == 0) return 0xFFFFFFFF;
+    if (clock_freq_ == 0) return 0xFFFFFFFF;
     uint64_t ticks = 1024ULL * (256 - timer_b_value_);
     return static_cast<uint32_t>((ticks * 1000000ULL) / clock_freq_);
 }
 
 bool Timer::Advance(uint32_t microseconds) {
     bool interrupted = false;
-    
+
     if (timer_a_active_ && timer_a_enable_) {
-        timer_a_count_ -= microseconds;
-        if (timer_a_count_ <= 0) {
+        if (timer_a_count_ <= microseconds) {
             timer_a_flag_ = true;
             interrupted = true;
             timer_a_count_ = GetTimerAPeriod();
+        } else {
+            timer_a_count_ -= microseconds;
         }
     }
-    
+
     if (timer_b_active_ && timer_b_enable_) {
-        timer_b_count_ -= microseconds;
-        if (timer_b_count_ <= 0) {
+        if (timer_b_count_ <= microseconds) {
             timer_b_flag_ = true;
             interrupted = true;
             timer_b_count_ = GetTimerBPeriod();
+        } else {
+            timer_b_count_ -= microseconds;
         }
     }
-    
+
     return interrupted;
 }
 
