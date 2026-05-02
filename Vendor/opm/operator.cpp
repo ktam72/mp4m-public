@@ -97,9 +97,8 @@ static const uint16_t exp_rom[256] = {
     0x455, 0x452, 0x44f, 0x44c, 0x449, 0x446, 0x443, 0x440
 };
 
-Operator::Operator() 
+Operator::Operator()
     : pg_count_(0), pg_diff_(0),
-      detune_(0), detune2_(0),
       eg_phase_(EGPhase::Off), eg_level_(127), eg_count_(0),
       ar_(0), dr_(0), sr_(0), rr_(0), sl_(0),
       tl_(0), kc_(0), kf_(0), ks_(0), mul_(0),
@@ -172,12 +171,12 @@ void Operator::KeyOff() {
 // ===== Parameter setters =====
 void Operator::SetDT(uint8_t dt) {
     dt1_ = dt & 0x07;
-    UpdateDetune();
+    UpdatePGDiff();
 }
 
 void Operator::SetDT2(uint8_t dt2) {
     dt2_ = dt2 & 0x03;
-    UpdateDetune();
+    UpdatePGDiff();
 }
 
 void Operator::SetMUL(uint8_t mul) {
@@ -228,29 +227,6 @@ void Operator::SetAM(bool enable) {
 }
 
 // ===== Update detune =====
-void Operator::UpdateDetune() {
-    // DT1: Fine detune (-3 to +3 cents)
-    // DT2: Coarse detune (0, +1, +2, +3 semitones)
-    
-    // Simplified: convert to frequency ratio
-    // 1 cent = 2^(1/1200)
-    // This is approximate - real YM2151 has more complex behavior
-    
-    detune_ = 0;
-    detune2_ = 0;
-    
-    if (dt1_ > 0) {
-        int dt1_cents = (dt1_ > 3) ? -(7 - dt1_) : (dt1_ - 1);
-        // Approximate: each cent = 0.0578% frequency change
-        detune_ = (dt1_cents * 65536) / 1200;
-    }
-    
-    if (dt2_ > 0) {
-        // DT2: semitone units (12 cents each)
-        detune2_ = (dt2_ * 12 * 65536) / 1200;
-    }
-}
-
 // ===== Update PG difference =====
 // Nuked OPM pg_freqtable[64] and OPM_KCToFNum() based
 void Operator::UpdatePGDiff() {

@@ -82,8 +82,6 @@ private:
     // Phase Generator state
     uint32_t pg_count_;      // Current phase counter (21-bit)
     uint32_t pg_diff_;       // Phase increment per sample
-    int32_t detune_;         // Fine detune value (-3 to +3 cents)
-    int32_t detune2_;        // Coarse detune value (semitones)
 
     // Envelope Generator state
     EGPhase eg_phase_;       // Current EG phase
@@ -126,7 +124,6 @@ private:
     static uint32_t eg_step_table_[64];
 
     // Helper functions
-    void UpdateDetune();
     void UpdatePGDiff();
     void UpdateEG();
 };
