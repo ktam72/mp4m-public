@@ -108,10 +108,6 @@ private:
     uint8_t kon_csm_;           // Channel mask for CSM KeyOn (4 bits)
     uint8_t kon_csm_lock_;      // Lock flag to prevent multiple KeyOn per overflow
 
-    // IO Control (CT1/CT2)
-    uint8_t ct1_;               // CT1 output state (register 0x1B bit 6)
-    uint8_t ct2_;               // CT2 output state (register 0x1B bit 7)
-
     // Internal methods - register dispatch
     void WriteReg00(uint8_t reg, uint8_t data);   // Registers 0x00-0x1F
     void WriteReg20_RLFB(uint8_t reg, uint8_t data);  // 0x20-0x27: RL/FB/CONNECT
@@ -157,8 +153,7 @@ OpmDeviceImpl::OpmDeviceImpl()
       status_(0),
       intr_cb_(nullptr), intr_context_(nullptr),
       channel_mask_(0xFFFFFFFF),
-      mode_csm_(0), kon_csm_(0), kon_csm_lock_(0),
-      ct1_(0), ct2_(0) {
+      mode_csm_(0), kon_csm_(0), kon_csm_lock_(0) {
     std::memset(regs_, 0, sizeof(regs_));
     std::memset(kc_, 0, sizeof(kc_));
     std::memset(kf_, 0, sizeof(kf_));
@@ -201,10 +196,6 @@ void OpmDeviceImpl::Reset() {
     mode_csm_ = 0;
     kon_csm_ = 0;
     kon_csm_lock_ = 0;
-
-    // IO Control reset
-    ct1_ = 0;
-    ct2_ = 0;
 
     status_ = 0;
 }
@@ -316,12 +307,7 @@ void OpmDeviceImpl::WriteReg00(uint8_t reg, uint8_t data) {
                     }
                     break;
                 }
-                case 0x1B:  // LFO waveform and CT1/CT2 output control
-                    // Bit 7: CT2 output
-                    ct2_ = (data >> 7) & 1;
-                    // Bit 6: CT1 output
-                    ct1_ = (data >> 6) & 1;
-                    // Bits 1-0: LFO waveform
+                case 0x1B:  // LFO waveform
                     {
                         uint8_t wav = data & 3;
                         LfoWave wave = LfoWave::Saw;
@@ -520,25 +506,25 @@ void OpmDeviceImpl::Generate(Sample* buffer, size_t num_samples) {
 
 void OpmDeviceImpl::Mix(Sample* buffer, size_t num_samples) {
     for (size_t i = 0; i < num_samples; i++) {
+        // Every sample update EG state
+        for (int ch = 0; ch < 8; ch++) {
+            if (channel_mask_ & (1 << ch)) {
+                channels_[ch].Prepare();
+            }
+        }
+        
         // Advance LFO
         lfo_.Advance(1);
         int32_t am = lfo_.GetAM() << 16;
         int32_t pm = lfo_.GetPM();
-
-        // Update each channel with LFO modulation (frequency and amplitude)
-        for (int ch = 0; ch < 8; ch++) {
-            if (channel_mask_ & (1 << ch)) {
-                channels_[ch].Prepare(pm);  // Pass PM for frequency calculation
-            }
-        }
-
+        
         // Generate for each channel
         int32_t left = 0, right = 0;
-
+        
         for (int ch = 0; ch < 8; ch++) {
             if (!(channel_mask_ & (1 << ch))) continue;
             if (!channels_[ch].IsActive()) continue;
-
+            
             int32_t out = channels_[ch].Calculate(am, pm);
             
             uint8_t pan = channels_[ch].GetPan();
