@@ -251,8 +251,8 @@ void Operator::UpdateDetune() {
     }
 }
 
-// ===== Update PG difference (Nuked OPM compatible with DT1/DT2/KF) =====
-void Operator::UpdatePGDiff() {
+// ===== Update PG difference (Nuked OPM compatible with DT1/DT2/KF/LFO_PM) =====
+void Operator::UpdatePGDiff(int32_t pm) {
     // YM2151 frequency calculation using Nuked OPM reference
     // pg_freqtable[64]: basefreq, approxtype, slope for each KC high 6 bits
 
@@ -284,20 +284,25 @@ void Operator::UpdatePGDiff() {
     // Step 1: Form kcf (13-bit combined KC + KF)
     int32_t kcf = (kc_ << 6) | (kf_ & 0x3F);
 
-    // Step 2: Apply DT2 (semitone-based detune, 0-3 = 0, +100, +200, +300 cents)
+    // Step 2: Apply LFO pitch modulation (if provided)
+    if (pm != 0) {
+        kcf += (pm >> 10);  // Normalize PM to kcf scale
+    }
+
+    // Step 3: Apply DT2 (semitone-based detune, 0-3 = 0, +100, +200, +300 cents)
     // Approximately: 1 semitone ≈ 100 cents ≈ 64 kcf units (rough approximation)
     if (dt2_ > 0) {
         kcf += (dt2_ << 6);  // dt2_=1,2,3 adds 64, 128, 192 to kcf
     }
 
-    // Step 3: Clamp kcf to valid range (7-bit kcode at most = 448 kcf units)
+    // Step 4: Clamp kcf to valid range (7-bit kcode at most = 448 kcf units)
     if (kcf > 0x1FFF) kcf = 0x1FFF;  // Clamp high
     if (kcf < 0) kcf = 0;            // Clamp low
 
-    // Step 4: Extract kcode_adj from kcf (7-bit value: block=3bits, note=2bits)
+    // Step 5: Extract kcode_adj from kcf (7-bit value: block=3bits, note=2bits)
     kcode_adj_ = (kcf >> 6) & 0x7F;
 
-    // Step 5: Calculate fnum using OPM_KCToFNum logic (from kcode_adj)
+    // Step 6: Calculate fnum using OPM_KCToFNum logic (from kcode_adj)
     int32_t kcode_h = (kcode_adj_ >> 2) & 0x3F;
     int32_t kcode_l = kcode_adj_ & 0x03;
 
@@ -321,14 +326,14 @@ void Operator::UpdatePGDiff() {
     }
     int32_t fnum = pg_freqtable[kcode_h].basefreq + (sum >> 1);
 
-    // Step 6: Extract block and note from kcode_adj for DT1 calculation
+    // Step 7: Extract block and note from kcode_adj for DT1 calculation
     int32_t block = kcode_adj_ >> 2;   // Upper 5 bits = block
     int32_t note = kcode_adj_ & 0x03;  // Lower 2 bits = note
 
-    // Step 7: Calculate basefreq (before DT1 detune)
+    // Step 8: Calculate basefreq (before DT1 detune)
     pg_basefreq_ = (fnum << block) >> 2;
 
-    // Step 8: Apply DT1 detune (Nuked OPM algorithm, fully block-dependent)
+    // Step 9: Apply DT1 detune (Nuked OPM algorithm, fully block-dependent)
     int32_t basefreq = pg_basefreq_;
     uint8_t dt_l = dt1_ & 0x03;  // Lower 2 bits of DT1 register
 
@@ -355,11 +360,11 @@ void Operator::UpdatePGDiff() {
         }
     }
 
-    // Step 9: Apply MUL (frequency multiplier)
+    // Step 10: Apply MUL (frequency multiplier)
     int32_t mul = (mul_ == 0) ? 1 : mul_;
     int32_t inc = (basefreq * mul) & 0xFFFFF;  // 20-bit phase increment
 
-    // Step 10: Convert to sample-rate-adapted pg_diff (21-bit phase increment)
+    // Step 11: Convert to sample-rate-adapted pg_diff (21-bit phase increment)
     const uint32_t OPM_CLOCK = 3579545;
     const uint32_t SAMPLE_RATE = 44100;
     pg_diff_ = ((uint64_t)inc * SAMPLE_RATE * 256) / OPM_CLOCK;
@@ -487,12 +492,8 @@ int32_t Operator::Calculate(int32_t in, int32_t am, int32_t pm) {
     // Phase calculation (10-bit phase from 21-bit counter)
     uint32_t phase = (pg_count_ >> 11) & 0x3FF;
 
-    // Apply pitch modulation (PM from LFO)
-    if (pm != 0) {
-        phase = (phase + (pm >> 9)) & 0x3FF;
-    }
-
     // Apply modulation input (from feedback or previous operator)
+    // Note: LFO pitch modulation (PM) is applied at frequency stage in Prepare()
     if (in != 0) {
         phase = (phase + (in >> 8)) & 0x3FF;
     }
@@ -552,7 +553,10 @@ int32_t Operator::Calculate(int32_t in, int32_t am, int32_t pm) {
 }
 
 // ===== Prepare for next sample =====
-void Operator::Prepare() {
+void Operator::Prepare(int32_t pm) {
+    // Update frequency with LFO pitch modulation
+    UpdatePGDiff(pm);
+
     // Update phase
     pg_count_ += pg_diff_;
 

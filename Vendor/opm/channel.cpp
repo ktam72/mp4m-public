@@ -180,9 +180,9 @@ int32_t Channel::Calculate(int32_t am, int32_t pm) {
     return result;
 }
 
-void Channel::Prepare() {
+void Channel::Prepare(int32_t pm) {
     for (int i = 0; i < 4; i++) {
-        ops_[i].Prepare();
+        ops_[i].Prepare(pm);
     }
     fb_idx_ = 1 - fb_idx_;
 }

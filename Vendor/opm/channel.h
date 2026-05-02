@@ -63,7 +63,8 @@ public:
     int32_t Calculate(int32_t am, int32_t pm);
 
     // Prepare for next sample
-    void Prepare();
+    // pm: LFO pitch modulation value (passed to each operator)
+    void Prepare(int32_t pm = 0);
 
     // Set pan (0=off, 1=L, 2=R, 3=L+R)
     void SetPan(uint8_t pan) { pan_ = pan & 3; }
