@@ -67,8 +67,7 @@ public:
 
     // Update internal state for next sample
     // Must be called once per sample (after Calculate)
-    // pm: LFO pitch modulation value (used to calculate final frequency)
-    void Prepare(int32_t pm = 0);
+    void Prepare();
 
     // Check if operator is active
     bool IsActive() const { return eg_phase_ != EGPhase::Off; }
@@ -130,7 +129,7 @@ private:
 
     // Helper functions
     void UpdateDetune();
-    void UpdatePGDiff(int32_t pm = 0);
+    void UpdatePGDiff();
     void UpdateEG();
 };
 

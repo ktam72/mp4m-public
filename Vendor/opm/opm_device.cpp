@@ -520,17 +520,17 @@ void OpmDeviceImpl::Generate(Sample* buffer, size_t num_samples) {
 
 void OpmDeviceImpl::Mix(Sample* buffer, size_t num_samples) {
     for (size_t i = 0; i < num_samples; i++) {
+        // Advance EG state for all channels
+        for (int ch = 0; ch < 8; ch++) {
+            if (channel_mask_ & (1 << ch)) {
+                channels_[ch].Prepare();
+            }
+        }
+
         // Advance LFO
         lfo_.Advance(1);
         int32_t am = lfo_.GetAM() << 16;
         int32_t pm = lfo_.GetPM();
-
-        // Update each channel with LFO modulation (frequency and amplitude)
-        for (int ch = 0; ch < 8; ch++) {
-            if (channel_mask_ & (1 << ch)) {
-                channels_[ch].Prepare(pm);  // Pass PM for frequency calculation
-            }
-        }
 
         // Generate for each channel
         int32_t left = 0, right = 0;
