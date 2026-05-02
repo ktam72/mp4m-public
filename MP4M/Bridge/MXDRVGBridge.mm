@@ -129,25 +129,49 @@ static NSString* getTitleFromData(NSData* data) {
         return nil;
     }
 
-    // 同じディレクトリから PDX を探してロード（大文字小文字両方試す）
-    NSString* basePath = [mdxPath stringByDeletingPathExtension];
-    fprintf(stderr, "[loadMDXFile] basePath=%s\n", [basePath UTF8String]);
+    NSString* mdxDir = [mdxPath stringByDeletingLastPathComponent];
+    NSData* pdxData = nil;
 
-    NSString* pdxPath1 = [basePath stringByAppendingPathExtension:@"pdx"];
-    fprintf(stderr, "[loadMDXFile] trying pdx (lowercase): %s\n", [pdxPath1 UTF8String]);
+    // MDX 内部からPDXファイル名を抽出
+    const unsigned char* ptr = (const unsigned char*)fileData.bytes;
+    int titleEndPos;
+    for (titleEndPos = 0; titleEndPos < (int)fileData.length; titleEndPos++) {
+        if (ptr[titleEndPos] == 0x0d && ptr[titleEndPos + 1] == 0x0a) break;
+    }
 
-    NSData* pdxData = [NSData dataWithContentsOfFile:pdxPath1];
-    if (!pdxData) {
-        NSString* pdxPath2 = [basePath stringByAppendingPathExtension:@"PDX"];
-        fprintf(stderr, "[loadMDXFile] lowercase pdx not found, trying uppercase: %s\n", [pdxPath2 UTF8String]);
-        pdxData = [NSData dataWithContentsOfFile:pdxPath2];
-        if (pdxData) {
-            fprintf(stderr, "[loadMDXFile] uppercase PDX found, size=%lu\n", (unsigned long)pdxData.length);
-        } else {
-            fprintf(stderr, "[loadMDXFile] uppercase PDX not found\n");
+    if (titleEndPos < (int)fileData.length) {
+        int mdxBodyStartPos;
+        for (mdxBodyStartPos = titleEndPos + 2; mdxBodyStartPos < (int)fileData.length; mdxBodyStartPos++) {
+            if (ptr[mdxBodyStartPos] == 0x1a) break;
         }
-    } else {
-        fprintf(stderr, "[loadMDXFile] lowercase pdx found, size=%lu\n", (unsigned long)pdxData.length);
+
+        if (mdxBodyStartPos < (int)fileData.length) {
+            mdxBodyStartPos++;  // 0x1A をスキップ
+
+            // PDX ファイル名を抽出
+            int pdxNameEnd = mdxBodyStartPos;
+            while (pdxNameEnd < (int)fileData.length && ptr[pdxNameEnd] != 0) {
+                pdxNameEnd++;
+            }
+
+            if (pdxNameEnd > mdxBodyStartPos) {
+                NSString* pdxFileName = [[NSString alloc] initWithBytes:&ptr[mdxBodyStartPos]
+                                                                   length:(pdxNameEnd - mdxBodyStartPos)
+                                                                 encoding:NSShiftJISStringEncoding];
+                if (pdxFileName) {
+                    NSString* pdxPath = [mdxDir stringByAppendingPathComponent:pdxFileName];
+                    fprintf(stderr, "[loadMDXFile] Extracted PDX name from MDX: %s\n", [pdxFileName UTF8String]);
+                    fprintf(stderr, "[loadMDXFile] Looking for PDX at: %s\n", [pdxPath UTF8String]);
+
+                    pdxData = [NSData dataWithContentsOfFile:pdxPath];
+                    if (pdxData) {
+                        fprintf(stderr, "[loadMDXFile] PDX found via extracted name, size=%lu\n", (unsigned long)pdxData.length);
+                    } else {
+                        fprintf(stderr, "[loadMDXFile] PDX not found at extracted path\n");
+                    }
+                }
+            }
+        }
     }
 
     return [MXDRVGBridge loadMDXData:fileData pdxData:pdxData];
