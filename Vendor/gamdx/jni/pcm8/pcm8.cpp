@@ -201,12 +201,12 @@ int Pcm8::GetPcm22() {
 		} else {
 			int N10Data;  // (N1Data << 4) | N0Data
 			if (N1DataFlag == 0) {  // 次のADPCMデータが内部にない場合
-			N10Data = DmaGetByte();  // DMA転送(1バイト)
-			if (N10Data == 0x80000000) {
-				RateCounter = 0;
-				AdpcmReg = 0xC7;  // ADPCM 停止
-				return 0x80000000;
-			}
+				N10Data = DmaGetByte();  // DMA転送(1バイト)
+				if (N10Data == 0x80000000) {
+					RateCounter = 0;
+					AdpcmReg = 0xC7;  // ADPCM 停止
+					return 0x80000000;
+				}
 				adpcm2pcm(N10Data & 0x0F);  // InpPcm に値が入る
 				N1Data = (N10Data >> 4) & 0x0F;
 				N1DataFlag = 1;
@@ -425,17 +425,10 @@ int Pcm8::GetRest() {
 }
 
 
-int Pcm8::GetMode() const {
+int Pcm8::GetMode() {
 	return Mode;
 }
 
-int Pcm8::GetDmaMtc() const {
-	return DmaMtc;
-}
-
-int Pcm8::GetDmaBtc() const {
-	return DmaBtc;
-}
 
 }
 

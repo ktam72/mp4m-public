@@ -49,13 +49,10 @@ public:
 	int Lot(void *tbl, int mode);
 	int SetMode(int mode);
 	int GetRest();
-	int GetMode() const;
+	int GetMode();
 
 	int GetPcm22();
 	int GetPcm62();
-	
-	int GetDmaMtc() const;
-	int GetDmaBtc() const;
 
 };
 

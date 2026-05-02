@@ -57,13 +57,13 @@ targets:
       - path: Vendor/lzx
         includes:
           - "lzx.cpp"
-      - path: Vendor/gamdx/jni/fmgen/fmgen
+      - path: Vendor/gamdx/jni/fmgen
         includes:
           - "*.cpp"
 
     settings:
       BRIDGING_HEADER: MP4M/Bridge/MP4M-Bridging-Header.h
-      HEADER_SEARCH_PATHS: $(SRCROOT) $(SRCROOT)/Vendor $(SRCROOT)/Vendor/gamdx/jni $(SRCROOT)/Vendor/gamdx/jni/fmgen $(SRCROOT)/Vendor/gamdx/jni/fmgen/fmgen $(SRCROOT)/MP4M/Bridge
+      HEADER_SEARCH_PATHS: $(SRCROOT) $(SRCROOT)/Vendor $(SRCROOT)/Vendor/gamdx/jni $(SRCROOT)/Vendor/gamdx/jni/fmgen $(SRCROOT)/MP4M/Bridge
       USER_HEADER_SEARCH_PATHS: $(SRCROOT)/MP4M/Bridge
       CLANG_CXX_LANGUAGE_DIALECT: gnu++17
       CLANG_CXX_LIBRARY: libc++

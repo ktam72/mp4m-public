@@ -4,8 +4,6 @@
 // Converted for Win32 [MXDRVg] V1.50a
 // Copyright (C) 2000 GORRY.
 
-#include <sys/time.h>
-
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-function"
 #pragma clang diagnostic ignored "-Wcomma"
@@ -39,93 +37,9 @@
 #include <float.h>
 #include "mxdrvg.h"
 
+#include "../fmgen/opm.h"
 #include "../pcm8/x68pcm8.h"
 #include "../downsample/downsample.h"
-
-// fmgen OPM integration
-#include <opm.h>
-
-static FM::OPM g_opm_fmgen;
-
-// C wrapper functions for fmgen OPM
-extern "C" {
-void OPM_InitWrapper(uint32_t clock, uint32_t rate, int filter);
-void OPM_SetRegWrapper(uint8_t addr, uint8_t data);
-void OPM_MixWrapper(int16_t* buf, int nsamples);
-unsigned long OPM_GetNextEventWrapper(void);
-void OPM_CountWrapper(uint32_t us);
-void* OPM_GetChipPtr(void);
-void OPM_GetChannelStates(void* states, int max_channels);
-void OPM_SetIntFunc(void (*func)(void));
-void (*OPM_GetIntFunc(void))(void);
-}
-
-void OPM_InitWrapper(uint32_t clock, uint32_t rate, int filter) {
-    (void)filter;
-    fprintf(stderr, "[OPM_InitWrapper] clock=%u rate=%u\n", clock, rate);
-    g_opm_fmgen.Init(clock, rate, false);
-}
-
-void OPM_SetRegWrapper(uint8_t addr, uint8_t data) {
-    static int reg_count = 0;
-    if (++reg_count <= 50 || addr == 0x08) {
-        fprintf(stderr, "[OPM_SetReg] #%d addr=0x%02x data=0x%02x\n", reg_count, addr, data);
-    }
-    g_opm_fmgen.SetReg(addr, data);
-}
-
-void OPM_MixWrapper(int16_t* buf, int nsamples) {
-    static int mix_count = 0;
-    mix_count++;
-    if (mix_count <= 5) {
-        fprintf(stderr, "[OPM_MixWrapper] #%d nsamples=%d\n", mix_count, nsamples);
-    }
-
-    if (nsamples > 0) {
-        FM::Sample* samples = new FM::Sample[nsamples * 2];
-        memset(samples, 0, nsamples * 2 * sizeof(FM::Sample));
-        g_opm_fmgen.Mix(samples, nsamples);
-        for (int i = 0; i < nsamples; i++) {
-            buf[i*2 + 0] = (int16_t)samples[i*2 + 0];
-            buf[i*2 + 1] = (int16_t)samples[i*2 + 1];
-        }
-        delete[] samples;
-    }
-
-    if (mix_count <= 5) {
-        fprintf(stderr, "[OPM_MixWrapper] #%d done: buf[0]=%d buf[1]=%d\n", mix_count, buf[0], buf[1]);
-    }
-}
-
-unsigned long OPM_GetNextEventWrapper(void) {
-    return g_opm_fmgen.GetNextEvent();
-}
-
-void OPM_CountWrapper(uint32_t us) {
-    g_opm_fmgen.Count(us);
-}
-
-void* OPM_GetChipPtr(void) {
-    // fmgen では opm_t 構造体を使用しないため nullptr を返す
-    return nullptr;
-}
-
-void OPM_GetChannelStates(void* states, int max_channels) {
-    // fmgen では公開されたチャンネル状態アクセス API がないため
-    // このプレースホルダー実装では何もしない
-    (void)states;
-    (void)max_channels;
-}
-
-static void (*g_opm_interrupt_func)(void) = nullptr;
-
-void OPM_SetIntFunc(void (*func)(void)) {
-    g_opm_interrupt_func = func;
-}
-
-void (*OPM_GetIntFunc(void))(void) {
-    return g_opm_interrupt_func;
-}
 
 extern volatile unsigned char OpmReg1B;  // OPM ÉåÉWÉXÉ^ $1B ÇÃì‡óe
 
@@ -148,8 +62,7 @@ static volatile MXDRVG_WORK_GLOBAL G;  // MXDRVG_WORK_GLOBALBUF;
 
 static volatile MXDRVG_WORK_KEY KEY;  // MXDRVG_WORK_KEYBUF;
 
-// Nuked-OPM uses opm_t structure directly, no OPMBUF needed
-// static volatile MXDRVG_WORK_OPM OPMBUF;  // 已移除，使用Nuked-OPM的opm_t
+static volatile MXDRVG_WORK_OPM OPMBUF;  // MXDRVG_WORK_OPMBUF;
 
 #define PCM8_ENABLE 1
 
@@ -161,9 +74,30 @@ static void OPMINTFUNC(
 	void
 );
 
-// 先行宣言
+class X68OPM : public FM::OPM {
+	public:
+		virtual void Intr(bool irq) {
+			if (irq) {
+				OPMINTFUNC();
+			}
+		}
+};
+static X68OPM OPM;
 static X68K::X68PCM8 PCM8;
 static X68K::DOWNSAMPLE DS;
+
+// OPM C interface for bridge
+extern "C" {
+void* OPM_GetChipPtr(void) {
+    return nullptr;  // fmgen では opm_t 構造体を使用しない
+}
+
+void OPM_GetChannelStates(void* states, int max_channels) {
+    // 本実装では何もしない（チャンネル状態はMXDRVGから直接取得）
+    (void)states;
+    (void)max_channels;
+}
+}
 
 /***************************************************************/
 
@@ -189,6 +123,7 @@ static UBYTE volatile *A7;
 
 static UBYTE DisposeStack_L00122e;
 
+static void (*OPMINT_FUNC)(void);
 static void (MXDRVG_CALLBACK *MXDRVG_CALLBACK_OPMINT)(void);
 
 static int volatile MeasurePlayTime;
@@ -334,13 +269,10 @@ int MXDRVG_Start(
 	int pdxbufsize
 ) {
 	int ret;
-	
-	fprintf(stderr, "[Start] samprate=%d mdxbufsize=%d pdxbufsize=%d\n", samprate, mdxbufsize, pdxbufsize);
-	
+
 	memset( (void *)&G, 0, sizeof(G) );
 	memset( (void *)&KEY, 0, sizeof(KEY) );
 	G.MEASURETIMELIMIT = (1000*(60*20-2))*(LONGLONG)4000/1024; // 20min-2sec
-	TotalVolume = 256; // 音量を最大に設定（0だと全サンプルが0になる）
 
 	switch (samprate) {
 	  case 22050:
@@ -349,23 +281,17 @@ int MXDRVG_Start(
 		G.OPMFILTER = 0;
 		break;
 
-	  case 40600:
-		G.SAMPRATE = 40600;
-		G.INNERSAMPRATE = 40600;
+	  case 44100:
+		G.SAMPRATE = 44100;
+		G.INNERSAMPRATE = 62500;
 		G.OPMFILTER = (filtermode&2) ? 1 : 0;
 		break;
 
-	  case 44100:
- 		G.SAMPRATE = 44100;
- 		G.INNERSAMPRATE = 44100;
- 		G.OPMFILTER = (filtermode&2) ? 1 : 0;
- 		break;
-
 	  case 48000:
- 		G.SAMPRATE = 48000;
- 		G.INNERSAMPRATE = 48000;
- 		G.OPMFILTER = (filtermode&2) ? 1 : 0;
- 		break;
+		G.SAMPRATE = 48000;
+		G.INNERSAMPRATE = 62500;
+		G.OPMFILTER = (filtermode&2) ? 1 : 0;
+		break;
 
 	  case 62500:
 		G.SAMPRATE = 62500;
@@ -380,16 +306,14 @@ int MXDRVG_Start(
 		return -1;
 	}
 
-	OPM_InitWrapper(4000000, G.SAMPRATE, (G.OPMFILTER != 0));
-	fprintf(stderr, "[Start] SAMPRATE=%lu OPM initialized\n", (ULONG)G.SAMPRATE);
+	OPM.Init(4000000, G.INNERSAMPRATE, (G.OPMFILTER != 0));
 	PCM8.Init(G.INNERSAMPRATE);
 	DS.Init(G.INNERSAMPRATE, G.SAMPRATE, ((filtermode&1) == 0));
 
-	// OPM_SetRegWrapper(-12); // volume control removed
+	OPM.SetVolume(-12);
 	PCM8.SetVolume(0);
 
 	ret = Initialize( mdxbufsize, pdxbufsize );
-	fprintf(stderr, "[Start] Initialize ret=%d\n", ret);
 	if ( ret != 0 ) {
 		return (-2);
 	}
@@ -404,15 +328,15 @@ void MXDRVG_End(
 	void
 ) {
 	if ( G.MDXBUF ) {
-		// MXDRVG does not own this memory - it's managed by MXDRVGBridge
+		free( (void*)G.MDXBUF );
 		G.MDXBUF = NULL;
 	}
 	if ( G.PDXBUF ) {
-		// MXDRVG does not own this memory - it's managed by MXDRVGBridge
+		free( (void*)G.PDXBUF );
 		G.PDXBUF = NULL;
 	}
 	if ( G.L001bac ) {
-		// free(G.L001bac) removed: buffer owned by MXDRVGBridge
+		free( (void*)G.L001bac );
 		G.L001bac = NULL;
 	}
 
@@ -425,7 +349,7 @@ void MXDRVG_End(
 	DisposeStack_L00122e = NULL;
 	memset((void*)MXDRVG_WORK_CHBUF_FM, 0, sizeof(MXDRVG_WORK_CHBUF_FM));
 	memset((void*)MXDRVG_WORK_CHBUF_PCM, 0, sizeof(MXDRVG_WORK_CHBUF_PCM));
-	// OPMBUF initialization removed - using OpmWrapper
+	memset((void*)&OPMBUF, 0, sizeof(OPMBUF));
 
 }
 
@@ -435,12 +359,6 @@ int MXDRVG_GetPCM(
 	SWORD *buf,
 	int len
 ) {
-	static int call_count = 0;
-	call_count++;
-	if (call_count <= 5) {
-		fprintf(stderr, "[MXDRVG_GetPCM] #%d called with len=%d\n", call_count, len);
-	}
-	
 	SLONG rest_us;
 	static Sample *innerbuf = NULL;
 	static ULONG innerbuflen = 0;
@@ -451,27 +369,11 @@ int MXDRVG_GetPCM(
 
 	rest_us = (SLONG)(len*1000000)/G.SAMPRATE;
 	rest_len = len;
-
-	if (call_count <= 3) {
-		fprintf(stderr, "[MXDRVG_GetPCM] #%d start: rest_len=%d rest_us=%ld\n", call_count, rest_len, rest_us);
-	}
-
 	while (rest_len > 0) {
-		if (call_count <= 3) {
-			fprintf(stderr, "[MXDRVG_GetPCM] #%d loop start: rest_len=%d\n", call_count, rest_len);
-		}
 		ULONG create_len = (ULONG)rest_len;
-		ULONG event_us = OPM_GetNextEventWrapper();
-	if (event_us == 0) {
-		// タイマー未設定時は OPMINTFUNC を1回呼んでシーケンスを進める
-		OPMINTFUNC();
-		event_us = OPM_GetNextEventWrapper();
-			if (event_us == 0) {
-				create_len = 1;
-			} else {
-				create_len = G.SAMPRATE*event_us/1000000;
-				if (create_len == 0) create_len = 1;
-			}
+		ULONG event_us = OPM.GetNextEvent();
+		if (event_us == 0) {
+			//
 		} else if ((SLONG)event_us < rest_us) {
 			create_len = G.SAMPRATE*event_us/1000000;
 			if (create_len == 0) {
@@ -489,7 +391,7 @@ int MXDRVG_GetPCM(
 		}
 		if (innerbuf) {
 			memset(innerbuf, 0, create_len2*sizeof(Sample)*2);
-			OPM_MixWrapper((int16_t *)innerbuf, create_len2);
+			OPM.Mix(innerbuf, create_len2);
 			PCM8.Mix(innerbuf, create_len2);
 			if (TotalVolume != 256) {
 				for (ULONG j=0; j<create_len2; j++) {
@@ -508,11 +410,10 @@ int MXDRVG_GetPCM(
 		}
 		G.PLAYSAMPLES += create_len;
 		ULONG use_us = (create_len*1000000)/G.SAMPRATE;
-		OPM_CountWrapper(use_us);
+		OPM.Count(use_us);
 		rest_us -= use_us;
 		rest_len -= create_len;
 	}
-
 	return (len);
 }
 
@@ -563,8 +464,6 @@ void MXDRVG_SetData(
 ) {
 	X68REG reg;
 
-	fprintf(stderr, "[SetData] mdxsize=%lu pdxsize=%lu\n", mdxsize, pdxsize);
-
 	reg.d0 = 0x02;
 	reg.d1 = mdxsize;
 	reg.a1 = (UBYTE *)mdx;
@@ -582,32 +481,6 @@ void MXDRVG_SetData(
 	reg.d0 = 0x0f;
 	reg.d1 = 0x00;
 	MXDRVG( &reg );
-
-	// L_0F() は再生準備状態にするが、OPM レジスタ設定は行わない。
-	// OPM レジスタは OPMINTFUNC() 経由で設定される。
-	// OPMINT_FUNC が NULL の可能性があるので明示的に設定。
-	fprintf(stderr, "[SetData] Before SETOPMINT: L002230=%p L002218=%p L001e0c=%p\n",
-		(void*)G.L002230, (void*)G.L002218, (void*)&G.L001e0c);
-
-	SETOPMINT( L_OPMINT );
-	fprintf(stderr, "[SetData] SETOPMINT done, calling OPMINTFUNC\n");
-	// OPMINTFUNC を数回呼び、OPM レジスタを初期化
-	int opmint_executed = 0;
-	for (int i = 0; i < 200 && !G.L001e13 && !G.FATALERROR; i++) {
-		opmint_executed++;
-		OPMINTFUNC();
-	}
-	fprintf(stderr, "[SetData] after OPMINTFUNC loop: executed=%d L001e13=%d FATALERROR=%d L002230=%p\n",
-		opmint_executed, (int)G.L001e13, (int)G.FATALERROR, (void*)G.L002230);
-
-	// OPM初期化後にシーケンス位置を冒頭へリセット
-	// 200回の OPMINTFUNC 呼び出しでシーケンスが進んでしまうため
-	fprintf(stderr, "[SetData] before L_0F: L001e0c=%p\n", (void*)&G.L001e0c);
-	reg.d0 = 0x0f;
-	reg.d1 = 0x00;
-	MXDRVG( &reg );
-	fprintf(stderr, "[SetData] after L_0F: L001e0c=%p\n", (void*)&G.L001e0c);
-	fprintf(stderr, "[SetData] done\n");
 }
 
 /***************************************************************/
@@ -626,8 +499,7 @@ void volatile *MXDRVG_GetWork(
 	  case MXDRVG_WORKADR_KEY:
 		return (void *)&KEY;
 	  case MXDRVG_WORKADR_OPM:
-	  // 返回Nuked-OPM的opm_t实例地址
- 	return (void *)OPM_GetChipPtr();
+		return (void *)&OPMBUF;
 	  case MXDRVG_WORKADR_PCM8:
 		return (void *)0;
 	  case MXDRVG_WORKADR_CREDIT:
@@ -636,23 +508,6 @@ void volatile *MXDRVG_GetWork(
 		return (void *)&MXDRVG_CALLBACK_OPMINT;
 	}
 	return (NULL);
-}
-
-// PCM8チャンネルのDMA転送残量取得
-extern X68K::X68PCM8 PCM8;
-
-MXDRVG_EXPORT
-int MXDRVG_GetPcm8DmaMtc(int ch) {
-	if (ch < 0 || ch >= 8) return 0;
-	return PCM8.GetPcm8ChannelDmaMtc(ch);
-}
-
-// PCM8チャンネルのモード（パン情報）取得
-// Modeのbit0=L出力, bit1=R出力
-MXDRVG_EXPORT
-int MXDRVG_GetPcm8ChannelMode(int ch) {
-	if (ch < 0 || ch >= 8) return 0;
-	return PCM8.GetPcm8ChannelMode(ch);
 }
 
 /***************************************************************/
@@ -716,11 +571,7 @@ ULONG MXDRVG_MeasurePlayTime(
 	reg.d1 = -1;
 	MXDRVG( &reg );
 
-	/* 悪意あるデータによる無限ループ防止: 最大1000万イテレーション */
-	{
-		int maxIter = 10000000;
-		while ( !TerminatePlay && maxIter-- > 0 ) OPMINTFUNC();
-	}
+	while ( !TerminatePlay ) OPMINTFUNC();
 
 	MXDRVG_Stop();
 
@@ -728,8 +579,7 @@ ULONG MXDRVG_MeasurePlayTime(
 	MeasurePlayTime = FALSE;
 	SETOPMINT( L_OPMINT );
 
-	ULONG result = (ULONG)(G.PLAYTIME*(LONGLONG)1024/4000+(1-DBL_EPSILON))+2000;
-	return result;
+	return ( (ULONG)(G.PLAYTIME*(LONGLONG)1024/4000+(1-DBL_EPSILON))+2000 );
 }
 
 /***************************************************************/
@@ -745,8 +595,6 @@ void MXDRVG_PlayAt(
 	MXDRVG_CALLBACK_OPMINTFUNC *opmintback;
 	UWORD chmaskback;
 
-	fprintf(stderr, "[PlayAt] start: playat=%lu loop=%d fadeout=%d\n", playat, loop, fadeout);
-
 	SETOPMINT( NULL );
 
 	TerminatePlay = FALSE;
@@ -755,16 +603,7 @@ void MXDRVG_PlayAt(
 	FadeoutStart = FALSE;
 	ReqFadeout = fadeout;
 
-	// MXDRVG(0x0f) で全初期化してから L_PLAY() でシーケンス初期化
-	// （逆順では L_PLAY の設定が MXDRVG で上書きされる）
-	reg.d0 = 0x0f;
-	reg.d1 = -1;
-	MXDRVG( &reg );
-	
-	fprintf(stderr, "[PlayAt] after init: L001e13=%d FATALERROR=%d\n", (int)G.L001e13, (int)G.FATALERROR);
-	
 	L_PLAY();
-	fprintf(stderr, "[PlayAt] after L_PLAY: PLAYTIME=%lu PLAYSAMPLES=%lu\n", (ULONG)G.PLAYTIME, (ULONG)G.PLAYSAMPLES);
 
 	playat = (ULONG)(playat*(LONGLONG)4000/1024);
 
@@ -772,22 +611,13 @@ void MXDRVG_PlayAt(
 	MXDRVG_CALLBACK_OPMINT = MXDRVG_MeasurePlayTime_OPMINT;
 	chmaskback = G.L001e1c;
 
-	fprintf(stderr, "[PlayAt] before loop: PLAYTIME=%lu playat=%lu\n", (ULONG)G.PLAYTIME, playat);
+	reg.d0 = 0x0f;
+	reg.d1 = -1;
+	MXDRVG( &reg );
 
-	/* 悪意あるデータによる無限ループ防止: 最大1000万イテレーション */
-	{
- 		int maxIter = 10000000;
- 		int iter = 0;
- 		while ( G.PLAYTIME < playat && maxIter-- > 0 ) {
- 			if ( TerminatePlay ) break;
- 			OPMINTFUNC();
- 			iter++;
- 			if (iter <= 10 || iter % 1000 == 0) {
- 				fprintf(stderr, "[PlayAt] iter=%d PLAYTIME=%lu\n", iter, (ULONG)G.PLAYTIME);
- 			}
- 		}
- 		fprintf(stderr, "[PlayAt] after loop: iter=%d PLAYTIME=%lu TerminatePlay=%d\n", 
- 				iter, (ULONG)G.PLAYTIME, (int)TerminatePlay);
+	while ( G.PLAYTIME < playat ) {
+		if ( TerminatePlay ) break;
+		OPMINTFUNC();
 	}
 
 	G.L001e1c = chmaskback;
@@ -873,9 +703,10 @@ static void OPM_SUB(
 		LOG_D(s);
 	}
 #endif
+
 	if ( MeasurePlayTime ) return;
 
-	OPM_SetRegWrapper( (UBYTE)D1, (UBYTE)D2 );
+	OPM.SetReg( (UBYTE)D1, (UBYTE)D2 );
 }
 
 /***************************************************************/
@@ -898,13 +729,14 @@ static void ADPCMMOD_END(
 	PCM8.Reset();
 }
 
+/***************************************************************/
+
 static void OPMINTFUNC(
 	void
 ) {
-	void (*func)(void) = OPM_GetIntFunc();
-	if ( func ) func();
+	if ( OPMINT_FUNC ) OPMINT_FUNC();
 	if ( !G.STOPMUSICTIMER ) {
-		G.PLAYTIME += 256-G.MUSICTIMER;
+		G.PLAYTIME += 256-G.MUSICTIMER; // OPMBUF[0x12];
 	}
 	if ( MXDRVG_CALLBACK_OPMINT ) MXDRVG_CALLBACK_OPMINT();
 }
@@ -912,30 +744,8 @@ static void OPMINTFUNC(
 static void SETOPMINT(
 	void (*func)( void )
 ) {
-	OPM_SetIntFunc(func);
+	OPMINT_FUNC = func;
 }
-
-/***************************************************************/
-
-/***************************************************************/
-// Exported for wrapper access (updates G.PLAYTIME)
-// Needs C linkage for opm_wrapper.cpp to call it.
-// Calls the static OPMINTFUNC() defined earlier in this file (around line 74).
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-void OPMINTFUNC_Export(void); // Declaration (C linkage)
-
-void OPMINTFUNC_Export(void) {
-    OPMINTFUNC(); // Call the static OPMINTFUNC (updates G.PLAYTIME)
-}
-
-#ifdef __cplusplus
-}
-#endif
-
 
 /***************************************************************/
 
@@ -1141,9 +951,10 @@ L_10:;
 		move.l  a0,d0
 		rts
 */
-// L_10 stub - OPMBUF no longer exists, return 0
-static void L_10(void) {
-    D0 = 0;
+static void L_10(
+  void
+) {
+	D0 = (UPTRLONG)(&OPMBUF);
 }
 
 
@@ -2633,17 +2444,17 @@ static void L0005f8(
 
 // L0005f8:;
 /*
-													cmp.l   d1,d0
-													bcs     L000630
-													movem.l d1/a0-a2,-(sp)
-													bsr     L00063e
-													movem.l (sp)+,d1/a0-a2
-													move.w  d1,d0
-													andi.w  #$0003,d0
-													lsr.l   #2,d1
-													swap.w  d1
+														cmp.l   d1,d0
+														bcs     L000630
+														movem.l d1/a0-a2,-(sp)
+														bsr     L00063e
+														movem.l (sp)+,d1/a0-a2
+														move.w  d1,d0
+														andi.w  #$0003,d0
+														lsr.l   #2,d1
+														swap.w  d1
 */
-	if ( D1 > D0 ) { goto L000630; }
+	if ( D1 > D0 ) goto L000630;
 	d1 = D1, a0 = A0, a1 = A1, a2 = A2;
 	L00063e();
 	A2 = a2, A1 = a1, A0 = a0, D1 = d1;
@@ -3182,6 +2993,24 @@ static void L0007c0(
 	PCM8_SUB();
 
 L0007f4:;
+/*
+														clr.b   (L001e12)
+														clr.b   (L001df4)
+														move.w  #$01ff,(L001e1a)
+														move.w  #$01ff,(L001e06)
+														clr.w   (L002246)
+														clr.w   (L001ba6)
+														move.b  (L002230),d0
+														beq     L_ERROR
+														bsr     L00063e
+														movea.l (L002218),a2
+														move.w  $0002(a2),d1
+														bmi     L000848
+														tst.b   (L002231)
+														beq     L_ERROR
+														movea.l (L00221c),a0
+														bra     L00083c
+*/
 	G.L001e12 = CLR;
 	G.STOPMUSICTIMER = CLR;
 	G.L001df4 = CLR;
@@ -3200,10 +3029,21 @@ L0007f4:;
 	goto L00083c;
 
 L000834:;
+/*
+														tst.l   (a0)
+														beq     L_ERROR
+														adda.l  (a0),a0
+*/
 	if ( GETBLONG( A0 ) == 0 ) { L_ERROR(); return; }
 	A0 += GETBLONG( A0 );
 
 L00083c:;
+/*
+														dbra    d1,L000834
+														adda.w  $0004(a0),a0
+														move.l  a0,(L00222c)
+
+*/
 	if ( D1-- != 0 ) goto L000834;
 	A0 += GETBWORD( A0+4 );
 	G.L00222c = A0;
@@ -3240,6 +3080,32 @@ L000866:;
 														move.w  (a1)+,d0
 														adda.l  d0,a2
 														move.l  a2,(a6)
+														move.l  a3,$0026(a6)
+														move.l  a3,$0040(a6)
+														move.w  d6,$0014(a6)
+														move.b  d6,$0023(a6)
+														move.b  d7,$0018(a6)
+														move.b  #$00,$001d(a6)
+														move.b  #$01,$001a(a6)
+														move.b  #$08,$0022(a6)
+														move.b  #$c0,$001c(a6)
+														move.b  #$08,$001e(a6)
+														clr.w   $0036(a6)
+														clr.w   $004a(a6)
+														clr.w   $0010(a6)
+														clr.b   $0024(a6)
+														clr.b   $001f(a6)
+														clr.b   $0019(a6)
+														clr.w   $0016(a6)
+														cmp.w   #$0008,d7
+														bcc     L0008d4
+														moveq.l #$38,d1
+														add.b   d7,d1
+														moveq.l #$00,d2
+														bsr     L_WRITEOPM
+														addq.w  #1,d7
+														lea.l   $0050(a6),a6
+														bra     L000866
 */
 	A2 = A0;
 	D0 = GETBWORD( A1 ); A1 += 2;
@@ -3489,31 +3355,6 @@ static void L000998(
 static void L_OPMINT(
   void
 ) {
-	static int opmint_count = 0;
-	opmint_count++;
-
-	if (opmint_count <= 3) {
-		fprintf(stderr, "[L_OPMINT] #%d: start, L002218=%p L001e0c=%p\n",
-			opmint_count, (void*)G.L002218, (void*)&G.L001e0c);
-	}
-
-	if ( G.FATALERROR ) {
-		return;
-	}
-
-	// 定时器中断：调用 MXDRVG() 推进序列器
-	// d0=0x08 对应 L_08 = MXDRVG_PlayInt
-	X68REG reg;
-	reg.d0 = 0x08;
-	reg.d1 = 0;
-	reg.a1 = NULL;
-	MXDRVG( &reg );
-
-	if (opmint_count <= 3) {
-		fprintf(stderr, "[L_OPMINT] #%d: after MXDRVG(0x08), L001e0c=%p\n",
-			opmint_count, (void*)&G.L001e0c);
-	}
-
 	UPTRLONG d0,d1,d2,d3,d4,d5,d6,d7;
 	UBYTE volatile *a0,*a1,*a2,*a3,*a4,*a5;
 	MXDRVG_WORK_CH volatile *a6;
@@ -3522,6 +3363,13 @@ static void L_OPMINT(
 	if ( G.FATALERROR ) {
 		return;
 	}
+
+#if LOGINT
+	FILE *fout;
+	fout = fopen( "c:\\temp\\int.log", "ab+" );
+	fprintf( fout, "%lu\n", timeGetTime() );
+	fclose( fout );
+#endif
 
 // L_OPMINT:;
 /*
@@ -7172,6 +7020,7 @@ static void L_WRITEOPM(
 */
 	OPM_SUB();
 	D1 &= 0xff;
+	OPMBUF[D1] = (UBYTE)D2;
 	if ( D1 == 0x1b ) goto L0017e4;
 	return;
 
@@ -7202,15 +7051,16 @@ static int Initialize(
 	memset( (void *)G.MDXBUF, 0, G.MDXSIZE );
 	G.PDXBUF = (UBYTE *)malloc( G.PDXSIZE );
 	if ( !G.PDXBUF ){
-		// free(G.MDXBUF) removed: buffer owned by MXDRVGBridge
+		free( (void *)G.MDXBUF );
 		G.MDXBUF = NULL;
 		return (!0);
 	}
 	memset( (void *)G.PDXBUF, 0, G.PDXSIZE );
 	G.L001bac = (UBYTE *)malloc( G.L001ba8 );
 	if ( !G.L001bac ) {
-		// free(G.PDXBUF) and free(G.MDXBUF) removed: buffers owned by MXDRVGBridge
+		free( (void *)G.PDXBUF );
 		G.PDXBUF = NULL;
+		free( (void *)G.MDXBUF );
 		G.MDXBUF = NULL;
 		return (!0);
 	}
@@ -7484,7 +7334,7 @@ MDXBUF:;
 		.ds.l   1
 PDXBUF:;
 		.ds.l   1
-// OPMBUF label removed
+OPMBUF:;
 		.ds.b   256
 CHBUF_FM:;
 		.ds.b   720

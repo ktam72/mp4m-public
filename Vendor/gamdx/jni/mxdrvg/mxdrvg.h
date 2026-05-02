@@ -222,16 +222,6 @@ int MXDRVG_GetChannelMask(
 	void
 );
 
-MXDRVG_EXPORT
-int MXDRVG_GetPcm8DmaMtc(
-	int ch
-);
-
-MXDRVG_EXPORT
-int MXDRVG_GetPcm8ChannelMode(
-	int ch
-);
-
 #endif // __MXDRVG_LOADMODULE
 
 #ifdef __cplusplus

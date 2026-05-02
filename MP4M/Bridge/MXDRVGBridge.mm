@@ -287,8 +287,8 @@ static NSString* getTitleFromData(NSData* data) {
             states[chIdx].keyCode = noteD & 0x7F;
             
             // Pan from PCM8 channel mode
-            int mode = MXDRVG_GetPcm8ChannelMode(i);
-            states[chIdx].pan = (mode & 3) ? (mode & 3) : 3;  // Default L+R
+            // MXDRVG_GetPcm8ChannelMode は MDXPlayer では未公開のため、デフォルトに設定
+            states[chIdx].pan = 3;  // Default L+R (stereo)
             
             // Volume (PCM doesn't have TL, estimate from keyOn)
             states[chIdx].volume = keyOn ? 64 : 127;
