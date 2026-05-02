@@ -46,6 +46,19 @@ enum class LfoWaveform {
 // Callback for interrupt notification
 class OpmDevice;
 
+// Channel state for UI (meters, etc.)
+// Must match MP4MChannelState in MP4M-Bridging-Header.h exactly
+struct ChannelState {
+    uint8_t keyCode;
+    uint8_t velocity;
+    uint8_t keyOn;     // 0 = off, 1 = on (use uint8_t for C/Swift compatibility)
+    uint8_t volume;
+    int16_t bend;
+    uint8_t pan;
+    uint8_t keyOffset;
+    uint8_t active;     // 0 = inactive, 1 = active
+};
+
 // Main OPM device class
 class OpmDevice {
 public:
@@ -93,6 +106,9 @@ public:
 
     // Debug: get operator output
     virtual int32_t DebugGetOpOut(int ch, int op) const = 0;
+
+    // Get channel states for UI
+    virtual void GetChannelStates(ChannelState* states, int max_channels) = 0;
 };
 
 // Factory function to create OPM device

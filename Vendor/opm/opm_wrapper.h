@@ -52,6 +52,9 @@ public:
     // Interrupt callback for MXDRVG
     static void OPMINT_FUNC_Callback(void* context, bool irq);
 
+    // Get channel states for UI
+    void GetChannelStates(opm::ChannelState* states, int max_channels);
+
 private:
     opm::OpmDevice* device_;
     int volume_db_;

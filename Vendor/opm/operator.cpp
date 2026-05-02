@@ -22,9 +22,80 @@ namespace opm {
 // Static table storage
 bool Operator::tables_initialized_ = false;
 uint32_t Operator::mul_table_[16] = {0};
-int32_t Operator::sine_table_[1024] = {0};
-int32_t Operator::exp_table_[256] = {0};  // Exponential attenuation table
-int32_t Operator::eg_step_table_[64] = {0};  // EG rate-to-increment mapping
+uint32_t Operator::logsin_table_[256] = {0};
+uint32_t Operator::exp_table_[256] = {0};
+uint32_t Operator::eg_step_table_[64] = {0};
+
+// Log-sine ROM (from Nuked OPM)
+static const uint16_t logsin_rom[256] = {
+    0x859, 0x6c3, 0x607, 0x58b, 0x52e, 0x4e4, 0x4a6, 0x471,
+    0x443, 0x41a, 0x3f5, 0x3d3, 0x3b5, 0x398, 0x37e, 0x365,
+    0x34e, 0x339, 0x324, 0x311, 0x2ff, 0x2ed, 0x2dc, 0x2cd,
+    0x2bd, 0x2af, 0x2a0, 0x293, 0x286, 0x279, 0x26d, 0x261,
+    0x256, 0x24b, 0x240, 0x236, 0x22c, 0x222, 0x218, 0x20f,
+    0x206, 0x1fd, 0x1f5, 0x1ec, 0x1e4, 0x1dc, 0x1d4, 0x1cd,
+    0x1c5, 0x1be, 0x1b7, 0x1b0, 0x1a9, 0x1a2, 0x19b, 0x195,
+    0x18f, 0x188, 0x182, 0x17c, 0x177, 0x171, 0x16b, 0x166,
+    0x160, 0x15b, 0x155, 0x150, 0x14b, 0x146, 0x141, 0x13c,
+    0x137, 0x133, 0x12e, 0x129, 0x125, 0x121, 0x11c, 0x118,
+    0x114, 0x10f, 0x10b, 0x107, 0x103, 0x0ff, 0x0fb, 0x0f8,
+    0x0f4, 0x0f0, 0x0ec, 0x0e9, 0x0e5, 0x0e2, 0x0de, 0x0db,
+    0x0d7, 0x0d4, 0x0d1, 0x0cd, 0x0ca, 0x0c7, 0x0c4, 0x0c1,
+    0x0be, 0x0bb, 0x0b8, 0x0b5, 0x0b2, 0x0af, 0x0ac, 0x0a9,
+    0x0a7, 0x0a4, 0x0a1, 0x09f, 0x09c, 0x099, 0x097, 0x094,
+    0x092, 0x08f, 0x08d, 0x08a, 0x088, 0x086, 0x083, 0x081,
+    0x07f, 0x07d, 0x07a, 0x078, 0x076, 0x074, 0x072, 0x070,
+    0x06e, 0x06c, 0x06a, 0x068, 0x066, 0x064, 0x062, 0x060,
+    0x05e, 0x05c, 0x05b, 0x059, 0x057, 0x055, 0x053, 0x052,
+    0x050, 0x04e, 0x04d, 0x04b, 0x04a, 0x048, 0x046, 0x045,
+    0x043, 0x042, 0x040, 0x03f, 0x03e, 0x03c, 0x03b, 0x039,
+    0x038, 0x037, 0x035, 0x034, 0x033, 0x031, 0x030, 0x02f,
+    0x02e, 0x02d, 0x02b, 0x02a, 0x029, 0x028, 0x027, 0x026,
+    0x025, 0x024, 0x023, 0x022, 0x021, 0x020, 0x01f, 0x01e,
+    0x01d, 0x01c, 0x01b, 0x01a, 0x019, 0x018, 0x017, 0x017,
+    0x016, 0x015, 0x014, 0x014, 0x013, 0x012, 0x011, 0x011,
+    0x010, 0x00f, 0x00f, 0x00e, 0x00d, 0x00d, 0x00c, 0x00c,
+    0x00b, 0x00a, 0x00a, 0x009, 0x009, 0x008, 0x008, 0x007,
+    0x007, 0x007, 0x006, 0x006, 0x005, 0x005, 0x005, 0x004,
+    0x004, 0x004, 0x003, 0x003, 0x003, 0x002, 0x002, 0x002,
+    0x002, 0x001, 0x001, 0x001, 0x001, 0x001, 0x001, 0x001,
+    0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000
+};
+
+// Exp table ROM (from Nuked OPM)
+static const uint16_t exp_rom[256] = {
+    0x7fa, 0x7f5, 0x7ef, 0x7ea, 0x7e4, 0x7df, 0x7da, 0x7d4,
+    0x7cf, 0x7c9, 0x7c4, 0x7bf, 0x7b9, 0x7b4, 0x7ae, 0x7a9,
+    0x7a4, 0x79f, 0x79a, 0x794, 0x78f, 0x78a, 0x785, 0x780,
+    0x77b, 0x776, 0x771, 0x76c, 0x768, 0x763, 0x75e, 0x759,
+    0x755, 0x750, 0x74b, 0x746, 0x742, 0x73d, 0x738, 0x734,
+    0x72f, 0x72a, 0x726, 0x721, 0x71c, 0x718, 0x713, 0x70f,
+    0x70a, 0x706, 0x701, 0x6fd, 0x6f8, 0x6f4, 0x6ef, 0x6eb,
+    0x6e6, 0x6e2, 0x6de, 0x6d9, 0x6d5, 0x6d0, 0x6cc, 0x6c8,
+    0x6c3, 0x6bf, 0x6bb, 0x6b6, 0x6b2, 0x6ae, 0x6aa, 0x6a5,
+    0x6a1, 0x69d, 0x699, 0x694, 0x690, 0x68c, 0x688, 0x684,
+    0x67f, 0x67b, 0x677, 0x673, 0x66f, 0x66b, 0x667, 0x663,
+    0x65f, 0x65b, 0x657, 0x653, 0x64f, 0x64b, 0x647, 0x643,
+    0x63f, 0x63b, 0x637, 0x633, 0x62f, 0x62b, 0x628, 0x624,
+    0x620, 0x61c, 0x618, 0x614, 0x610, 0x60c, 0x609, 0x605,
+    0x601, 0x5fd, 0x5f9, 0x5f5, 0x5f1, 0x5ee, 0x5ea, 0x5e6,
+    0x5e2, 0x5de, 0x5db, 0x5d7, 0x5d3, 0x5d0, 0x5cc, 0x5c8,
+    0x5c5, 0x5c1, 0x5bd, 0x5ba, 0x5b6, 0x5b2, 0x5af, 0x5ab,
+    0x5a8, 0x5a4, 0x5a0, 0x59d, 0x599, 0x596, 0x592, 0x58f,
+    0x58b, 0x588, 0x584, 0x581, 0x57d, 0x57a, 0x576, 0x573,
+    0x56f, 0x56c, 0x568, 0x565, 0x561, 0x55e, 0x55b, 0x557,
+    0x554, 0x551, 0x54d, 0x54a, 0x547, 0x543, 0x540, 0x53c,
+    0x539, 0x536, 0x532, 0x52f, 0x52c, 0x528, 0x525, 0x522,
+    0x51e, 0x51b, 0x518, 0x515, 0x511, 0x50e, 0x50b, 0x508,
+    0x504, 0x501, 0x4fe, 0x4fa, 0x4f7, 0x4f4, 0x4f1, 0x4ed,
+    0x4ea, 0x4e7, 0x4e4, 0x4e0, 0x4dd, 0x4da, 0x4d7, 0x4d4,
+    0x4d0, 0x4cd, 0x4ca, 0x4c7, 0x4c4, 0x4c0, 0x4bd, 0x4ba,
+    0x4b7, 0x4b4, 0x4b1, 0x4ae, 0x4ab, 0x4a7, 0x4a4, 0x4a1,
+    0x49e, 0x49b, 0x498, 0x495, 0x492, 0x48f, 0x48c, 0x489,
+    0x486, 0x483, 0x480, 0x47c, 0x479, 0x476, 0x473, 0x470,
+    0x46d, 0x46a, 0x467, 0x464, 0x461, 0x45e, 0x45b, 0x458,
+    0x455, 0x452, 0x44f, 0x44c, 0x449, 0x446, 0x443, 0x440
+};
 
 Operator::Operator() 
     : pg_count_(0), pg_diff_(0),
@@ -42,11 +113,9 @@ Operator::Operator()
 void Operator::InitializeTables() {
     if (tables_initialized_) return;
 
-    // ===== Sine table (0-90 degrees, 1024 entries) =====
-    // sin(x) normalized to -32768 to +32767
-    for (int i = 0; i < 1024; i++) {
-        double angle = (double)i * M_PI / 2.0 / 1024.0;
-        sine_table_[i] = (int32_t)(32767.0 * sin(angle));
+    // ===== Log-sine table (from Nuked OPM) =====
+    for (int i = 0; i < 256; i++) {
+        logsin_table_[i] = logsin_rom[i];
     }
 
     // ===== MUL table (Frequency Multiplier) =====
@@ -55,44 +124,29 @@ void Operator::InitializeTables() {
         mul_table_[i] = (i == 0) ? (1 << 9) / 2 : (i << 9);
     }
 
-    // ===== Exponential attenuation table =====
-    // YM2151: -0.75dB per step (2 * 0.375dB)
-    // exp_table[i] represents the attenuation multiplier
-    // exp_table[0] = 65536 (no attenuation, 1.0 in fixed-point)
-    // exp_table[127] = ~327 (-48dB)
-    // exp_table[255] = ~1 (-96dB)
+    // ===== Exponential table (from Nuked OPM) =====
     for (int i = 0; i < 256; i++) {
-        double atten_db = -i * 0.75;  // -0.75dB per step
-        double atten_linear = pow(10.0, atten_db / 20.0);
-        exp_table_[i] = (int32_t)(atten_linear * 65536.0);
-        if (exp_table_[i] < 1) exp_table_[i] = 1;  // Minimum 1
+        exp_table_[i] = exp_rom[i];
     }
 
-    // ===== EG Rate table =====
-    // YM2151: EG clock is internal clock / 2
-    // For 44.1kHz sampling:
-    // - Internal clock = 44.1kHz * some multiplier (typically 32)
-    // - EG updates every 2 internal clocks
-    // 
-    // Attack rate table: Maps rate (0-63) to level-per-sample increment
-    // Based on YM2151 typical timing:
-    // Rate 0: no change
-    // Rate 63: very fast (max speed)
-    //
-    // Simplified: step = (rate + 1) << (15 - (rate >> 4))
-    // This gives reasonable attack/decay times
+    // ===== EG step table (rate to increment mapping) =====
+    // YM2151 EG rates: 0-63 (effective rate after KS correction)
+    // Formula: steps per sample ≈ 2.537 * 2^(rate-63) in 16.16 fixed-point
+    // Reference: YM2151 logarithmic rate scaling
     for (int rate = 0; rate < 64; rate++) {
         if (rate == 0) {
             eg_step_table_[rate] = 0;
+        } else if (rate >= 60) {
+            // Very fast rates: instant attack (Nuked OPM behavior for rate 60+)
+            eg_step_table_[rate] = 0x7FFFFFFF; // Effectively infinite step
         } else {
-            // Basic formula: faster rates have larger steps
-            // rate 1-15: slower speeds
-            // rate 16-31: medium speeds
-            // rate 32-47: faster speeds
-            // rate 48-63: very fast speeds
-            int base = rate;
-            int shift = (rate >= 48) ? 8 : (rate >= 32) ? 7 : (rate >= 16) ? 6 : 5;
-            eg_step_table_[rate] = base << shift;
+            // Calculate steps per sample in 16.16 fixed point
+            double steps = 2.537 * pow(2.0, rate - 63);
+            uint32_t steps_fixed = static_cast<uint32_t>(steps * 65536.0);
+            if (steps_fixed == 0 && rate > 0) {
+                steps_fixed = 1; // Minimum non-zero step
+            }
+            eg_step_table_[rate] = steps_fixed;
         }
     }
 
@@ -198,61 +252,123 @@ void Operator::UpdateDetune() {
 }
 
 // ===== Update PG difference =====
+// Nuked OPM pg_freqtable[64] and OPM_KCToFNum() based
 void Operator::UpdatePGDiff() {
-    // YM2151 周波数計算 (fmgen SetKCKF を完全複製)
-    // これにより、fmgen と完全に同じ周波数計算を実現
+    // YM2151 frequency calculation using Nuked OPM reference
+    // pg_freqtable[64]: basefreq, approxtype, slope for each KC high 6 bits
     
-    // KC テーブル (fmgen から直接コピー)
-    static const uint32_t kctable[16] = {
-        5197, 5506, 5833, 6180, 6180, 6547, 6937, 7349,
-        7349, 7786, 8249, 8740, 8740, 9259, 9810, 10394,
+    static const struct {
+        int32_t basefreq;
+        int32_t approxtype;  // 1=linear, 0=log
+        int32_t slope;
+    } pg_freqtable[64] = {
+        { 1299, 1, 19 }, { 1318, 1, 19 }, { 1337, 1, 19 }, { 1356, 1, 20 },
+        { 1376, 1, 20 }, { 1396, 1, 20 }, { 1416, 1, 21 }, { 1437, 1, 20 },
+        { 1458, 1, 21 }, { 1479, 1, 21 }, { 1501, 1, 22 }, { 1523, 1, 22 },
+        { 0,    0, 16 }, { 0,    0, 16 }, { 0,    0, 16 }, { 0,    0, 16 },
+        { 1545, 1, 22 }, { 1567, 1, 22 }, { 1590, 1, 23 }, { 1613, 1, 23 },
+        { 1637, 1, 23 }, { 1660, 1, 24 }, { 1685, 1, 24 }, { 1709, 1, 24 },
+        { 1734, 1, 25 }, { 1759, 1, 25 }, { 1785, 1, 26 }, { 1811, 1, 26 },
+        { 0,    0, 16 }, { 0,    0, 16 }, { 0,    0, 16 }, { 0,    0, 16 },
+        { 1837, 1, 26 }, { 1864, 1, 27 }, { 1891, 1, 27 }, { 1918, 1, 28 },
+        { 1946, 1, 28 }, { 1975, 1, 28 }, { 2003, 1, 29 }, { 2032, 1, 30 },
+        { 2062, 1, 30 }, { 2092, 1, 30 }, { 2122, 1, 31 }, { 2153, 1, 31 },
+        { 0,    0, 16 }, { 0,    0, 16 }, { 0,    0, 16 }, { 0,    0, 16 },
+        { 2185, 1, 31 }, { 2216, 0, 31 }, { 2249, 0, 31 }, { 2281, 0, 31 },
+        { 2315, 0, 31 }, { 2348, 0, 31 }, { 2382, 0, 30 }, { 2417, 0, 30 },
+        { 2452, 0, 30 }, { 2488, 0, 30 }, { 2524, 0, 30 }, { 2561, 0, 30 },
+        { 0,    0, 16 }, { 0,    0, 16 }, { 0,    0, 16 }, { 0,    0, 16 }
     };
     
-    // KF テーブル (fmgen の計算を複製)
-    static uint32_t kftable[64] = {0};
-    static bool kftable_init = false;
+    // Calculate F-num from KC (Nuked OPM OPM_KCToFNum)
+    int32_t kcode_h = (kc_ >> 4) & 63;
+    int32_t kcode_l = kc_ & 15;
     
-    if (!kftable_init) {
-        for (int i = 0; i < 64; i++) {
-            double ratio = pow(2.0, (double)i / 768.0);
-            kftable[i] = (uint32_t)(0x10000 * ratio);
+    int32_t sum = 0;
+    if (pg_freqtable[kcode_h].approxtype) {
+        // Linear interpolation
+        for (int i = 0; i < 4; i++) {
+            if (kcode_l & (1 << i)) {
+                sum += (pg_freqtable[kcode_h].slope >> (3 - i));
+            }
         }
-        kftable_init = true;
+    } else {
+        // Log approximation
+        int32_t slope = pg_freqtable[kcode_h].slope | 1;
+        if (kcode_l & 1) sum += (slope >> 3) + 2;
+        if (kcode_l & 2) sum += 8;
+        if (kcode_l & 4) sum += slope >> 1;
+        if (kcode_l & 8) sum += slope + 1;
+        if ((kcode_l & 12) == 12 && (pg_freqtable[kcode_h].slope & 1) == 0) sum += 4;
+    }
+    int32_t fnum = pg_freqtable[kcode_h].basefreq + (sum >> 1);
+    
+    // Apply KF (Key Fraction) - Nuked OPM uses fnum directly
+    // KF adds fine tuning: 0-63 steps per note
+    if (kf_ > 0) {
+        fnum += (kf_ * pg_freqtable[kcode_h].slope) >> 6;
     }
     
-    // fmgen の SetKCKF をそのまま複製
-    int oct = 19 - ((kc_ >> 4) & 7);
-    
-    uint32_t kcv = kctable[kc_ & 0x0f];
-    kcv = (kcv + 2) / 4 * 4;
-    
-    uint32_t dp = kcv * kftable[kf_ & 0x3f];
-    
-    // These bit operations are equivalent to no-op but ensure correct calculation
-    dp >>= 16 + 3;
-    dp <<= 16 + 3;
-    dp >>= oct;
+    // Apply block (octave): YM2151 uses 3-bit block from KC high bits
+    int32_t block = (kc_ >> 4) & 7;
+    int32_t basefreq = (fnum << block) >> 2;
     
     // Apply MUL (frequency multiplier)
-    // In YM2151, MUL=0 means x1/2, MUL=1-15 means x1-15
-    uint32_t mul = (mul_ == 0) ? 1 : mul_;
-    dp = dp * mul;
+    // MUL=0 -> 0.5x, MUL=1-15 -> 1x-15x
+    int32_t mul = (mul_ == 0) ? 1 : mul_;
+    int32_t inc;
+    if (mul) {
+        inc = basefreq * mul;
+    } else {
+        inc = basefreq >> 1;
+    }
+    inc &= 0xfffff;  // 20-bit phase increment
     
-    // Convert YM2151 DP (operating at 3.579545 MHz) to phase increment for 44100 Hz
-    // DP is the phase delta for YM2151's internal clock
-    // We need to scale it to our sample rate and phase counter size
+    // Apply DT1 (detune)
+    if (dt1_ > 0) {
+        // Nuked OPM pg_detune[8] table
+        static const int32_t pg_detune[8] = { 16, 17, 19, 20, 22, 24, 27, 29 };
+        int32_t dt1_cents = (dt1_ > 3) ? -(7 - dt1_) : (dt1_ - 1);
+        if (dt1_cents != 0) {
+            // Calculate detune based on block and note
+            int32_t note = kc_ & 3;
+            int32_t detune = 0;
+            if (dt1_cents > 0) {
+                detune = pg_detune[(0 << 2) | note] >> (9 - (0));  // Simplified
+            }
+            if (dt1_ & 0x04) {
+                basefreq -= detune;
+            } else {
+                basefreq += detune;
+            }
+            inc = basefreq * mul;
+            inc &= 0xfffff;
+        }
+    }
+    
+    // Convert to our 21-bit phase counter, sample rate 44100 Hz
+    // Nuked OPM uses OPM clock (3.579545 MHz), we need to adapt
     const uint32_t OPM_CLOCK = 3579545;
     const uint32_t SAMPLE_RATE = 44100;
-    
-    // Scale factor: SAMPLE_RATE / OPM_CLOCK with adjustment for our phase counter
-    // This matches the calculation that produces audible output
-    pg_diff_ = ((uint64_t)dp * SAMPLE_RATE * 256) / OPM_CLOCK;
-    
-    // Apply detune (if needed - currently unused)
-    // if (detune_ != 0) pg_diff_ = ...
+    pg_diff_ = ((uint64_t)inc * SAMPLE_RATE * 256) / OPM_CLOCK;
 }
 
 // ===== Update EG (Envelope Generator) =====
+// Apply KS (Key Scale) correction to rate
+// Nuked OPM: rate = rate * 2 + ksv, where ksv = kc >> (ks ^ 3)
+static uint8_t ApplyKSToRate(uint8_t rate, uint8_t ks, uint8_t kc) {
+    if (rate == 0) return 0;
+    // ksv = kc >> (ks ^ 3)  (Nuked OPM reference)
+    uint8_t ksv = kc >> (ks ^ 3);
+    // If KS=0 and rate is 0, mask lower 2 bits
+    if (ks == 0 && rate == 0) {
+        ksv &= ~3;
+    }
+    int new_rate = rate * 2 + ksv;
+    if (new_rate >= 64) new_rate = 63;
+    return static_cast<uint8_t>(new_rate);
+}
+
 void Operator::UpdateEG() {
     if (!keyon_ && eg_phase_ != EGPhase::Off) {
         // Key off: transition to Release
@@ -267,7 +383,8 @@ void Operator::UpdateEG() {
     switch (eg_phase_) {
         case EGPhase::Attack: {
             // Attack: EG level decreases from 127 to 0
-            step = eg_step_table_[ar_];
+            uint8_t effective_ar = ApplyKSToRate(ar_, ks_, kc_);
+            step = eg_step_table_[effective_ar];
             eg_count_ += step;
             
             if (eg_count_ >= (1 << 16)) {
@@ -285,7 +402,8 @@ void Operator::UpdateEG() {
         
         case EGPhase::Decay: {
             // Decay: EG level increases from 0 to SL
-            step = eg_step_table_[dr_];
+            uint8_t effective_dr = ApplyKSToRate(dr_, ks_, kc_);
+            step = eg_step_table_[effective_dr];
             eg_count_ += step;
             
             if (eg_count_ >= (1 << 16)) {
@@ -304,7 +422,8 @@ void Operator::UpdateEG() {
         case EGPhase::Sustain: {
             // Sustain: EG level slowly increases (or stays constant)
             if (sr_ > 0) {
-                step = eg_step_table_[sr_];
+                uint8_t effective_sr = ApplyKSToRate(sr_, ks_, kc_);
+                step = eg_step_table_[effective_sr];
                 eg_count_ += step;
                 
                 if (eg_count_ >= (1 << 16)) {
@@ -322,7 +441,9 @@ void Operator::UpdateEG() {
         
         case EGPhase::Release: {
             // Release: EG level increases from current to 127
-            step = eg_step_table_[rr_];
+            // YM2151: RR = rr * 2 + 1 (Nuked OPM line 554)
+            uint8_t effective_rr = ApplyKSToRate(rr_ * 2 + 1, ks_, kc_);
+            step = eg_step_table_[effective_rr];
             eg_count_ += step;
             
             if (eg_count_ >= (1 << 16)) {
@@ -344,84 +465,85 @@ void Operator::UpdateEG() {
     }
 }
 
-// ===== Sine wave lookup with quadrant mirroring =====
-int32_t Operator::LookupSine(uint32_t phase) {
-    // phase: 10-bit value (0-1023)
-    uint32_t index = phase & 0x3ff;
-    
-    if (index < 256) {
-        // 0-90 degrees
-        return sine_table_[index];
-    } else if (index < 512) {
-        // 90-180 degrees (mirror)
-        return sine_table_[511 - index];
-    } else if (index < 768) {
-        // 180-270 degrees (negative)
-        return -sine_table_[index - 512];
-    } else {
-        // 270-360 degrees (negative mirror)
-        return -sine_table_[1023 - index];
-    }
-}
-
-// ===== Calculate operator output for one sample =====
+// ===== Calculate operator output for one sample (Nuked OPM style) =====
 int32_t Operator::Calculate(int32_t in, int32_t am, int32_t pm) {
     if (eg_phase_ == EGPhase::Off) {
         out_ = 0;
         return 0;
     }
     
-    // Phase calculation with modulation
-    uint32_t phase = pg_count_;
+    // Phase calculation (10-bit phase from 21-bit counter)
+    uint32_t phase = (pg_count_ >> 11) & 0x3FF;
+    
+    // Apply pitch modulation (PM from LFO)
     if (pm != 0) {
-        phase += (pm >> 10);  // PM: pitch modulation
+        phase = (phase + (pm >> 9)) & 0x3FF;
     }
+    
+    // Apply modulation input (from feedback or previous operator)
     if (in != 0) {
-        phase += (in >> 7);   // Feedback/modulation input
+        phase = (phase + (in >> 8)) & 0x3FF;
     }
     
-    // Sine wave lookup (-32768 to +32767)
-    int32_t sine = LookupSine(phase >> 10);
+    // Get quadrant (0-3)
+    uint32_t quadrant = (phase >> 8) & 3;
     
-    // EG level: 0=max volume, 127=min volume (-48dB)
-    int32_t eg_att = eg_level_;
-    
-    // TL (Total Level): additional attenuation (0-127)
-    // Combined attenuation: 0-254 (each step = -0.75dB)
-    int32_t total_atten = tl_ + eg_att;
-    if (total_atten > 255) total_atten = 255;
-    
-    // Apply AM (Amplitude Modulation) if enabled
-    // AM modulates the attenuation level (reduces it)
-    int32_t final_atten = total_atten;
-    if (am_on_ && am != 0) {
-        // am: LFO amplitude value, reduce attenuation
-        final_atten -= (am >> 8);
-        if (final_atten < 0) final_atten = 0;
+    // Get sine index (0-255)
+    uint32_t sin_idx = phase & 0xFF;
+    // Reflect for quadrants 1 and 2
+    if (quadrant & 1) {
+        sin_idx ^= 0xFF;
     }
     
-    // Apply exponential attenuation: sine * exp_table[atten]
-    // exp_table[0] = 65536 (1.0 in fixed-point, no attenuation)
-    // exp_table[255] = ~1 (-96dB)
-    int64_t result = ((int64_t)sine * exp_table_[final_atten]) >> 16;
+    // Log-sine lookup (10-bit value)
+    uint32_t logsin_val = logsin_table_[sin_idx];
     
-    // Output scaling: multiply by ~2.6 to reach proper audio level
-    // This compensates for the attenuation table scale
-    result = (result * 168) >> 6;  // 168/64 ≈ 2.625
+    // Attenuation: logsin + EG + TL
+    // eg_level_: 0=loudest, 127=silent (7-bit)
+    // tl_: 0=loudest, 127=silent (7-bit)
+    // Shift by 3 to convert to 10-bit attenuation
+    uint32_t atten = logsin_val + ((eg_level_ + tl_) << 3);
     
-    // Clamp to int16 range
-    if (result > 32767) result = 32767;
-    if (result < -32768) result = -32768;
+    // Clamp to 10 bits (0x3FF = silent)
+    if (atten > 0x3FF) atten = 0x3FF;
     
-    out_ = (int32_t)result;
-    return out_;
+    // Apply AM (LFO amplitude modulation)
+    // AM adds to attenuation (makes sound quieter)
+    if (am_on_ && (am != 0)) {
+        int32_t am_val = am >> 16;  // am is << 16, so >> 16 gives 0-127 range
+        if (am_val > 0) {
+            if (atten + am_val <= 0x3FF) {
+                atten += am_val;
+            } else {
+                atten = 0x3FF;
+            }
+        }
+    }
+    
+    // Exp lookup: convert log attenuation to linear output
+    uint32_t exp_val = exp_table_[atten & 0xFF];
+    uint32_t shift = (atten >> 8) & 0x07;
+    int32_t result = (int32_t)(exp_val << 2) >> shift;
+    
+    // Apply sign based on quadrant (0 and 1 are positive, 2 and 3 are negative)
+    if (quadrant & 2) {
+        result = -result;
+    }
+    
+    // Output scaling: Nuked OPM outputs 14-bit
+    // Mask to 14 bits (0x3FFF) and sign-extend
+    result &= 0x3FFF;  // 14-bit mask
+    if (result & 0x2000) result -= 0x4000;  // Sign extend from 14-bit to int32_t
+    
+    out_ = result;
+    return result;
 }
 
 // ===== Prepare for next sample =====
 void Operator::Prepare() {
     // Update phase
     pg_count_ += pg_diff_;
-    
+
     // Update EG
     UpdateEG();
 }

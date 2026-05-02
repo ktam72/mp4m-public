@@ -6,11 +6,15 @@
 #import "MXDRVGBridge.h"
 #include "../Vendor/gamdx/jni/mxdrvg/mxdrvg.h"
 #include "../Vendor/lzx/lzx.h"
+#include "../Vendor/opm/opm.h"
 #include <stdlib.h>
 #include <string.h>
 
-static NSMutableData* g_mdxData = NULL;
-static NSMutableData* g_pdxData = NULL;
+extern "C" void OPM_GetChannelStates(opm::ChannelState* states, int max_channels);
+
+// グローバル状態
+static NSData* g_mdxData = nil;
+static NSData* g_pdxData = nil;
 static char g_lastTitle[512] = {0};
 static int g_totalPlayTimeMs = 0;
 
@@ -105,13 +109,13 @@ static NSString* getTitleFromData(NSData* data) {
 + (void)startWithSampleRate:(int)sampleRate {
     MXDRVG_End();
     MXDRVG_Start(sampleRate, 0, 64 * 1024, 1024 * 1024);
-    MXDRVG_TotalVolume(256);  // 最大音量設定
+    MXDRVG_TotalVolume(128);  // 音量を50%に設定（大きすぎる問題の対策）
 }
 
 + (void)end {
     MXDRVG_End();
-    g_mdxData = NULL;
-    g_pdxData = NULL;
+    g_mdxData = nil;
+    g_pdxData = nil;
 }
 
 + (nullable NSString *)loadMDXFile:(NSString *)mdxPath {
@@ -161,19 +165,28 @@ static NSString* getTitleFromData(NSData* data) {
     NSData* decompressed = decompressIfLZX(mdxBody);
     if (!decompressed) return nil;
     
-    // PDX 処理
+    // PDX 処理（ログ追加）
     NSData* pdxDecompressed = nil;
     if (pdxData) {
+        fprintf(stderr, "[PDX] Loading PDX data, original size: %lu bytes\n", (unsigned long)pdxData.length);
         pdxDecompressed = decompressIfLZX(pdxData);
+        if (pdxDecompressed) {
+            fprintf(stderr, "[PDX] PDX decompressed successfully, size: %lu bytes\n", (unsigned long)pdxDecompressed.length);
+        } else {
+            fprintf(stderr, "[PDX] PDX decompression failed, ignoring PDX\n");
+            pdxData = nil;
+        }
+    } else {
+        fprintf(stderr, "[PDX] No PDX data provided\n");
     }
     
     // ヘッダー付与
     NSData* mdxWrapped = wrapMDX(decompressed, pdxDecompressed);
     NSData* pdxWrapped = pdxDecompressed ? wrapPDX(pdxDecompressed) : nil;
     
-    // グローバル変数に保存
-    g_mdxData = (NSMutableData*)mdxWrapped;
-    g_pdxData = (NSMutableData*)pdxWrapped;
+    // グローバル変数に保存（ARC が自動管理）
+    g_mdxData = mdxWrapped;
+    g_pdxData = pdxWrapped;
 
     // MDX/PDX データをエンジンに登録（必須: これをしないとシーケンスポインタがNULLのままクラッシュ）
     MXDRVG_SetData(
@@ -220,7 +233,9 @@ static NSString* getTitleFromData(NSData* data) {
 }
 
 + (int)currentPlayTimeMs {
-    return (int)MXDRVG_GetPlayAt();
+    ULONG t = MXDRVG_GetPlayAt();
+    fprintf(stderr, "[Timer] currentPlayTimeMs: %lu\n", t);
+    return (int)t;
 }
 
 + (int)totalPlayTimeMs {
@@ -235,6 +250,57 @@ static NSString* getTitleFromData(NSData* data) {
 + (void)getChannelStates:(MP4MChannelState *)states {
     if (!states) return;
     memset(states, 0, sizeof(MP4MChannelState) * 16);
+    
+    // Get OPM channel states (FM 8ch)
+    opm::ChannelState opmStates[8];
+    memset(opmStates, 0, sizeof(opmStates));
+    
+    OPM_GetChannelStates(opmStates, 8);
+    
+    // Convert FM channels (0-7)
+    for (int i = 0; i < 8; i++) {
+        states[i].keyCode = opmStates[i].keyCode;
+        states[i].velocity = opmStates[i].velocity;
+        states[i].keyOn = opmStates[i].keyOn;
+        states[i].volume = opmStates[i].volume;
+        states[i].bend = opmStates[i].bend;
+        states[i].pan = opmStates[i].pan;
+        states[i].keyOffset = opmStates[i].keyOffset;
+        states[i].active = opmStates[i].active;
+    }
+    
+    // Get PCM8 channel states (channels 8-15) from MXDRVG work area
+    // MXDRVG_WORK_CH: S0016 (flags, bit3=keyon), S0012 (note+D, UWORD)
+    MXDRVG_WORK_CH* pcmCh = (MXDRVG_WORK_CH*)MXDRVG_GetWork(MXDRVG_WORKADR_PCM);
+    if (pcmCh) {
+        for (int i = 0; i < 8; i++) {
+            int chIdx = 8 + i;
+            uint8_t flags = pcmCh[i].S0016;
+            uint8_t keyOn = (flags >> 3) & 1;  // bit3 = keyon
+            states[chIdx].keyOn = keyOn;
+            states[chIdx].active = keyOn;
+            
+            // note+D is UWORD, lower bits = note
+            uint16_t noteD = pcmCh[i].S0012;
+            states[chIdx].keyCode = noteD & 0x7F;
+            
+            // Pan from PCM8 channel mode
+            int mode = MXDRVG_GetPcm8ChannelMode(i);
+            states[chIdx].pan = (mode & 3) ? (mode & 3) : 3;  // Default L+R
+            
+            // Volume (PCM doesn't have TL, estimate from keyOn)
+            states[chIdx].volume = keyOn ? 64 : 127;
+            states[chIdx].velocity = keyOn ? 100 : 0;
+        }
+    }
+    
+    // Debug log
+    static int callCount = 0;
+    if (callCount++ % 60 == 0) {
+        fprintf(stderr, "[ChannelStates] FM0: on=%d kc=%d | FM1: on=%d | PCM8: on=%d kc=%d\n",
+                states[0].keyOn, states[0].keyCode, states[1].keyOn,
+                states[8].keyOn, states[8].keyCode);
+    }
 }
 
 @end

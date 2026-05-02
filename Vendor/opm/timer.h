@@ -55,6 +55,12 @@ public:
     // Get microseconds until next timer event
     uint32_t GetNextEventTime() const;
 
+    // Get Timer A overflow flag (for CSM mode)
+    bool GetTimerAOverflow() const { return timer_a_flag_; }
+
+    // Clear Timer A overflow flag (for CSM mode)
+    void ClearTimerAOverflow() { timer_a_flag_ = false; }
+
     // Reset timers
     void Reset();
 

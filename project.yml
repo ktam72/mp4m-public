@@ -45,7 +45,6 @@ targets:
       - path: MP4M/Bridge
         includes:
           - "MXDRVGBridge.mm"
-          - "MXDRVGBridgeImpl.cpp"
       - path: Vendor/gamdx/jni/mxdrvg
         includes:
           - "so.cpp"

@@ -16,8 +16,14 @@
 #include "opm_wrapper.h"
 #include <cstdio>
 
+// Declare the export function from mxdrvg_core.h
+extern "C" void OPMINTFUNC_Export(void);
+
 // Interrupt function pointer (same as original FOOpmWrapper)
 void (*OpmWrapper::OPMINT_FUNC)(void) = nullptr;
+
+// Global wrapper instance for channel state access
+static OpmWrapper* g_opmWrapper = nullptr;
 
 OpmWrapper::OpmWrapper() : device_(nullptr), volume_db_(0) {
 }
@@ -27,9 +33,24 @@ OpmWrapper::~OpmWrapper() {
         opm::DestroyOpmDevice(device_);
         device_ = nullptr;
     }
+    if (g_opmWrapper == this) {
+        g_opmWrapper = nullptr;
+    }
 }
 
-void OpmWrapper::InitWrapper(uint32_t clock, uint32_t rate, bool filter) {
+// Set the global wrapper instance
+void SetGlobalOpmWrapper(OpmWrapper* wrapper) {
+    g_opmWrapper = wrapper;
+}
+
+// Get channel states from global wrapper
+extern "C" void OPM_GetChannelStates(opm::ChannelState* states, int max_channels) {
+    if (g_opmWrapper) {
+        g_opmWrapper->GetChannelStates(states, max_channels);
+    }
+}
+
+void OpmWrapper::InitWrapper(uint32_t clock, uint32_t rate, bool /*filter*/) {
     if (device_) {
         opm::DestroyOpmDevice(device_);
     }
@@ -73,9 +94,17 @@ void OpmWrapper::CountWrapper(uint32_t us) {
     }
 }
 
-void OpmWrapper::OPMINT_FUNC_Callback(void* context, bool irq) {
+void OpmWrapper::OPMINT_FUNC_Callback(void* /*context*/, bool irq) {
     // This is called when OPM timer interrupt occurs
-    if (irq && OPMINT_FUNC) {
-        OPMINT_FUNC();
+    // We need to call OPMINTFUNC() which updates G.PLAYTIME,
+    // not just OPMINT_FUNC (L_OPMINT) which only does sequence processing.
+    if (irq) {
+        OPMINTFUNC_Export();
+    }
+}
+
+void OpmWrapper::GetChannelStates(opm::ChannelState* states, int max_channels) {
+    if (device_) {
+        device_->GetChannelStates(states, max_channels);
     }
 }

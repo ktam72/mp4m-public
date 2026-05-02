@@ -55,8 +55,11 @@ public:
                          uint8_t tl, uint8_t ar, uint8_t dr, uint8_t sr,
                          uint8_t sl, uint8_t rr, bool am);
 
+    // Set PM/AM sensitivity
+    void SetPMS(uint8_t pms);
+    void SetAMS(uint8_t ams);
+
     // Calculate output for one sample
-    // Returns: channel output (before panning)
     int32_t Calculate(int32_t am, int32_t pm);
 
     // Prepare for next sample
@@ -69,9 +72,15 @@ public:
     // Check if channel is active
     bool IsActive() const;
 
+    // Check if any operator is key on
+    bool IsKeyOn() const;
+
+    // Get combined output level (for meter display)
+    int32_t GetOutputLevel() const;
+
     // Get operator output (for debug)
     int32_t GetOpOut(int op_idx) const { return ops_[op_idx].GetOutput(); }
-    
+
     // Direct operator access for register-based writes
     Operator* GetOperator(int op_idx) { return (op_idx >= 0 && op_idx < 4) ? &ops_[op_idx] : nullptr; }
 
@@ -80,10 +89,15 @@ private:
     Algorithm algo_;
     uint8_t fb_;       // Feedback level
     uint8_t pan_;      // Pan: 0=off, 1=L, 2=R, 3=L+R
-    
+    uint8_t pms_;      // PM sensitivity (0-7)
+    uint8_t ams_;      // AM sensitivity (0-3)
+
     // Feedback buffer
     int32_t fb_buf_[2];
     int fb_idx_;
+
+    // Previous sample operator outputs (for 1-sample delay)
+    int32_t prev_op_out_[4];
 
     // Algorithm routing
     int32_t RouteA0(int32_t am, int32_t pm);

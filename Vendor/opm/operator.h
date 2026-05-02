@@ -72,6 +72,9 @@ public:
     // Check if operator is active
     bool IsActive() const { return eg_phase_ != EGPhase::Off; }
 
+    // Check if operator is key on
+    bool IsKeyOn() const { return eg_phase_ != EGPhase::Off && eg_phase_ != EGPhase::Release; }
+
     // Debug
     int32_t GetOutput() const { return out_; }
 
@@ -113,20 +116,19 @@ private:
     // Frequency multiplier table
     static uint32_t mul_table_[16];
 
-    // Sine wave table (0-90 degrees)
-    static int32_t sine_table_[1024];
+    // Log-sine table (from Nuked-OPM)
+    static uint32_t logsin_table_[256];
 
-    // Exponential attenuation table
-    static int32_t exp_table_[256];
+    // Exponential table (from Nuked-OPM)
+    static uint32_t exp_table_[256];
 
     // EG step table (rate-to-increment mapping)
-    static int32_t eg_step_table_[64];
+    static uint32_t eg_step_table_[64];
 
     // Helper functions
     void UpdateDetune();
     void UpdatePGDiff();
     void UpdateEG();
-    int32_t LookupSine(uint32_t phase);
 };
 
 } // namespace opm

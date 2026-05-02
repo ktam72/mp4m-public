@@ -14,6 +14,7 @@ typedef struct {
     int16_t bend;
     uint8_t pan;
     uint8_t keyOffset;
+    uint8_t active;   // 追加: チャンネルがアクティブか
 } MP4MChannelState;
 
 @interface MXDRVGBridge : NSObject

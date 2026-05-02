@@ -14,6 +14,7 @@
  */
 
 #include "timer.h"
+#include <cstdio>
 
 namespace opm {
 
@@ -40,7 +41,7 @@ void Timer::SetTimerB(uint8_t value) {
 
 void Timer::LoadTimerA(bool load) {
     timer_a_load_ = load;
-    if (load && !timer_a_active_) {
+    if (load) {
         timer_a_count_ = GetTimerAPeriod();
         timer_a_active_ = true;
     }
@@ -90,7 +91,7 @@ uint32_t Timer::GetTimerBPeriod() const {
 
 bool Timer::Advance(uint32_t microseconds) {
     bool interrupted = false;
-
+    
     if (timer_a_active_ && timer_a_enable_) {
         if (timer_a_count_ <= microseconds) {
             timer_a_flag_ = true;
@@ -100,7 +101,7 @@ bool Timer::Advance(uint32_t microseconds) {
             timer_a_count_ -= microseconds;
         }
     }
-
+    
     if (timer_b_active_ && timer_b_enable_) {
         if (timer_b_count_ <= microseconds) {
             timer_b_flag_ = true;
@@ -110,7 +111,7 @@ bool Timer::Advance(uint32_t microseconds) {
             timer_b_count_ -= microseconds;
         }
     }
-
+    
     return interrupted;
 }
 

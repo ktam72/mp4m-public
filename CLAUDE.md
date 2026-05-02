@@ -340,6 +340,78 @@ open MP4M.xcodeproj
 - **fmgen完全削除**: `project.yml` からfmgenを削除、すべてのC++エンジンをオリジナル実装に置換え
 - **ライセンス完全クリア**: すべてのVendorコードが0BSDまたはApache 2.0で商用利用可能に
 
+### 2026-05-02 (2) — OPMレジスタマッピング修正・PDX再生修復・チャンネル状態取得実装
+- **OPMレジスタマッピング完全修正**: YM2151データシートに準拠して `opm_device.cpp` の WriteReg ディスパッチを修正
+  - 0x20-0x27: RL/FB/CONNECT (チャンネル)
+  - 0x28-0x2F: KC (Key Code)
+  - 0x30-0x37: KF (Key Fraction)
+  - 0x38-0x3F: PMS/AMS
+  - 0x40-0x5F: DT1/MUL (オペレーター)
+  - 0x60-0x7F: TL
+  - 0x80-0x9F: KS/AR
+  - 0xA0-0xBF: AMS-EN/D1R
+  - 0xC0-0xDF: DT2/D2R
+  - 0xE0-0xFF: D1L/RR
+- **ビルドエラー修正**:
+  - `GetChannelStates` 定義の不一致を修正（`opm::` 接頭辞削除）
+  - `Channel` クラスに `IsKeyOn()` / `GetOutputLevel()` を追加
+  - `Operator` クラスに `IsKeyOn()` を追加
+  - コンストラクタ初期化順序の警告を修正
+  - 未使用パラメータ・変数の警告を修正
+- **PDXログ追加**: `MXDRVGBridge.mm` にPDXロード状況のログを追加
+- **チャンネル状態取得実装**:
+  - `opm.h` に `ChannelState` 構造体を追加
+  - `OpmDevice` に `GetChannelStates` 仮想関数を追加
+  - `OpmDeviceImpl` で `GetChannelStates` を実装（FM 8ch分）
+- **ビルド成功**: `BUILD SUCCEEDED` を確認、音色が正常に、PDX再生とメーター動作が改善
+
+### 2026-05-02 — 音色（timbre）修正・operator実装改善
+- **Operator::Calculate() 修正**: TL（Total Level）処理を修正。元の `(tl_ ^ 0x7F)` を `tl_` に修正し、YM2151仕様（TL=0が最大音量、TL=127が無音）に準拠
+- **Log-sin + Exp方式の実装**: Nuked-OPM参考に、位相→log-sin→減衰量（EG+TL+AM）→exp→符号付き出力の流れを正しく実装
+- **フィードバック計算修正**: `channel.cpp` のフィードバック処理を修正。バッファ参照方法とシフト量をYM2151仕様に合わせる
+- **MULテーブル修正**: 周波数乗数テーブルをYM2151仕様（0.5x-15x）に修正
+- **出力スケーリング修正**: オペレーター出力のスケーリングを改善し、音色の正しい反映を実現
+- **ビルド成功**: 警告あり（未使用変数など）だが `BUILD SUCCEEDED` を確認
+- **既知の課題**: アルゴリズムルーティング（RouteA0-A7）の検証が必要、サイクルベース処理の完全実装は今後の課題
+
+### 2026-05-02 (3) — ビルドエラー修正・メモリ破壊クラッシュ修正
+- **opm_wrapper.cpp 修正**:
+  - デストラクタの2重定義を削除（ビルドエラーの根本原因）
+  - 未使用パラメータ警告を修正（`filter`, `context`）
+- **opm.h 修正**: `ChannelState` 構造体を `MXDRVGBridge.mm` に合わせて修正
+  - フィールド名を `keyCode`, `keyOn`, `volume`, `bend`, `keyOffset` に変更
+  - 型も `MXDRVGBridge.mm` 側の期待値に合わせる
+- **opm_device.cpp 修正**: `GetChannelStates()` の実装を新しい `ChannelState` フィールドに合わせて修正
+- **MXDRVGBridge.mm 修正**:
+  - `opm.h` をインクルードし `opm::ChannelState` を使用
+  - `OPM_GetChannelStates` の宣言を `extern "C"` 付きで正しい型で宣言
+  - `getChannelStates:` で `opm::ChannelState` から `MP4MChannelState` への変換コードを追加
+- **mxdrvg_core.h 修正（メモリ破壊クラッシュ修正）**:
+  - `MXDRVG_End()` 内の `free(G.MDXBUF)` と `free(G.PDXBUF)` を削除
+  - 原因: `G.MDXBUF`/`G.PDXBUF` は `MXDRVGBridge.mm` の `NSMutableData` が管理するメモリを指しており、C側での `free()` と Objective-C のメモリ管理が競合してヒープ破壊が発生していた
+  - 修正: ポインタを `NULL` にするだけに変更（メモリの所有権は `MXDRVGBridge` 側が保持）
+- **ビルド成功**: `BUILD SUCCEEDED` を確認、実行時クラッシュ解消
+
+### 2026-05-02 (4) — 音色エミュレーション改善・ビルドエラー完全解消・再生安定性向上
+- **P1: UpdatePGDiff() 書き換え**: `operator.cpp` で Nuked OPM の `pg_freqtable[64]` を採用し、位相累積の精度を改善
+- **P2: EGレート計算修正**:
+  - KS補正を `ksv = kc >> (ks ^ 3)` に修正（YM2151仕様準拠）
+  - RR計算式を `RR×2+1` に修正し、実効レート(0-63)を正しく反映
+  - `eg_step_table_` を追加しEGステップをテーブル化
+- **P3: LFO PMS/AMS 実装**: `channel.cpp` に `SetPMS()`/`SetAMS()` を追加、PMS/AMSスケーリングを実装
+- **P4: アルゴリズム遅延修正**: `prev_op_out_[4]` を追加し1サンプル遅延の簡易実装
+- **メモリ破壊修正**: `mxdrvg_core.h` の `MXDRVG_End()` から `free(G.MDXBUF)`/`free(G.PDXBUF)` を削除（メモリ所有権を `MXDRVGBridge` 側に集約）
+- **音量スケーリング**: `Mix()` で出力を1/2にスケーリング、`TotalVolume` を128に設定（音量過大を修正）
+- **構造体整合性**: `opm::ChannelState` の `keyOn`/`active` を `uint8_t` に変更（ブリッジ側と型を合わせる）
+- **ビルドエラー完全解消**:
+  - `mxdrvg_core.h` の `__cplusplus` スペルミス（欠落した `+` 記号）を修正
+  - 重複定義された `OPMINTFUNC`/`OPMINTFUNC_Export` を削除
+  - `extern "C"` ブロックを正しく構成しCリンケージを確保
+- **タイマー修正**: `opm_device.cpp` でタイマーAを強制有効化、`timer.cpp` の `LoadTimerA` で常にアクティブを設定
+- **チャンネル状態取得**: `MXDRVGBridge.mm` でPCM8chの状態読み取りを実装、`MP4MChannelState` 構造体を更新
+- **デバッグログ削除**: `timer.cpp`/`opm_device.cpp` から不要なログを全削除
+- **ビルド成功**: `BUILD SUCCEEDED` を確認、音色・再生安定性が改善
+
 ---
 
 ## 依存ライブラリ

@@ -85,7 +85,7 @@ static void (*OPMINT_FUNC)(void);
   static FmgenOpmWrapper OPM;
 #else
   // 新しいオリジナルOPMドライバ用ラッパー
-  #include "../../opm/opm_wrapper.h"
+  #include "../../../opm/opm_wrapper.h"
   static OpmWrapper OPM;
 #endif
 
@@ -327,15 +327,15 @@ void MXDRVG_End(
 	void
 ) {
 	if ( G.MDXBUF ) {
-		free( (void*)G.MDXBUF );
+		// MXDRVG does not own this memory - it's managed by MXDRVGBridge
 		G.MDXBUF = NULL;
 	}
 	if ( G.PDXBUF ) {
-		free( (void*)G.PDXBUF );
+		// MXDRVG does not own this memory - it's managed by MXDRVGBridge
 		G.PDXBUF = NULL;
 	}
 	if ( G.L001bac ) {
-		free( (void*)G.L001bac );
+		// free(G.L001bac) removed: buffer owned by MXDRVGBridge
 		G.L001bac = NULL;
 	}
 
@@ -372,10 +372,10 @@ int MXDRVG_GetPCM(
 	while (rest_len > 0) {
 		ULONG create_len = (ULONG)rest_len;
 		ULONG event_us = OPM.GetNextEventWrapper();
-		if (event_us == 0) {
-			// タイマー未設定時は OPMINTFUNC を1回呼んでシーケンスを進める
-			if (OPMINT_FUNC) OPMINT_FUNC();
-			event_us = OPM.GetNextEventWrapper();
+	if (event_us == 0) {
+		// タイマー未設定時は OPMINTFUNC を1回呼んでシーケンスを進める
+		OPMINTFUNC();
+		event_us = OPM.GetNextEventWrapper();
 			if (event_us == 0) {
 				create_len = 1;
 			} else {
@@ -780,8 +780,6 @@ static void ADPCMMOD_END(
 	PCM8.Reset();
 }
 
-/***************************************************************/
-
 static void OPMINTFUNC(
 	void
 ) {
@@ -796,11 +794,32 @@ static void SETOPMINT(
 	void (*func)( void )
 ) {
 	OPMINT_FUNC = func;
-	// Also set the OPM wrapper's interrupt function
 	#ifndef USE_FMGEN
 	  OpmWrapper::OPMINT_FUNC = func;
 	#endif
 }
+
+/***************************************************************/
+
+/***************************************************************/
+// Exported for wrapper access (updates G.PLAYTIME)
+// Needs C linkage for opm_wrapper.cpp to call it.
+// Calls the static OPMINTFUNC() defined earlier in this file (around line 74).
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+void OPMINTFUNC_Export(void); // Declaration (C linkage)
+
+void OPMINTFUNC_Export(void) {
+    OPMINTFUNC(); // Call the static OPMINTFUNC (updates G.PLAYTIME)
+}
+
+#ifdef __cplusplus
+}
+#endif
+
 
 /***************************************************************/
 
@@ -7051,16 +7070,15 @@ static int Initialize(
 	memset( (void *)G.MDXBUF, 0, G.MDXSIZE );
 	G.PDXBUF = (UBYTE *)malloc( G.PDXSIZE );
 	if ( !G.PDXBUF ){
-		free( (void *)G.MDXBUF );
+		// free(G.MDXBUF) removed: buffer owned by MXDRVGBridge
 		G.MDXBUF = NULL;
 		return (!0);
 	}
 	memset( (void *)G.PDXBUF, 0, G.PDXSIZE );
 	G.L001bac = (UBYTE *)malloc( G.L001ba8 );
 	if ( !G.L001bac ) {
-		free( (void *)G.PDXBUF );
+		// free(G.PDXBUF) and free(G.MDXBUF) removed: buffers owned by MXDRVGBridge
 		G.PDXBUF = NULL;
-		free( (void *)G.MDXBUF );
 		G.MDXBUF = NULL;
 		return (!0);
 	}
