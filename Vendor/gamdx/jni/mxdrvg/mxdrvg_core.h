@@ -3397,10 +3397,6 @@ static void L_OPMINT(
 ) {
 	static int opmint_count = 0;
 	opmint_count++;
-	if (opmint_count <= 10 || opmint_count % 100 == 0) {
-		fprintf(stderr, "[L_OPMINT] #%d PLAYTIME=%lu PLAYSAMPLES=%lu\n", 
-				opmint_count, (ULONG)G.PLAYTIME, (ULONG)G.PLAYSAMPLES);
-	}
 
 	if ( G.FATALERROR ) {
 		return;

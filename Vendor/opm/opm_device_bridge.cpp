@@ -16,14 +16,21 @@ static opm::OpmDevice* g_opm_device = nullptr;
 void OPM_InitWrapper(uint32_t clock, uint32_t rate, int filter) {
     (void)filter;
 
+    fprintf(stderr, "[OPM_InitWrapper] START clock=%u rate=%u\n", clock, rate);
+
     if (g_opm_device) {
         opm::DestroyOpmDevice(g_opm_device);
+        g_opm_device = nullptr;
     }
 
     g_opm_device = opm::CreateOpmDevice();
+    fprintf(stderr, "[OPM_InitWrapper] CreateOpmDevice: %p\n", (void*)g_opm_device);
+
     if (g_opm_device) {
-        g_opm_device->Init(clock, rate);
-        fprintf(stderr, "[OPM_InitWrapper] Initialized with clock=%u rate=%u\n", clock, rate);
+        bool init_result = g_opm_device->Init(clock, rate);
+        fprintf(stderr, "[OPM_InitWrapper] Init result: %d\n", init_result);
+    } else {
+        fprintf(stderr, "[OPM_InitWrapper] FAILED: CreateOpmDevice returned nullptr\n");
     }
 }
 
@@ -34,23 +41,14 @@ void OPM_SetRegWrapper(uint8_t addr, uint8_t data) {
 }
 
 void OPM_MixWrapper(int16_t* buf, int nsamples) {
-    static int mix_call_count = 0;
-    mix_call_count++;
-
-    if (g_opm_device) {
-        g_opm_device->Mix((opm::Sample*)buf, nsamples);
-
-        if (mix_call_count <= 5 || mix_call_count % 100 == 0) {
-            // ログ出力：サンプルが 0 でないか確認
-            int16_t sample_l = buf[0];
-            int16_t sample_r = (nsamples > 0) ? buf[1] : 0;
-            fprintf(stderr, "[MixWrapper] #%d samples=%d sample_l=%d sample_r=%d\n",
-                    mix_call_count, nsamples, sample_l, sample_r);
+    if (!buf || !g_opm_device) {
+        if (buf) {
+            memset(buf, 0, nsamples * 2 * sizeof(int16_t));
         }
-    } else {
-        // g_opm_device が nullptr の場合、バッファを 0 で埋める
-        memset(buf, 0, nsamples * 2 * sizeof(int16_t));
+        return;
     }
+
+    g_opm_device->Mix((opm::Sample*)buf, nsamples);
 }
 
 unsigned long OPM_GetNextEventWrapper(void) {
