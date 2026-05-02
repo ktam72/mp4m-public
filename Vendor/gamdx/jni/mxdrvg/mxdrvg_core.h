@@ -355,9 +355,6 @@ int MXDRVG_GetPCM(
 ) {
 	static int call_count = 0;
 	call_count++;
-	if (call_count <= 10 || call_count % 100 == 0) {
-		fprintf(stderr, "[GetPCM] #%d len=%d SAMPRATE=%lu\n", call_count, len, (ULONG)G.SAMPRATE);
-	}
 	
 	SLONG rest_us;
 	static Sample *innerbuf = NULL;
@@ -373,9 +370,6 @@ int MXDRVG_GetPCM(
 	while (rest_len > 0) {
 		ULONG create_len = (ULONG)rest_len;
 		ULONG event_us = OPM_GetNextEventWrapper();
-		if (call_count <= 5) {
-			fprintf(stderr, "[GetPCM] event_us=%lu\n", event_us);
-		}
 	if (event_us == 0) {
 		// タイマー未設定時は OPMINTFUNC を1回呼んでシーケンスを進める
 		OPMINTFUNC();
