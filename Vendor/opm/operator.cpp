@@ -302,13 +302,22 @@ void Operator::UpdatePGDiff() {
         if ((kcode_l & 12) == 12 && (pg_freqtable[kcode_h].slope & 1) == 0) sum += 4;
     }
     int32_t fnum = pg_freqtable[kcode_h].basefreq + (sum >> 1);
-    
+
     // Apply KF (Key Fraction) - Nuked OPM uses fnum directly
     // KF adds fine tuning: 0-63 steps per note
     if (kf_ > 0) {
         fnum += (kf_ * pg_freqtable[kcode_h].slope) >> 6;
     }
-    
+
+    // Apply DT2 (coarse detune in semitones): 0-3 semitones up
+    // Multipliers: 2^(dt2/12) for dt2 = 0,1,2,3
+    // Using fixed-point approximations (scaled to preserve precision)
+    if (dt2_ > 0) {
+        // DT2 semitone multipliers (fixed-point, scaled by 65536)
+        static const int32_t dt2_mult[4] = { 65536, 69558, 73550, 77659 };
+        fnum = (fnum * dt2_mult[dt2_]) >> 16;
+    }
+
     // Apply block (octave): YM2151 uses 3-bit block from KC high bits
     int32_t block = (kc_ >> 4) & 7;
     int32_t basefreq = (fnum << block) >> 2;
