@@ -107,8 +107,11 @@ static NSString* getTitleFromData(NSData* data) {
 @implementation MXDRVGBridge
 
 + (void)startWithSampleRate:(int)sampleRate {
+    fprintf(stderr, "[MXDRVGBridge] startWithSampleRate: %d\n", sampleRate);
     MXDRVG_End();
+    fprintf(stderr, "[MXDRVGBridge] calling MXDRVG_Start...\n");
     MXDRVG_Start(sampleRate, 0, 64 * 1024, 1024 * 1024);
+    fprintf(stderr, "[MXDRVGBridge] MXDRVG_Start done\n");
     MXDRVG_TotalVolume(128);  // 音量を50%に設定（大きすぎる問題の対策）
 }
 

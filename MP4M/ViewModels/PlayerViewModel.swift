@@ -36,8 +36,11 @@ final class PlayerViewModel: @unchecked Sendable {
     // MARK: - 初期化
 
     init(audioService: any AudioEngineService) {
+        print("[PlayerViewModel.init] START")
         self.audioService = audioService
+        print("[PlayerViewModel.init] calling audioService.start()")
         audioService.start(sampleRate: 44100)
+        print("[PlayerViewModel.init] audioService.start() done")
     }
 
     /// 明示的クリーンアップ (deinit ではなく View の onDisappear で呼ぶ)

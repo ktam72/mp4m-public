@@ -355,6 +355,9 @@ int MXDRVG_GetPCM(
 ) {
 	static int call_count = 0;
 	call_count++;
+	if (call_count <= 5) {
+		fprintf(stderr, "[MXDRVG_GetPCM] #%d called with len=%d\n", call_count, len);
+	}
 	
 	SLONG rest_us;
 	static Sample *innerbuf = NULL;
@@ -367,7 +370,14 @@ int MXDRVG_GetPCM(
 	rest_us = (SLONG)(len*1000000)/G.SAMPRATE;
 	rest_len = len;
 
+	if (call_count <= 3) {
+		fprintf(stderr, "[MXDRVG_GetPCM] #%d start: rest_len=%d rest_us=%ld\n", call_count, rest_len, rest_us);
+	}
+
 	while (rest_len > 0) {
+		if (call_count <= 3) {
+			fprintf(stderr, "[MXDRVG_GetPCM] #%d loop start: rest_len=%d\n", call_count, rest_len);
+		}
 		ULONG create_len = (ULONG)rest_len;
 		ULONG event_us = OPM_GetNextEventWrapper();
 	if (event_us == 0) {

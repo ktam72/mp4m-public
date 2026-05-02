@@ -12,6 +12,10 @@ final class MXDRVAudioEngine: AudioEngineService {
     private static let pcmBufferSize = maxFrameCount * 2
     nonisolated(unsafe) private var pcmBuffer: [Int16] = [Int16](repeating: 0, count: pcmBufferSize)
 
+    init() {
+        fputs("[MXDRVAudioEngine.init]\n", stderr)
+    }
+
     nonisolated(unsafe) private static var diag_callCount: Int = 0
     nonisolated(unsafe) private static var diag_totalFrames: Int = 0
     nonisolated(unsafe) private static var diag_prevTime: CFAbsoluteTime = 0

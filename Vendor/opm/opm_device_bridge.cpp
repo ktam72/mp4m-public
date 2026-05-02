@@ -19,43 +19,79 @@ void OPM_InitWrapper(uint32_t clock, uint32_t rate, int filter) {
     fprintf(stderr, "[OPM_InitWrapper] START clock=%u rate=%u\n", clock, rate);
 
     if (g_opm_device) {
+        fprintf(stderr, "[OPM_InitWrapper] Destroying old device: %p\n", (void*)g_opm_device);
         opm::DestroyOpmDevice(g_opm_device);
         g_opm_device = nullptr;
     }
 
     g_opm_device = opm::CreateOpmDevice();
-    fprintf(stderr, "[OPM_InitWrapper] CreateOpmDevice: %p\n", (void*)g_opm_device);
+    fprintf(stderr, "[OPM_InitWrapper] CreateOpmDevice result: %p\n", (void*)g_opm_device);
 
     if (g_opm_device) {
         bool init_result = g_opm_device->Init(clock, rate);
-        fprintf(stderr, "[OPM_InitWrapper] Init result: %d\n", init_result);
+        fprintf(stderr, "[OPM_InitWrapper] Init result: %d, device=%p\n", init_result, (void*)g_opm_device);
     } else {
-        fprintf(stderr, "[OPM_InitWrapper] FAILED: CreateOpmDevice returned nullptr\n");
+        fprintf(stderr, "[OPM_InitWrapper] ERROR: CreateOpmDevice returned nullptr!\n");
     }
 }
 
 void OPM_SetRegWrapper(uint8_t addr, uint8_t data) {
+    static int reg_count = 0;
+    if (++reg_count <= 10) {
+        fprintf(stderr, "[OPM_SetReg] #%d addr=0x%02x data=0x%02x device=%p\n", reg_count, addr, data, (void*)g_opm_device);
+    }
     if (g_opm_device) {
         g_opm_device->WriteReg(addr, data);
     }
 }
 
 void OPM_MixWrapper(int16_t* buf, int nsamples) {
-    if (!buf || !g_opm_device) {
-        if (buf) {
-            memset(buf, 0, nsamples * 2 * sizeof(int16_t));
-        }
+    static int mix_count = 0;
+    mix_count++;
+
+    if (!buf) {
+        fprintf(stderr, "[OPM_MixWrapper] #%d ERROR: buf is nullptr\n", mix_count);
         return;
     }
 
+    if (!g_opm_device) {
+        fprintf(stderr, "[OPM_MixWrapper] #%d ERROR: g_opm_device is nullptr\n", mix_count);
+        memset(buf, 0, nsamples * 2 * sizeof(int16_t));
+        return;
+    }
+
+    if (mix_count <= 5) {
+        fprintf(stderr, "[OPM_MixWrapper] #%d calling Mix, nsamples=%d device=%p\n",
+                mix_count, nsamples, (void*)g_opm_device);
+    }
+
     g_opm_device->Mix((opm::Sample*)buf, nsamples);
+
+    if (mix_count <= 5) {
+        fprintf(stderr, "[OPM_MixWrapper] #%d after Mix, buf[0]=%d buf[1]=%d\n",
+                mix_count, buf[0], buf[1]);
+    }
 }
 
 unsigned long OPM_GetNextEventWrapper(void) {
-    if (g_opm_device) {
-        return g_opm_device->GetNextEventTime();
+    static int event_count = 0;
+    event_count++;
+
+    if (!g_opm_device) {
+        if (event_count <= 5) {
+            fprintf(stderr, "[OPM_GetNextEvent] #%d ERROR: g_opm_device is nullptr\n", event_count);
+        }
+        return 0;
     }
-    return 0;
+
+    unsigned long result = g_opm_device->GetNextEventTime();
+
+    if (event_count <= 10 || event_count % 1000 == 0) {
+        fprintf(stderr, "[OPM_GetNextEvent] #%d result=%lu device=%p\n",
+                event_count, result, (void*)g_opm_device);
+    }
+
+    return result;
 }
 
 void OPM_CountWrapper(uint32_t us) {
