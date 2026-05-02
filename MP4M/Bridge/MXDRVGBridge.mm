@@ -122,14 +122,32 @@ static NSString* getTitleFromData(NSData* data) {
 }
 
 + (nullable NSString *)loadMDXFile:(NSString *)mdxPath {
+    fprintf(stderr, "[loadMDXFile] mdxPath=%s\n", [mdxPath UTF8String]);
     NSData* fileData = [NSData dataWithContentsOfFile:mdxPath];
-    if (!fileData) return nil;
+    if (!fileData) {
+        fprintf(stderr, "[loadMDXFile] ERROR: Failed to load MDX file\n");
+        return nil;
+    }
 
     // 同じディレクトリから PDX を探してロード（大文字小文字両方試す）
     NSString* basePath = [mdxPath stringByDeletingPathExtension];
-    NSData* pdxData = [NSData dataWithContentsOfFile:[basePath stringByAppendingPathExtension:@"pdx"]];
+    fprintf(stderr, "[loadMDXFile] basePath=%s\n", [basePath UTF8String]);
+
+    NSString* pdxPath1 = [basePath stringByAppendingPathExtension:@"pdx"];
+    fprintf(stderr, "[loadMDXFile] trying pdx (lowercase): %s\n", [pdxPath1 UTF8String]);
+
+    NSData* pdxData = [NSData dataWithContentsOfFile:pdxPath1];
     if (!pdxData) {
-        pdxData = [NSData dataWithContentsOfFile:[basePath stringByAppendingPathExtension:@"PDX"]];
+        NSString* pdxPath2 = [basePath stringByAppendingPathExtension:@"PDX"];
+        fprintf(stderr, "[loadMDXFile] lowercase pdx not found, trying uppercase: %s\n", [pdxPath2 UTF8String]);
+        pdxData = [NSData dataWithContentsOfFile:pdxPath2];
+        if (pdxData) {
+            fprintf(stderr, "[loadMDXFile] uppercase PDX found, size=%lu\n", (unsigned long)pdxData.length);
+        } else {
+            fprintf(stderr, "[loadMDXFile] uppercase PDX not found\n");
+        }
+    } else {
+        fprintf(stderr, "[loadMDXFile] lowercase pdx found, size=%lu\n", (unsigned long)pdxData.length);
     }
 
     return [MXDRVGBridge loadMDXData:fileData pdxData:pdxData];
