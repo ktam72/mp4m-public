@@ -42,6 +42,91 @@
 #include "../pcm8/x68pcm8.h"
 #include "../downsample/downsample.h"
 
+// fmgen OPM integration
+#include <opm.h>
+
+static FM::OPM g_opm_fmgen;
+
+// C wrapper functions for fmgen OPM
+extern "C" {
+void OPM_InitWrapper(uint32_t clock, uint32_t rate, int filter);
+void OPM_SetRegWrapper(uint8_t addr, uint8_t data);
+void OPM_MixWrapper(int16_t* buf, int nsamples);
+unsigned long OPM_GetNextEventWrapper(void);
+void OPM_CountWrapper(uint32_t us);
+void* OPM_GetChipPtr(void);
+void OPM_GetChannelStates(void* states, int max_channels);
+void OPM_SetIntFunc(void (*func)(void));
+void (*OPM_GetIntFunc(void))(void);
+}
+
+void OPM_InitWrapper(uint32_t clock, uint32_t rate, int filter) {
+    (void)filter;
+    fprintf(stderr, "[OPM_InitWrapper] clock=%u rate=%u\n", clock, rate);
+    g_opm_fmgen.Init(clock, rate, false);
+}
+
+void OPM_SetRegWrapper(uint8_t addr, uint8_t data) {
+    static int reg_count = 0;
+    if (++reg_count <= 50 || addr == 0x08) {
+        fprintf(stderr, "[OPM_SetReg] #%d addr=0x%02x data=0x%02x\n", reg_count, addr, data);
+    }
+    g_opm_fmgen.SetReg(addr, data);
+}
+
+void OPM_MixWrapper(int16_t* buf, int nsamples) {
+    static int mix_count = 0;
+    mix_count++;
+    if (mix_count <= 5) {
+        fprintf(stderr, "[OPM_MixWrapper] #%d nsamples=%d\n", mix_count, nsamples);
+    }
+
+    if (nsamples > 0) {
+        FM::Sample* samples = new FM::Sample[nsamples * 2];
+        memset(samples, 0, nsamples * 2 * sizeof(FM::Sample));
+        g_opm_fmgen.Mix(samples, nsamples);
+        for (int i = 0; i < nsamples; i++) {
+            buf[i*2 + 0] = (int16_t)samples[i*2 + 0];
+            buf[i*2 + 1] = (int16_t)samples[i*2 + 1];
+        }
+        delete[] samples;
+    }
+
+    if (mix_count <= 5) {
+        fprintf(stderr, "[OPM_MixWrapper] #%d done: buf[0]=%d buf[1]=%d\n", mix_count, buf[0], buf[1]);
+    }
+}
+
+unsigned long OPM_GetNextEventWrapper(void) {
+    return g_opm_fmgen.GetNextEvent();
+}
+
+void OPM_CountWrapper(uint32_t us) {
+    g_opm_fmgen.Count(us);
+}
+
+void* OPM_GetChipPtr(void) {
+    // fmgen では opm_t 構造体を使用しないため nullptr を返す
+    return nullptr;
+}
+
+void OPM_GetChannelStates(void* states, int max_channels) {
+    // fmgen では公開されたチャンネル状態アクセス API がないため
+    // このプレースホルダー実装では何もしない
+    (void)states;
+    (void)max_channels;
+}
+
+static void (*g_opm_interrupt_func)(void) = nullptr;
+
+void OPM_SetIntFunc(void (*func)(void)) {
+    g_opm_interrupt_func = func;
+}
+
+void (*OPM_GetIntFunc(void))(void) {
+    return g_opm_interrupt_func;
+}
+
 extern volatile unsigned char OpmReg1B;  // OPM ÉåÉWÉXÉ^ $1B ÇÃì‡óe
 
 #define LOGOPM 0
@@ -77,9 +162,6 @@ static void OPMINTFUNC(
 );
 
 // 先行宣言
-// Nuked-OPM C wrapper
-#include "../../../opm/opm_wrapper.h"
-
 static X68K::X68PCM8 PCM8;
 static X68K::DOWNSAMPLE DS;
 
@@ -520,9 +602,11 @@ void MXDRVG_SetData(
 
 	// OPM初期化後にシーケンス位置を冒頭へリセット
 	// 200回の OPMINTFUNC 呼び出しでシーケンスが進んでしまうため
+	fprintf(stderr, "[SetData] before L_0F: L001e0c=%p\n", (void*)&G.L001e0c);
 	reg.d0 = 0x0f;
 	reg.d1 = 0x00;
 	MXDRVG( &reg );
+	fprintf(stderr, "[SetData] after L_0F: L001e0c=%p\n", (void*)&G.L001e0c);
 	fprintf(stderr, "[SetData] done\n");
 }
 
