@@ -234,7 +234,6 @@ static NSString* getTitleFromData(NSData* data) {
 
 + (int)currentPlayTimeMs {
     ULONG t = MXDRVG_GetPlayAt();
-    fprintf(stderr, "[Timer] currentPlayTimeMs: %lu\n", t);
     return (int)t;
 }
 
