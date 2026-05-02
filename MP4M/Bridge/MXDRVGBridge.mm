@@ -6,11 +6,11 @@
 #import "MXDRVGBridge.h"
 #include "../Vendor/gamdx/jni/mxdrvg/mxdrvg.h"
 #include "../Vendor/lzx/lzx.h"
-#include "../Vendor/opm/opm.h"
+#include "../Vendor/opm/opm_wrapper.h"
 #include <stdlib.h>
 #include <string.h>
 
-extern "C" void OPM_GetChannelStates(opm::ChannelState* states, int max_channels);
+extern void OPM_GetChannelStates(MP4MChannelState* states, int max_channels);
 
 // グローバル状態
 static NSData* g_mdxData = nil;
@@ -252,7 +252,7 @@ static NSString* getTitleFromData(NSData* data) {
     memset(states, 0, sizeof(MP4MChannelState) * 16);
     
     // Get OPM channel states (FM 8ch)
-    opm::ChannelState opmStates[8];
+    MP4MChannelState opmStates[8];
     memset(opmStates, 0, sizeof(opmStates));
     
     OPM_GetChannelStates(opmStates, 8);

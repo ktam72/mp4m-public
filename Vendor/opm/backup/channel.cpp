@@ -248,15 +248,15 @@ int32_t Channel::RouteA2(int32_t am, int32_t pm) {
 }
 
 int32_t Channel::RouteA3(int32_t am, int32_t pm) {
-    // All operators in parallel (with 1-sample delay for consistency)
+    // All operators in parallel
     int32_t fb = (fb_ == 0) ? 0 : (fb_buf_[1 - fb_idx_] >> (8 - fb_));
     int32_t out1 = ops_[0].Calculate(fb, am, pm);
     fb_buf_[fb_idx_] = out1 << (fb_ + 8);
-    
+
     int32_t out2 = ops_[1].Calculate(0, am, pm);
     int32_t out3 = ops_[2].Calculate(0, am, pm);
     int32_t out4 = ops_[3].Calculate(0, am, pm);
-    return prev_op_out_[0] + prev_op_out_[1] + prev_op_out_[2] + prev_op_out_[3];
+    return out1 + out2 + out3 + out4;
 }
 
 int32_t Channel::RouteA4(int32_t am, int32_t pm) {
@@ -296,13 +296,15 @@ int32_t Channel::RouteA6(int32_t am, int32_t pm) {
 }
 
 int32_t Channel::RouteA7(int32_t am, int32_t pm) {
-    // All parallel (same as A3, with 1-sample delay)
-    int32_t fb = (fb_ == 0) ?0 : (fb_buf_[1 - fb_idx_] >> (8 - fb_));
+    // All parallel
+    int32_t fb = (fb_ == 0) ? 0 : (fb_buf_[1 - fb_idx_] >> (8 - fb_));
     int32_t out1 = ops_[0].Calculate(fb, am, pm);
     fb_buf_[fb_idx_] = out1 << (fb_ + 8);
-    
-    // Return sum of previous sample's operator outputs
-    return prev_op_out_[0] + prev_op_out_[1] + prev_op_out_[2] + prev_op_out_[3];
+
+    int32_t out2 = ops_[1].Calculate(0, am, pm);
+    int32_t out3 = ops_[2].Calculate(0, am, pm);
+    int32_t out4 = ops_[3].Calculate(0, am, pm);
+    return out1 + out2 + out3 + out4;
 }
 
 } // namespace opm

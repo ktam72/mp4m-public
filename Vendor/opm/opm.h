@@ -1,120 +1,289 @@
-/*
- * Copyright (c) 2026
+/* Nuked OPM
+ * Copyright (C) 2020, 2026 Nuke.YKT
  *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted.
+ * This file is part of Nuked OPM.
  *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ * Nuked OPM is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as
+ * published by the Free Software Foundation, either version 2.1
+ * of the License, or (at your option) any later version.
+ *
+ * Nuked OPM is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with Nuked OPM. If not, see <https://www.gnu.org/licenses/>.
+ *
+ *  Nuked OPM emulator.
+ *  Thanks:
+ *      John McMaster(siliconpr0n.org):
+ *          YM2151 and other FM chip decaps and die shots.
+ *      gtr3qq (https://github.com/gtr3qq):
+ *          YM2164 decap
+ *
+ * version: 1.0
  */
+#ifndef _OPM_H_
+#define _OPM_H_
 
-#ifndef OPM_H
-#define OPM_H
+#include <stdint.h>
 
-#include <cstdint>
-#include <cstddef>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-namespace opm {
-
-// Sample type for audio output
-using Sample = int16_t;
-using ISample = int32_t;
-
-// OPM has 8 channels, each with 4 operators
-static constexpr int NUM_CHANNELS = 8;
-static constexpr int NUM_OPERATORS = 4;
-
-// Timer IDs
-enum class TimerId {
-    A,
-    B
+enum {
+    opm_flags_none = 0,
+    opm_flags_ym2164 = 1,   /* YM2164(OPP) */
 };
 
-// LFO waveform types
-enum class LfoWaveform {
-    Saw,
-    Square,
-    Triangle,
-    Noise
-};
+typedef struct {
+    uint32_t cycles;
+    uint8_t ic;
+    uint8_t ic2;
+    uint8_t opp;
+    // IO
+    uint8_t write_data;
+    uint8_t write_a;
+    uint8_t write_a_en;
+    uint8_t write_d;
+    uint8_t write_d_en;
+    uint8_t write_busy;
+    uint8_t write_busy_cnt;
+    uint8_t mode_address;
+    uint8_t io_ct1;
+    uint8_t io_ct2;
 
-// Callback for interrupt notification
-class OpmDevice;
+    // LFO
+    uint8_t lfo_am_lock;
+    uint8_t lfo_pm_lock;
+    uint8_t lfo_counter1;
+    uint8_t lfo_counter1_of1;
+    uint8_t lfo_counter1_of2;
+    uint16_t lfo_counter2;
+    uint8_t lfo_counter2_load;
+    uint8_t lfo_counter2_of;
+    uint8_t lfo_counter2_of_lock;
+    uint8_t lfo_counter2_of_lock2;
+    uint8_t lfo_counter3_clock;
+    uint16_t lfo_counter3;
+    uint8_t lfo_counter3_step;
+    uint8_t lfo_frq_update;
+    uint8_t lfo_clock;
+    uint8_t lfo_clock_lock;
+    uint8_t lfo_clock_test;
+    uint8_t lfo_test;
+    uint32_t lfo_val;
+    uint8_t lfo_val_carry;
+    uint32_t lfo_out1;
+    uint32_t lfo_out2;
+    uint32_t lfo_out2_b;
+    uint8_t lfo_mult_carry;
+    uint8_t lfo_trig_sign;
+    uint8_t lfo_saw_sign;
+    uint8_t lfo_bit_counter;
 
-// Channel state for UI (meters, etc.)
-// Must match MP4MChannelState in MP4M-Bridging-Header.h exactly
-struct ChannelState {
-    uint8_t keyCode;
-    uint8_t velocity;
-    uint8_t keyOn;     // 0 = off, 1 = on (use uint8_t for C/Swift compatibility)
-    uint8_t volume;
-    int16_t bend;
-    uint8_t pan;
-    uint8_t keyOffset;
-    uint8_t active;     // 0 = inactive, 1 = active
-};
+    // Env Gen
+    uint8_t eg_state[32];
+    uint16_t eg_level[32];
+    uint8_t eg_rate[2];
+    uint8_t eg_sl[2];
+    uint8_t eg_tl[3];
+    uint16_t eg_tl_opp;
+    uint8_t eg_zr[2];
+    uint8_t eg_timershift_lock;
+    uint8_t eg_timer_lock;
+    uint8_t eg_inchi;
+    uint8_t eg_shift;
+    uint8_t eg_clock;
+    uint8_t eg_clockcnt;
+    uint8_t eg_clockquotinent;
+    uint8_t eg_inc;
+    uint8_t eg_ratemax[2];
+    uint8_t eg_instantattack;
+    uint8_t eg_inclinear;
+    uint8_t eg_incattack;
+    uint8_t eg_mute;
+    uint16_t eg_outtemp[2];
+    uint16_t eg_out[2];
+    uint16_t eg_am;
+    uint8_t eg_ams[2];
+    uint8_t eg_timercarry;
+    uint32_t eg_timer;
+    uint32_t eg_timer2;
+    uint8_t eg_timerbstop;
+    uint32_t eg_serial;
+    uint8_t eg_serial_bit;
+    uint8_t eg_test;
+    
 
-// Main OPM device class
-class OpmDevice {
-public:
-    OpmDevice() = default;
-    virtual ~OpmDevice() = default;
+    // Phase Gen
+    uint16_t pg_fnum[32];
+    uint8_t pg_kcode[32];
+    uint32_t pg_inc[32];
+    uint32_t pg_phase[32];
+    uint8_t pg_reset[32];
+    uint8_t pg_reset_latch[32];
+    uint32_t pg_serial;
+    uint8_t pg_opp_pms;
+    uint8_t pg_opp_dt2[32];
 
-    // Initialize the OPM device
-    // clock: OPM clock frequency in Hz (typically 3579545 for X68000)
-    // sample_rate: audio sample rate in Hz (e.g., 44100)
-    virtual bool Init(uint32_t clock, uint32_t sample_rate) = 0;
+    // Operator
+    uint16_t op_phase_in;
+    uint16_t op_mod_in;
+    uint16_t op_phase;
+    uint16_t op_logsin[3];
+    uint16_t op_atten;
+    uint16_t op_exp[2];
+    uint8_t op_pow[2];
+    uint32_t op_sign;
+    int16_t op_out[6];
+    uint32_t op_connect;
+    uint8_t op_counter;
+    uint8_t op_fbupdate;
+    uint8_t op_fbshift;
+    uint8_t op_c1update;
+    uint8_t op_modtable[5];
+    int16_t op_m1[8][2];
+    int16_t op_c1[8];
+    int16_t op_mod[3];
+    int16_t op_fb[2];
+    uint8_t op_mixl;
+    uint8_t op_mixr;
+    uint8_t op_opp_rl;
+    uint8_t op_opp_fb[3];
 
-    // Reset the device to initial state
-    virtual void Reset() = 0;
+    // Mixer
 
-    // Write to a register
-    virtual void WriteReg(uint8_t reg, uint8_t data) = 0;
+    int32_t mix[2];
+    int32_t mix2[2];
+    int32_t mix_op;
+    uint32_t mix_serial[2];
+    uint32_t mix_bits;
+    uint32_t mix_top_bits_lock;
+    uint8_t mix_sign_lock;
+    uint8_t mix_sign_lock2;
+    uint8_t mix_exp_lock;
+    uint8_t mix_clamp_low[2];
+    uint8_t mix_clamp_high[2];
+    uint8_t mix_out_bit;
 
-    // Read status register
-    virtual uint8_t ReadStatus() = 0;
+    // Output
+    uint8_t smp_so;
+    uint8_t smp_sh1;
+    uint8_t smp_sh2;
 
-    // Generate audio samples
-    // buffer: output buffer, stereo interleaved (L, R, L, R...)
-    // num_samples: number of sample pairs to generate
-    virtual void Generate(Sample* buffer, size_t num_samples) = 0;
+    // Noise
+    uint32_t noise_lfsr;
+    uint32_t noise_timer;
+    uint8_t noise_timer_of;
+    uint8_t noise_update;
+    uint8_t noise_bit;
 
-    // Alternative: generate and add to existing buffer (for mixing)
-    virtual void Mix(Sample* buffer, size_t num_samples) = 0;
+    // Register set
+    uint8_t mode_test[8];
+    uint8_t mode_kon_operator[4];
+    uint8_t mode_kon_channel;
 
-    // Timer control
-    // Advance timers by given microseconds, returns true if interrupt occurred
-    virtual bool AdvanceTimers(uint32_t microseconds) = 0;
+    uint8_t reg_address;
+    uint8_t reg_address_ready;
+    uint8_t reg_data;
+    uint8_t reg_data_ready;
 
-    // Get microseconds until next timer event (for scheduling)
-    virtual uint32_t GetNextEventTime() const = 0;
+    uint8_t ch_rl[8];
+    uint8_t ch_fb[8];
+    uint8_t ch_connect[8];
+    uint8_t ch_kc[8];
+    uint8_t ch_kf[8];
+    uint8_t ch_pms[8];
+    uint8_t ch_ams[8];
 
-    // Set interrupt callback
-    using InterruptCallback = void (*)(void* context, bool irq);
-    virtual void SetInterruptCallback(InterruptCallback cb, void* context) = 0;
+    uint8_t sl_dt1[32];
+    uint8_t sl_mul[32];
+    uint8_t sl_tl[32];
+    uint8_t sl_ks[32];
+    uint8_t sl_ar[32];
+    uint8_t sl_am_e[32];
+    uint8_t sl_d1r[32];
+    uint8_t sl_dt2[32];
+    uint8_t sl_d2r[32];
+    uint8_t sl_d1l[32];
+    uint8_t sl_rr[32];
 
-    // Volume control (in 0.5dB steps, 0 = full volume)
-    virtual void SetVolume(int db) = 0;
+    uint8_t noise_en;
+    uint8_t noise_freq;
 
-    // Channel mask (bitmask, 1 = enabled)
-    virtual void SetChannelMask(uint32_t mask) = 0;
+    // OPP
+    uint8_t ch_ramp_div[8];
+    uint8_t reg_20_delay;
+    uint8_t reg_28_delay;
+    uint8_t reg_30_delay;
+    uint8_t opp_tl_cnt[8];
+    uint16_t opp_tl[32];
 
-    // Debug: get operator output
-    virtual int32_t DebugGetOpOut(int ch, int op) const = 0;
+    // Timer
+    uint16_t timer_a_reg;
+    uint8_t timer_b_reg;
+    uint8_t timer_a_temp;
+    uint8_t timer_a_do_reset, timer_a_do_load;
+    uint8_t timer_a_inc;
+    uint16_t timer_a_val;
+    uint8_t timer_a_of;
+    uint8_t timer_a_load;
+    uint8_t timer_a_status;
 
-    // Get channel states for UI
-    virtual void GetChannelStates(ChannelState* states, int max_channels) = 0;
-};
+    uint8_t timer_b_sub;
+    uint8_t timer_b_sub_of;
+    uint8_t timer_b_inc;
+    uint16_t timer_b_val;
+    uint8_t timer_b_of;
+    uint8_t timer_b_do_reset, timer_b_do_load;
+    uint8_t timer_b_temp;
+    uint8_t timer_b_status;
+    uint8_t timer_irq;
 
-// Factory function to create OPM device
-OpmDevice* CreateOpmDevice();
-void DestroyOpmDevice(OpmDevice* device);
+    uint8_t lfo_freq_hi;
+    uint8_t lfo_freq_lo;
+    uint8_t lfo_pmd;
+    uint8_t lfo_amd;
+    uint8_t lfo_wave;
 
-} // namespace opm
+    uint8_t timer_irqa, timer_irqb;
+    uint8_t timer_loada, timer_loadb;
+    uint8_t timer_reseta, timer_resetb;
+    uint8_t mode_csm;
 
-#endif // OPM_H
+    uint8_t nc_active, nc_active_lock, nc_sign, nc_sign_lock, nc_sign_lock2;
+    uint8_t nc_bit;
+    uint16_t nc_out;
+    int16_t op_mix;
+
+    uint8_t kon_csm, kon_csm_lock;
+    uint8_t kon_do;
+    uint8_t kon_chanmatch;
+    uint8_t kon[32];
+    uint8_t kon2[32];
+    uint8_t mode_kon[32];
+
+    // DAC
+    uint8_t dac_osh1, dac_osh2;
+    uint16_t dac_bits;
+    int32_t dac_output[2];
+} opm_t;
+
+void OPM_Clock(opm_t *chip, int32_t *output, uint8_t *sh1, uint8_t *sh2, uint8_t *so);
+void OPM_Write(opm_t *chip, uint32_t port, uint8_t data);
+uint8_t OPM_Read(opm_t *chip, uint32_t port);
+uint8_t OPM_ReadIRQ(opm_t *chip);
+uint8_t OPM_ReadCT1(opm_t *chip);
+uint8_t OPM_ReadCT2(opm_t *chip);
+void OPM_SetIC(opm_t *chip, uint8_t ic);
+void OPM_Reset(opm_t *chip, uint32_t flags);
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
+
+#endif

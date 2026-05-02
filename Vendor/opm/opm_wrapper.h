@@ -1,67 +1,56 @@
-/*
- * Copyright (c) 2026
- *
- * Permission to use, copy, modify, and/or distribute this software for any
- * purpose with or without fee is hereby granted.
- *
- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- */
-
 #ifndef OPM_WRAPPER_H
 #define OPM_WRAPPER_H
 
+#include <stdint.h>
 #include "opm.h"
 
-// OPM wrapper for MXDRVG compatibility
-// This wrapper provides an interface similar to FOOpmWrapper but uses
-// the new original OPM driver implementation
-class OpmWrapper {
-public:
-    OpmWrapper();
-    ~OpmWrapper();
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-    // Initialize the OPM device
-    // clock: OPM clock frequency in Hz (typically 3579545 for X68000)
-    // rate: audio sample rate in Hz (e.g., 44100)
-    void InitWrapper(uint32_t clock, uint32_t rate, bool filter = false);
+typedef struct MP4MChannelState {
+    uint8_t keyCode;
+    uint8_t keyOn;
+    uint8_t volume;
+    uint8_t velocity;
+    int16_t bend;
+    uint8_t pan;
+    uint8_t keyOffset;
+    uint8_t active;
+} MP4MChannelState;
 
-    // Set volume (in dB, 0 = full volume)
-    void SetVolumeWrapper(int db);
+// OPM interrupt callback type
+typedef void (*OPMIntFuncPtr)(void);
 
-    // Write to OPM register
-    void SetRegWrapper(uint8_t addr, uint8_t data);
+// Initialize OPM wrapper
+void OPM_InitWrapper(uint32_t clock, uint32_t rate, int filter);
 
-    // Mix audio samples
-    // buf: output buffer, stereo interleaved (L, R, L, R...)
-    // nsamples: number of sample pairs to generate
-    void MixWrapper(int16_t* buf, int nsamples);
+// Write OPM register
+void OPM_SetRegWrapper(uint8_t addr, uint8_t data);
 
-    // Get microseconds until next timer event
-    unsigned long GetNextEventWrapper();
+// Mix audio samples
+void OPM_MixWrapper(int16_t* buf, int nsamples);
 
-    // Advance timers by given microseconds
-    // This should be called from MXDRVG's timer interrupt handler
-    void CountWrapper(uint32_t us);
+// Get next event time in microseconds
+unsigned long OPM_GetNextEventWrapper(void);
 
-    // Interrupt callback for MXDRVG
-    static void OPMINT_FUNC_Callback(void* context, bool irq);
+// Count time (timer advance)
+void OPM_CountWrapper(uint32_t us);
 
-    // Get channel states for UI
-    void GetChannelStates(opm::ChannelState* states, int max_channels);
+// Get channel states
+void OPM_GetChannelStates(struct MP4MChannelState* states, int max_channels);
 
-private:
-    opm::OpmDevice* device_;
-    int volume_db_;
+// Set global interrupt callback
+void OPM_SetIntFunc(OPMIntFuncPtr func);
 
-public:
-    // Static interrupt callback (public for access from mxdrvg_core.h)
-    static void (*OPMINT_FUNC)(void);
-};
+// Get global interrupt callback
+OPMIntFuncPtr OPM_GetIntFunc(void);
+
+// Get pointer to opm_t instance (for MXDRVG_GetWork)
+opm_t* OPM_GetChipPtr(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // OPM_WRAPPER_H

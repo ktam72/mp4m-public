@@ -4,18 +4,7 @@
 //
 
 #import <Foundation/Foundation.h>
-
-// チャンネル状態
-typedef struct {
-    uint8_t keyCode;
-    uint8_t velocity;
-    uint8_t keyOn;
-    uint8_t volume;
-    int16_t bend;
-    uint8_t pan;
-    uint8_t keyOffset;
-    uint8_t active;   // 追加: チャンネルがアクティブか
-} MP4MChannelState;
+#include "../Vendor/opm/opm_wrapper.h"
 
 @interface MXDRVGBridge : NSObject
 

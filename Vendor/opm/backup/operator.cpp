@@ -15,7 +15,6 @@
 
 #include "operator.h"
 #include <cmath>
-#include <cstdio>
 
 namespace opm {
 
@@ -130,16 +129,19 @@ void Operator::InitializeTables() {
 
     // ===== EG step table (rate to increment mapping) =====
     // YM2151 EG rates: 0-63 (effective rate after KS correction)
-    // Formula: steps per sample ≈ 2.537 * 2^(rate-63) in 16.16 fixed-point
-    // Reference: YM2151 logarithmic rate scaling
+    // Formula: steps per sample in 16.16 fixed-point
+    // Reference: Nuked OPM - eg_step_table
+    // EG rate calculation follows YM2151 datasheet: increment based on rate and clock cycles
     for (int rate = 0; rate < 64; rate++) {
         if (rate == 0) {
             eg_step_table_[rate] = 0;
         } else if (rate >= 60) {
-            // Very fast rates: instant attack (Nuked OPM behavior for rate 60+)
-            eg_step_table_[rate] = 0x7FFFFFFF; // Effectively infinite step
+            // Fast rates: use reasonable high value instead of INT_MAX
+            // This allows multiple updates per sample for very fast attack
+            eg_step_table_[rate] = 4 << 16;  // ~4 units per sample for fast attack
         } else {
             // Calculate steps per sample in 16.16 fixed point
+            // Nuked OPM formula: steps ≈ rate-dependent increment
             double steps = 2.537 * pow(2.0, rate - 63);
             uint32_t steps_fixed = static_cast<uint32_t>(steps * 65536.0);
             if (steps_fixed == 0 && rate > 0) {
@@ -377,11 +379,13 @@ void Operator::UpdateEG() {
             uint8_t effective_ar = ApplyKSToRate(ar_, ks_, kc_);
             step = eg_step_table_[effective_ar];
             eg_count_ += step;
-            
+
+
             if (eg_count_ >= (1 << 16)) {
-                eg_level_ -= (eg_count_ >> 16);
+                uint8_t delta = eg_count_ >> 16;
+                eg_level_ -= delta;
                 eg_count_ &= 0xffff;
-                
+
                 if (eg_level_ <= 0) {
                     eg_level_ = 0;
                     eg_phase_ = EGPhase::Decay;
@@ -396,11 +400,11 @@ void Operator::UpdateEG() {
             uint8_t effective_dr = ApplyKSToRate(dr_, ks_, kc_);
             step = eg_step_table_[effective_dr];
             eg_count_ += step;
-            
+
             if (eg_count_ >= (1 << 16)) {
                 eg_level_ += (eg_count_ >> 16);
                 eg_count_ &= 0xffff;
-                
+
                 if (eg_level_ >= sl_) {
                     eg_level_ = sl_;
                     eg_phase_ = EGPhase::Sustain;
@@ -411,22 +415,25 @@ void Operator::UpdateEG() {
         }
         
         case EGPhase::Sustain: {
-            // Sustain: EG level slowly increases (or stays constant)
+            // Sustain: EG level slowly increases until KeyOff
+            // YM2151 behavior: Sustain phase continues indefinitely until KeyOff
+            // SR > 0 causes eg_level to increase, but phase does NOT transition to Off
             if (sr_ > 0) {
                 uint8_t effective_sr = ApplyKSToRate(sr_, ks_, kc_);
                 step = eg_step_table_[effective_sr];
                 eg_count_ += step;
-                
+
                 if (eg_count_ >= (1 << 16)) {
                     eg_level_ += (eg_count_ >> 16);
                     eg_count_ &= 0xffff;
-                    
+
                     if (eg_level_ >= 127) {
                         eg_level_ = 127;
-                        eg_phase_ = EGPhase::Off;
+                        // Stay in Sustain phase, do NOT transition to Off
                     }
                 }
             }
+            // Sustain phase lasts until KeyOff (then UpdateEG's first check will set Release)
             break;
         }
         
@@ -448,7 +455,7 @@ void Operator::UpdateEG() {
             }
             break;
         }
-        
+
         case EGPhase::Off:
         default:
             eg_level_ = 127;
@@ -462,7 +469,7 @@ int32_t Operator::Calculate(int32_t in, int32_t am, int32_t pm) {
         out_ = 0;
         return 0;
     }
-    
+
     // Phase calculation (10-bit phase from 21-bit counter)
     uint32_t phase = (pg_count_ >> 11) & 0x3FF;
     
@@ -494,7 +501,8 @@ int32_t Operator::Calculate(int32_t in, int32_t am, int32_t pm) {
     // tl_: 0=loudest, 127=silent (7-bit)
     // Shift by 3 to convert to 10-bit attenuation
     uint32_t atten = logsin_val + ((eg_level_ + tl_) << 3);
-    
+
+
     // Clamp to 10 bits (0x3FF = silent)
     if (atten > 0x3FF) atten = 0x3FF;
     

@@ -18,6 +18,7 @@
 #include "lfo.h"
 #include "timer.h"
 #include <cstring>
+#include <cstdio>
 #include <cmath>
 
 namespace opm {
@@ -512,21 +513,21 @@ void OpmDeviceImpl::Mix(Sample* buffer, size_t num_samples) {
                 channels_[ch].Prepare();
             }
         }
-        
+
         // Advance LFO
         lfo_.Advance(1);
         int32_t am = lfo_.GetAM() << 16;
         int32_t pm = lfo_.GetPM();
-        
+
         // Generate for each channel
         int32_t left = 0, right = 0;
-        
+
         for (int ch = 0; ch < 8; ch++) {
             if (!(channel_mask_ & (1 << ch))) continue;
             if (!channels_[ch].IsActive()) continue;
-            
+
             int32_t out = channels_[ch].Calculate(am, pm);
-            
+
             uint8_t pan = channels_[ch].GetPan();
             if (pan & 1) left += out;   // L
             if (pan & 2) right += out;  // R
