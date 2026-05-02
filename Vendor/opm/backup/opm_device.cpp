@@ -167,6 +167,12 @@ bool OpmDeviceImpl::Init(uint32_t clock, uint32_t sample_rate) {
     clock_ = clock;
     sample_rate_ = sample_rate;
     timers_.Init(clock_);  // Initialize timer with clock frequency
+    timers_.SetTimerA(0);   // Set Timer A to max period
+    timers_.SetTimerB(0);   // Set Timer B to max period
+    timers_.LoadTimerA(true);  // Load and activate Timer A
+    timers_.LoadTimerB(true);  // Load and activate Timer B
+    timers_.EnableTimerA(true);  // Enable Timer A interrupt
+    timers_.EnableTimerB(true);  // Enable Timer B interrupt
     Reset();
     return true;
 }

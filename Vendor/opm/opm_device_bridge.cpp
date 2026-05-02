@@ -37,11 +37,13 @@ void OPM_InitWrapper(uint32_t clock, uint32_t rate, int filter) {
 
 void OPM_SetRegWrapper(uint8_t addr, uint8_t data) {
     static int reg_count = 0;
-    if (++reg_count <= 10) {
+    if (++reg_count <= 50 || reg_count % 1000 == 0) {
         fprintf(stderr, "[OPM_SetReg] #%d addr=0x%02x data=0x%02x device=%p\n", reg_count, addr, data, (void*)g_opm_device);
     }
     if (g_opm_device) {
         g_opm_device->WriteReg(addr, data);
+    } else {
+        fprintf(stderr, "[OPM_SetReg] WARNING: device is nullptr!\n");
     }
 }
 
@@ -60,16 +62,11 @@ void OPM_MixWrapper(int16_t* buf, int nsamples) {
         return;
     }
 
-    if (mix_count <= 5) {
-        fprintf(stderr, "[OPM_MixWrapper] #%d calling Mix, nsamples=%d device=%p\n",
-                mix_count, nsamples, (void*)g_opm_device);
-    }
-
     g_opm_device->Mix((opm::Sample*)buf, nsamples);
 
-    if (mix_count <= 5) {
-        fprintf(stderr, "[OPM_MixWrapper] #%d after Mix, buf[0]=%d buf[1]=%d\n",
-                mix_count, buf[0], buf[1]);
+    if (mix_count <= 10) {
+        fprintf(stderr, "[OPM_MixWrapper] #%d nsamples=%d, buf[0]=%d buf[1]=%d buf[2]=%d buf[3]=%d\n",
+                mix_count, nsamples, buf[0], buf[1], buf[2], buf[3]);
     }
 }
 
