@@ -62,16 +62,9 @@ final class PlayerViewModel: @unchecked Sendable {
 
         title = loadedTitle ?? url.deletingPathExtension().lastPathComponent
 
-        // PDX ファイルを探す
-        let baseName = url.deletingPathExtension()
-        let pdxPath = baseName.appendingPathExtension("pdx")
-        let pdxPathUpper = baseName.appendingPathExtension("PDX")
-        let fileManager = FileManager.default
-
-        if fileManager.fileExists(atPath: pdxPath.path) {
-            pdxFileName = pdxPath.lastPathComponent
-        } else if fileManager.fileExists(atPath: pdxPathUpper.path) {
-            pdxFileName = pdxPathUpper.lastPathComponent
+        // PDX ファイル名を audioService から取得
+        if let pdxName = audioService.pdxFileName() {
+            pdxFileName = pdxName
         } else {
             pdxFileName = "(no PDX)"
         }
@@ -167,9 +160,9 @@ final class PlayerViewModel: @unchecked Sendable {
 
         currentTimeMs = audioService.currentPlayTimeMs()
         let fmChannels = audioService.getChannelStates()
-        for i in 0..<min(channels.count, fmChannels.count) {
-            channels[i] = fmChannels[i]
-        }
+
+        // @Observable が配列要素の変更を検出できないため、配列全体を置き換える
+        channels = fmChannels
 
         updateSpectrum()
 

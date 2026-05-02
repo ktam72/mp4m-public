@@ -37,6 +37,7 @@ typedef struct {
 + (int32_t)totalPlayTimeMs;
 + (int32_t)getPCM:(int16_t *)buf frameCount:(int32_t)frameCount;
 + (void)getChannelStates:(MP4MChannelState *)states;
++ (nullable NSString *)pdxFileName;
 
 @end
 

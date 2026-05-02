@@ -36,6 +36,10 @@ final class MXDRVAudioEngine: AudioEngineService {
         MXDRVGBridge.loadMDXFile(path)
     }
 
+    func pdxFileName() -> String? {
+        MXDRVGBridge.pdxFileName()
+    }
+
     func playWithLoopCount(_ loopCount: Int32) -> Int {
         MXDRVGBridge.play(withLoopCount: loopCount)
         return Int(MXDRVGBridge.totalPlayTimeMs())

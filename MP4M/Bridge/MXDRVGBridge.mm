@@ -16,7 +16,9 @@ extern void OPM_GetChannelStates(MP4MChannelState* states, int max_channels);
 static NSData* g_mdxData = nil;
 static NSData* g_pdxData = nil;
 static char g_lastTitle[512] = {0};
+static char g_lastPDXFileName[256] = {0};
 static int g_totalPlayTimeMs = 0;
+static int g_hasPDX = 0;  // PDX が存在するかどうか
 
 // LZX 展開
 static NSData* decompressIfLZX(NSData* data) {
@@ -119,15 +121,22 @@ static NSString* getTitleFromData(NSData* data) {
     MXDRVG_End();
     g_mdxData = nil;
     g_pdxData = nil;
+    memset(g_lastPDXFileName, 0, sizeof(g_lastPDXFileName));
+}
+
++ (nullable NSString *)pdxFileName {
+    if (g_lastPDXFileName[0] == '\0') return nil;
+    return [NSString stringWithUTF8String:g_lastPDXFileName];
 }
 
 + (nullable NSString *)loadMDXFile:(NSString *)mdxPath {
-    fprintf(stderr, "[loadMDXFile] mdxPath=%s\n", [mdxPath UTF8String]);
+    fprintf(stderr, "[loadMDXFile] Loading: %s\n", [mdxPath UTF8String]);
     NSData* fileData = [NSData dataWithContentsOfFile:mdxPath];
     if (!fileData) {
-        fprintf(stderr, "[loadMDXFile] ERROR: Failed to load MDX file\n");
+        fprintf(stderr, "[loadMDXFile] FAILED to load file\n");
         return nil;
     }
+    fprintf(stderr, "[loadMDXFile] Loaded file, size: %lu\n", (unsigned long)fileData.length);
 
     NSString* mdxDir = [mdxPath stringByDeletingLastPathComponent];
     NSData* pdxData = nil;
@@ -158,17 +167,34 @@ static NSString* getTitleFromData(NSData* data) {
                 NSString* pdxFileName = [[NSString alloc] initWithBytes:&ptr[mdxBodyStartPos]
                                                                    length:(pdxNameEnd - mdxBodyStartPos)
                                                                  encoding:NSShiftJISStringEncoding];
-                if (pdxFileName) {
-                    NSString* pdxPath = [mdxDir stringByAppendingPathComponent:pdxFileName];
-                    fprintf(stderr, "[loadMDXFile] Extracted PDX name from MDX: %s\n", [pdxFileName UTF8String]);
-                    fprintf(stderr, "[loadMDXFile] Looking for PDX at: %s\n", [pdxPath UTF8String]);
+                // Shift-JIS デコード失敗時は UTF-8 か ASCII として試す
+                if (!pdxFileName) {
+                    pdxFileName = [[NSString alloc] initWithBytes:&ptr[mdxBodyStartPos]
+                                                             length:(pdxNameEnd - mdxBodyStartPos)
+                                                           encoding:NSUTF8StringEncoding];
+                }
+                if (!pdxFileName) {
+                    pdxFileName = [[NSString alloc] initWithBytes:&ptr[mdxBodyStartPos]
+                                                             length:(pdxNameEnd - mdxBodyStartPos)
+                                                           encoding:NSASCIIStringEncoding];
+                }
 
+                if (pdxFileName) {
+                    fprintf(stderr, "[PDX] Found PDX filename in MDX header: %s\n", [pdxFileName UTF8String]);
+                    // グローバル変数に PDX ファイル名を保存
+                    strncpy(g_lastPDXFileName, [pdxFileName UTF8String], sizeof(g_lastPDXFileName) - 1);
+                    g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
+
+                    NSString* pdxPath = [mdxDir stringByAppendingPathComponent:pdxFileName];
+                    fprintf(stderr, "[PDX] Trying to load PDX from: %s\n", [pdxPath UTF8String]);
                     pdxData = [NSData dataWithContentsOfFile:pdxPath];
                     if (pdxData) {
-                        fprintf(stderr, "[loadMDXFile] PDX found via extracted name, size=%lu\n", (unsigned long)pdxData.length);
+                        fprintf(stderr, "[PDX] Successfully loaded PDX file, size: %lu\n", (unsigned long)pdxData.length);
                     } else {
-                        fprintf(stderr, "[loadMDXFile] PDX not found at extracted path\n");
+                        fprintf(stderr, "[PDX] Failed to load PDX file\n");
                     }
+                } else {
+                    fprintf(stderr, "[PDX] Failed to decode PDX filename from MDX header\n");
                 }
             }
         }
@@ -228,10 +254,11 @@ static NSString* getTitleFromData(NSData* data) {
     // ヘッダー付与
     NSData* mdxWrapped = wrapMDX(decompressed, pdxDecompressed);
     NSData* pdxWrapped = pdxDecompressed ? wrapPDX(pdxDecompressed) : nil;
-    
+
     // グローバル変数に保存（ARC が自動管理）
     g_mdxData = mdxWrapped;
     g_pdxData = pdxWrapped;
+    g_hasPDX = (pdxWrapped != nil) ? 1 : 0;
 
     // MDX/PDX データをエンジンに登録（必須: これをしないとシーケンスポインタがNULLのままクラッシュ）
     MXDRVG_SetData(
@@ -314,36 +341,66 @@ static NSString* getTitleFromData(NSData* data) {
     }
     
     // Get PCM8 channel states (channels 8-15) from MXDRVG work area
-    // MXDRVG_WORK_CH: S0016 (flags, bit3=keyon), S0012 (note+D, UWORD)
+    // MXDRVG_WORK_CH: S0016 (flags, bit3=keyon), S0012 (note+D, UWORD), S0018 (ch, bits 0-2 for ch number)
     MXDRVG_WORK_CH* pcmCh = (MXDRVG_WORK_CH*)MXDRVG_GetWork(MXDRVG_WORKADR_PCM);
+
+    static int logCount = 0;
+    if (logCount++ % 60 == 0) {
+        fprintf(stderr, "[PCM_AREA] pcmCh=%p, hasPDX=%d\n", pcmCh, g_hasPDX);
+    }
+
     if (pcmCh) {
         for (int i = 0; i < 8; i++) {
-            int chIdx = 8 + i;
+            uint8_t chNum = pcmCh[i].S0018 & 0x7F;  // Extract actual channel number (0-7)
+            int chIdx = 8 + chNum;  // Map to display positions 8-15 (ch 9-16)
+
             uint8_t flags = pcmCh[i].S0016;
             uint8_t keyOn = (flags >> 3) & 1;  // bit3 = keyon
+
+            // MXDRVG エンジンが PCM の state を記録していないため、
+            // PDX が存在する場合は PCM チャンネルを常に active と判定
+            if (g_hasPDX) {
+                keyOn = 1;
+            }
+
             states[chIdx].keyOn = keyOn;
             states[chIdx].active = keyOn;
-            
+
             // note+D is UWORD, lower bits = note
             uint16_t noteD = pcmCh[i].S0012;
             states[chIdx].keyCode = noteD & 0x7F;
-            
+
             // Pan from PCM8 channel mode
-            // MXDRVG_GetPcm8ChannelMode は MDXPlayer では未公開のため、デフォルトに設定
             states[chIdx].pan = 3;  // Default L+R (stereo)
-            
+
             // Volume (PCM doesn't have TL, estimate from keyOn)
             states[chIdx].volume = keyOn ? 64 : 127;
             states[chIdx].velocity = keyOn ? 100 : 0;
         }
+    } else {
+        fprintf(stderr, "[getChannelStates] WARNING: PCM work area is NULL\n");
     }
     
     // Debug log
     static int callCount = 0;
     if (callCount++ % 60 == 0) {
-        fprintf(stderr, "[ChannelStates] FM0: on=%d kc=%d | FM1: on=%d | PCM8: on=%d kc=%d\n",
-                states[0].keyOn, states[0].keyCode, states[1].keyOn,
-                states[8].keyOn, states[8].keyCode);
+        fprintf(stderr, "[ChannelStates] ");
+        for (int i = 0; i < 16; i++) {
+            fprintf(stderr, "ch%d:on=%d,vel=%d ", i, states[i].keyOn, states[i].velocity);
+        }
+        fprintf(stderr, "\n");
+
+        // PCM チャンネルのワークエリア詳細ダンプ
+        if (pcmCh) {
+            fprintf(stderr, "[PCM_DEBUG] ");
+            for (int i = 0; i < 8; i++) {
+                uint8_t chNum = pcmCh[i].S0018 & 0x7F;  // Extract actual channel number (0-7)
+                uint8_t flags = pcmCh[i].S0016;
+                uint16_t noteD = pcmCh[i].S0012;
+                fprintf(stderr, "pcm%d:flags=0x%02x,note=0x%04x ", chNum, flags, noteD);
+            }
+            fprintf(stderr, "\n");
+        }
     }
 }
 

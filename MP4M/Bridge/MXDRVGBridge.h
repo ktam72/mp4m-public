@@ -21,5 +21,6 @@
 + (int)totalPlayTimeMs;
 + (int)getPCM:(int16_t *)buf frameCount:(int)frameCount;
 + (void)getChannelStates:(MP4MChannelState *)states;
++ (nullable NSString *)pdxFileName;
 
 @end

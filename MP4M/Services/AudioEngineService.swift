@@ -15,6 +15,9 @@ protocol AudioEngineService: AnyObject {
     /// - Returns: タイトル文字列 (nil で失敗)
     func loadMDXFile(path: String) -> String?
 
+    /// ロード済み PDX ファイル名
+    func pdxFileName() -> String?
+
     /// 再生開始 (ループ回数指定)
     /// - Parameter loopCount: ループ回数
     /// - Returns: 総再生時間 (ミリ秒)

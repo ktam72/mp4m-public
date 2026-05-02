@@ -56,7 +56,7 @@ extern volatile unsigned char OpmReg1B;  // OPM ÉåÉWÉXÉ^ $1B ÇÃì‡óe
 static TCHAR MXDRVG_WORK_CREDIT[] = TEXT("X68k MXDRV music driver version 2.06+17 Rel.X5-S (c)1988-92 milk.,K.MAEKAWA, Missy.M, Yatsube\nConverted [fMXDRVg] V3.00a Copyright (C) 2000-2011 GORRY.");
 
 static volatile MXDRVG_WORK_CH MXDRVG_WORK_CHBUF_FM[9];
-static volatile MXDRVG_WORK_CH MXDRVG_WORK_CHBUF_PCM[7];
+static volatile MXDRVG_WORK_CH MXDRVG_WORK_CHBUF_PCM[8];
 
 static volatile MXDRVG_WORK_GLOBAL G;  // MXDRVG_WORK_GLOBALBUF;
 
