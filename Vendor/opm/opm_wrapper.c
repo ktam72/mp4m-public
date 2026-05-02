@@ -26,8 +26,11 @@ void OPM_InitWrapper(uint32_t clock, uint32_t rate, int filter) {
 
 void OPM_SetRegWrapper(uint8_t addr, uint8_t data) {
     static int reg_count = 0;
-    if (++reg_count <= 100 || reg_count % 1000 == 0) {
+    if (++reg_count <= 100 || reg_count % 1000 == 0 || addr == 0x08) {
         fprintf(stderr, "[OPM_SetReg] #%d addr=0x%02x data=0x%02x\n", reg_count, addr, data);
+    }
+    if (addr == 0x08 && data != 0) {
+        fprintf(stderr, "[OPM_SetReg] !!! KEY-ON detected: addr=0x%02x data=0x%02x (channels=%d)\n", addr, data, data & 0x07);
     }
     OPM_Write(&g_chip, 0, addr);
     OPM_Write(&g_chip, 1, data);
