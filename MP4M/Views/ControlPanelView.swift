@@ -51,7 +51,13 @@ struct ControlPanelView: View {
             }
             .buttonStyle(.plain)
             Spacer()
-            Text(statusLabel).font(.mmdspSmall).foregroundColor(statusColor).padding(.horizontal, 12)
+            Text(viewModel?.pdxFileName ?? "(no PDX)")
+                .font(.mmdspSmall)
+                .foregroundColor(Color.mmdspCyan)
+                .lineLimit(1)
+                .truncationMode(.tail)
+                .frame(maxWidth: 200, alignment: .trailing)
+                .padding(.horizontal, 12)
         }
         .background(Color.mmdspBackground.opacity(0.95))
     }
@@ -62,24 +68,6 @@ struct ControlPanelView: View {
         case .playing: return "❚❚"
         case .paused:  return "▶"
         case .stopped: return "▶"
-        }
-    }
-
-    private var statusLabel: String {
-        guard let vm = viewModel else { return "■ STOP" }
-        switch vm.status {
-        case .playing: return "● PLAY"
-        case .paused:  return "‖ PAUSE"
-        case .stopped: return "■ STOP"
-        }
-    }
-
-    private var statusColor: Color {
-        guard let vm = viewModel else { return Color.mmdspText.opacity(0.4) }
-        switch vm.status {
-        case .playing: return Color.mmdspBright
-        case .paused:  return Color.mmdspAmber
-        case .stopped: return Color.mmdspText.opacity(0.4)
         }
     }
 

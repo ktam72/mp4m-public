@@ -9,6 +9,7 @@ final class PlayerViewModel: @unchecked Sendable {
 
     var status: PlayStatus = .stopped
     var title: String = ""
+    var pdxFileName: String = ""
     var currentTimeMs: Int = 0
     var totalTimeMs: Int = 0
     var loopCount: Int = 2
@@ -60,6 +61,21 @@ final class PlayerViewModel: @unchecked Sendable {
         }.value
 
         title = loadedTitle ?? url.deletingPathExtension().lastPathComponent
+
+        // PDX ファイルを探す
+        let baseName = url.deletingPathExtension()
+        let pdxPath = baseName.appendingPathExtension("pdx")
+        let pdxPathUpper = baseName.appendingPathExtension("PDX")
+        let fileManager = FileManager.default
+
+        if fileManager.fileExists(atPath: pdxPath.path) {
+            pdxFileName = pdxPath.lastPathComponent
+        } else if fileManager.fileExists(atPath: pdxPathUpper.path) {
+            pdxFileName = pdxPathUpper.lastPathComponent
+        } else {
+            pdxFileName = "(no PDX)"
+        }
+
         currentTimeMs = 0
         totalTimeMs = 0
     }
