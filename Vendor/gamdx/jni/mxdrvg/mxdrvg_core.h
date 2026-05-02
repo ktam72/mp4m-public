@@ -93,9 +93,41 @@ void* OPM_GetChipPtr(void) {
 }
 
 void OPM_GetChannelStates(void* states, int max_channels) {
-    // 本実装では何もしない（チャンネル状態はMXDRVGから直接取得）
-    (void)states;
-    (void)max_channels;
+    if (!states || max_channels < 8) return;
+
+    // 構造体のレイアウトを MP4MChannelState と一致させる
+    // typedef struct { uint8_t keyCode, velocity, keyOn, volume; int16_t bend; uint8_t pan, keyOffset, active; }
+    struct ChannelState {
+        uint8_t keyCode;
+        uint8_t velocity;
+        uint8_t keyOn;        // 0 or 1
+        uint8_t volume;
+        int16_t bend;         // int16_t（2バイト）
+        uint8_t pan;
+        uint8_t keyOffset;
+        uint8_t active;
+    };
+    ChannelState* ch_states = (ChannelState*)states;
+
+    // MXDRVG の FM チャンネルワークエリアから状態を取得
+    // MXDRVG_WORK_CH: S0016 (flags, bit3=keyon), S0012 (note+D)
+    for (int i = 0; i < 8 && i < max_channels; i++) {
+        uint8_t flags = MXDRVG_WORK_CHBUF_FM[i].S0016;
+        uint8_t keyOn = (flags >> 3) & 1;  // bit3 = keyon（0 or 1）
+        ch_states[i].keyOn = keyOn;
+        ch_states[i].active = keyOn;
+
+        // note+D の下位7ビットがノートナンバー
+        uint16_t noteD = MXDRVG_WORK_CHBUF_FM[i].S0012;
+        ch_states[i].keyCode = noteD & 0x7F;
+
+        // FM パンはボリューム情報から取得（簡略化）
+        ch_states[i].pan = 3;  // デフォルト L+R
+        ch_states[i].volume = keyOn ? 100 : 0;
+        ch_states[i].velocity = keyOn ? 127 : 0;
+        ch_states[i].bend = 0;
+        ch_states[i].keyOffset = 0;
+    }
 }
 }
 
