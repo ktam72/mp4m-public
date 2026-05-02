@@ -16,6 +16,7 @@ static opm::OpmDevice* g_opm_device = nullptr;
 void OPM_InitWrapper(uint32_t clock, uint32_t rate, int filter) {
     (void)filter;
 
+    fprintf(stderr, "[OPM_InitWrapper] ===============================\n");
     fprintf(stderr, "[OPM_InitWrapper] START clock=%u rate=%u\n", clock, rate);
 
     if (g_opm_device) {
@@ -30,9 +31,12 @@ void OPM_InitWrapper(uint32_t clock, uint32_t rate, int filter) {
     if (g_opm_device) {
         bool init_result = g_opm_device->Init(clock, rate);
         fprintf(stderr, "[OPM_InitWrapper] Init result: %d, device=%p\n", init_result, (void*)g_opm_device);
+        fprintf(stderr, "[OPM_InitWrapper] Device initialized successfully!\n");
     } else {
         fprintf(stderr, "[OPM_InitWrapper] ERROR: CreateOpmDevice returned nullptr!\n");
     }
+    fprintf(stderr, "[OPM_InitWrapper] ===============================\n");
+    fflush(stderr);
 }
 
 void OPM_SetRegWrapper(uint8_t addr, uint8_t data) {

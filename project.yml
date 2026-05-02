@@ -63,24 +63,9 @@ targets:
           - "reference_git/**"
           - "reference/**"
           - "datasheet/**"
-          - "opm.c"
-          - "opm.h"
-          - "opm_wrapper.c"
-        includes:
-          - "opm_wrapper.h"
           - "opm_device_bridge.cpp"
-      - path: Vendor/opm/backup
         includes:
-          - "opm_device.cpp"
-          - "opm.h"
-          - "channel.cpp"
-          - "channel.h"
-          - "lfo.cpp"
-          - "lfo.h"
-          - "timer.cpp"
-          - "timer.h"
-          - "operator.cpp"
-          - "operator.h"
+          - "*.c"
 
     settings:
       BRIDGING_HEADER: MP4M/Bridge/MP4M-Bridging-Header.h
