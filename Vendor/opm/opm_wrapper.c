@@ -16,17 +16,32 @@ static OPMIntFuncPtr g_int_func = NULL;
 
 void OPM_InitWrapper(uint32_t clock, uint32_t rate, int filter) {
     (void)filter;
+    fprintf(stderr, "[opm_wrapper] OPM_InitWrapper called! clock=%u rate=%u\n", clock, rate);
     g_clock = clock;
     g_sample_rate = rate;
     OPM_Reset(&g_chip, 0);
+    fprintf(stderr, "[opm_wrapper] OPM_Reset done, chip initialized\n");
+    fflush(stderr);
 }
 
 void OPM_SetRegWrapper(uint8_t addr, uint8_t data) {
+    static int reg_count = 0;
+    if (++reg_count <= 100 || reg_count % 1000 == 0) {
+        fprintf(stderr, "[OPM_SetReg] #%d addr=0x%02x data=0x%02x\n", reg_count, addr, data);
+    }
     OPM_Write(&g_chip, 0, addr);
     OPM_Write(&g_chip, 1, data);
 }
 
 void OPM_MixWrapper(int16_t* buf, int nsamples) {
+    static int mix_count = 0;
+    mix_count++;
+
+    if (mix_count <= 5) {
+        fprintf(stderr, "[OPM_MixWrapper] #%d nsamples=%d clock=%u rate=%u\n",
+                mix_count, nsamples, g_clock, g_sample_rate);
+    }
+
     for (int i = 0; i < nsamples; i++) {
         if (g_clock == 0 || g_sample_rate == 0) {
             buf[i*2 + 0] = 0;
@@ -56,6 +71,11 @@ void OPM_MixWrapper(int16_t* buf, int nsamples) {
 
         buf[i*2 + 0] = (int16_t)(sample_l > 32767 ? 32767 : (sample_l < -32768 ? -32768 : sample_l));
         buf[i*2 + 1] = (int16_t)(sample_r > 32767 ? 32767 : (sample_r < -32768 ? -32768 : sample_r));
+    }
+
+    if (mix_count <= 5) {
+        fprintf(stderr, "[OPM_MixWrapper] #%d done: buf[0]=%d buf[1]=%d\n",
+                mix_count, buf[0], buf[1]);
     }
 }
 
