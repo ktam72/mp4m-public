@@ -324,18 +324,24 @@ void Operator::UpdatePGDiff() {
     }
     inc &= 0xfffff;  // 20-bit phase increment
     
-    // Apply DT1 (detune)
+    // Apply DT1 (detune) - Nuked OPM 準拠
     if (dt1_ > 0) {
-        // Nuked OPM pg_detune[8] table
         static const int32_t pg_detune[8] = { 16, 17, 19, 20, 22, 24, 27, 29 };
-        int32_t dt1_cents = (dt1_ > 3) ? -(7 - dt1_) : (dt1_ - 1);
-        if (dt1_cents != 0) {
-            // Calculate detune based on block and note
-            int32_t note = kc_ & 3;
-            int32_t detune = 0;
-            if (dt1_cents > 0) {
-                detune = pg_detune[(0 << 2) | note] >> (9 - (0));  // Simplified
-            }
+        int32_t dt_l = dt1_ & 3;  // DT1 magnitude (bits 0-1)
+        if (dt_l) {
+            // Block-dependent detune calculation (Nuked OPM)
+            int32_t kcode_adj = kc_;
+            if (kcode_adj > 0x1c) kcode_adj = 0x1c;  // Clamp
+            int32_t block = kcode_adj >> 2;
+            int32_t note = kcode_adj & 3;
+            // sum = block + 9 + extra
+            // extra = 1 if dt_l==3 OR (dt_l & 2)!=0
+            int32_t sum = block + 9 + ((dt_l == 3) | (dt_l & 2));
+            int32_t sum_h = sum >> 1;
+            int32_t sum_l = sum & 1;
+            int32_t detune = pg_detune[(sum_l << 2) | note] >> (9 - sum_h);
+
+            // Apply direction (DT1 bit 2)
             if (dt1_ & 0x04) {
                 basefreq -= detune;
             } else {
