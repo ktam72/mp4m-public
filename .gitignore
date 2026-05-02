@@ -32,5 +32,20 @@ build/
 *.tmp
 /tmp/
 
+# Test binaries and sources
+test_*
+mdx_player_cli
+mdx_player_cli.cpp
+opm_interface.cpp
+opm_interface.h
+fmgen_wrapper.h
+compile_and_test_lzx.sh
+
+# Vendor backups
+Vendor/opm/backup/
+
+# Test directory
+build_test/
+
 # Dependencies (if any)
 node_modules/
