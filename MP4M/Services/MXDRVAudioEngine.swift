@@ -80,7 +80,7 @@ final class MXDRVAudioEngine: AudioEngineService {
     }
 
     func renderPCM(into buffer: UnsafeMutablePointer<Int16>, frameCount: Int32) -> Int32 {
-        MXDRVGBridge.getPCM(buffer, frameCount: frameCount)
+        return MXDRVGBridge.getPCM(buffer, frameCount: frameCount)
     }
 
     func startEngine() {
