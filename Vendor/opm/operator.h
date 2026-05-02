@@ -67,7 +67,8 @@ public:
 
     // Update internal state for next sample
     // Must be called once per sample (after Calculate)
-    void Prepare();
+    // pm: LFO pitch modulation value (used to calculate final frequency)
+    void Prepare(int32_t pm = 0);
 
     // Check if operator is active
     bool IsActive() const { return eg_phase_ != EGPhase::Off; }
@@ -84,6 +85,8 @@ private:
     uint32_t pg_diff_;       // Phase increment per sample
     int32_t detune_;         // Fine detune value (-3 to +3 cents)
     int32_t detune2_;        // Coarse detune value (semitones)
+    uint8_t kcode_adj_;      // Adjusted kcode (after DT2/KF/PM) for DT1 calculation
+    int32_t pg_basefreq_;    // Basefreq before detune application (for intermediate calculations)
 
     // Envelope Generator state
     EGPhase eg_phase_;       // Current EG phase
@@ -127,7 +130,7 @@ private:
 
     // Helper functions
     void UpdateDetune();
-    void UpdatePGDiff();
+    void UpdatePGDiff(int32_t pm = 0);
     void UpdateEG();
 };
 

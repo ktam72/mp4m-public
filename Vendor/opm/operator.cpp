@@ -15,7 +15,6 @@
 
 #include "operator.h"
 #include <cmath>
-#include <cstdio>
 
 namespace opm {
 
@@ -62,44 +61,45 @@ static const uint16_t logsin_rom[256] = {
     0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000, 0x000
 };
 
-// Exp table ROM (from Nuked OPM)
+// Exp table ROM (Nuked OPM official)
 static const uint16_t exp_rom[256] = {
     0x7fa, 0x7f5, 0x7ef, 0x7ea, 0x7e4, 0x7df, 0x7da, 0x7d4,
     0x7cf, 0x7c9, 0x7c4, 0x7bf, 0x7b9, 0x7b4, 0x7ae, 0x7a9,
-    0x7a4, 0x79f, 0x79a, 0x794, 0x78f, 0x78a, 0x785, 0x780,
-    0x77b, 0x776, 0x771, 0x76c, 0x768, 0x763, 0x75e, 0x759,
-    0x755, 0x750, 0x74b, 0x746, 0x742, 0x73d, 0x738, 0x734,
-    0x72f, 0x72a, 0x726, 0x721, 0x71c, 0x718, 0x713, 0x70f,
-    0x70a, 0x706, 0x701, 0x6fd, 0x6f8, 0x6f4, 0x6ef, 0x6eb,
-    0x6e6, 0x6e2, 0x6de, 0x6d9, 0x6d5, 0x6d0, 0x6cc, 0x6c8,
-    0x6c3, 0x6bf, 0x6bb, 0x6b6, 0x6b2, 0x6ae, 0x6aa, 0x6a5,
-    0x6a1, 0x69d, 0x699, 0x694, 0x690, 0x68c, 0x688, 0x684,
-    0x67f, 0x67b, 0x677, 0x673, 0x66f, 0x66b, 0x667, 0x663,
-    0x65f, 0x65b, 0x657, 0x653, 0x64f, 0x64b, 0x647, 0x643,
-    0x63f, 0x63b, 0x637, 0x633, 0x62f, 0x62b, 0x628, 0x624,
-    0x620, 0x61c, 0x618, 0x614, 0x610, 0x60c, 0x609, 0x605,
-    0x601, 0x5fd, 0x5f9, 0x5f5, 0x5f1, 0x5ee, 0x5ea, 0x5e6,
-    0x5e2, 0x5de, 0x5db, 0x5d7, 0x5d3, 0x5d0, 0x5cc, 0x5c8,
-    0x5c5, 0x5c1, 0x5bd, 0x5ba, 0x5b6, 0x5b2, 0x5af, 0x5ab,
-    0x5a8, 0x5a4, 0x5a0, 0x59d, 0x599, 0x596, 0x592, 0x58f,
-    0x58b, 0x588, 0x584, 0x581, 0x57d, 0x57a, 0x576, 0x573,
-    0x56f, 0x56c, 0x568, 0x565, 0x561, 0x55e, 0x55b, 0x557,
-    0x554, 0x551, 0x54d, 0x54a, 0x547, 0x543, 0x540, 0x53c,
-    0x539, 0x536, 0x532, 0x52f, 0x52c, 0x528, 0x525, 0x522,
-    0x51e, 0x51b, 0x518, 0x515, 0x511, 0x50e, 0x50b, 0x508,
-    0x504, 0x501, 0x4fe, 0x4fa, 0x4f7, 0x4f4, 0x4f1, 0x4ed,
-    0x4ea, 0x4e7, 0x4e4, 0x4e0, 0x4dd, 0x4da, 0x4d7, 0x4d4,
-    0x4d0, 0x4cd, 0x4ca, 0x4c7, 0x4c4, 0x4c0, 0x4bd, 0x4ba,
-    0x4b7, 0x4b4, 0x4b1, 0x4ae, 0x4ab, 0x4a7, 0x4a4, 0x4a1,
-    0x49e, 0x49b, 0x498, 0x495, 0x492, 0x48f, 0x48c, 0x489,
-    0x486, 0x483, 0x480, 0x47c, 0x479, 0x476, 0x473, 0x470,
-    0x46d, 0x46a, 0x467, 0x464, 0x461, 0x45e, 0x45b, 0x458,
-    0x455, 0x452, 0x44f, 0x44c, 0x449, 0x446, 0x443, 0x440
+    0x7a4, 0x79f, 0x799, 0x794, 0x78f, 0x78a, 0x784, 0x77f,
+    0x77a, 0x775, 0x770, 0x76a, 0x765, 0x760, 0x75b, 0x756,
+    0x751, 0x74c, 0x747, 0x742, 0x73d, 0x738, 0x733, 0x72e,
+    0x729, 0x724, 0x71f, 0x71a, 0x715, 0x710, 0x70b, 0x706,
+    0x702, 0x6fd, 0x6f8, 0x6f3, 0x6ee, 0x6e9, 0x6e5, 0x6e0,
+    0x6db, 0x6d6, 0x6d2, 0x6cd, 0x6c8, 0x6c4, 0x6bf, 0x6ba,
+    0x6b5, 0x6b1, 0x6ac, 0x6a8, 0x6a3, 0x69e, 0x69a, 0x695,
+    0x691, 0x68c, 0x688, 0x683, 0x67f, 0x67a, 0x676, 0x671,
+    0x66d, 0x668, 0x664, 0x65f, 0x65b, 0x657, 0x652, 0x64e,
+    0x649, 0x645, 0x641, 0x63c, 0x638, 0x634, 0x630, 0x62b,
+    0x627, 0x623, 0x61e, 0x61a, 0x616, 0x612, 0x60e, 0x609,
+    0x605, 0x601, 0x5fd, 0x5f9, 0x5f5, 0x5f0, 0x5ec, 0x5e8,
+    0x5e4, 0x5e0, 0x5dc, 0x5d8, 0x5d4, 0x5d0, 0x5cc, 0x5c8,
+    0x5c4, 0x5c0, 0x5bc, 0x5b8, 0x5b4, 0x5b0, 0x5ac, 0x5a8,
+    0x5a4, 0x5a0, 0x59c, 0x599, 0x595, 0x591, 0x58d, 0x589,
+    0x585, 0x581, 0x57e, 0x57a, 0x576, 0x572, 0x56f, 0x56b,
+    0x567, 0x563, 0x560, 0x55c, 0x558, 0x554, 0x551, 0x54d,
+    0x549, 0x546, 0x542, 0x53e, 0x53b, 0x537, 0x534, 0x530,
+    0x52c, 0x529, 0x525, 0x522, 0x51e, 0x51b, 0x517, 0x514,
+    0x510, 0x50c, 0x509, 0x506, 0x502, 0x4ff, 0x4fb, 0x4f8,
+    0x4f4, 0x4f1, 0x4ed, 0x4ea, 0x4e7, 0x4e3, 0x4e0, 0x4dc,
+    0x4d9, 0x4d6, 0x4d2, 0x4cf, 0x4cc, 0x4c8, 0x4c5, 0x4c2,
+    0x4be, 0x4bb, 0x4b8, 0x4b5, 0x4b1, 0x4ae, 0x4ab, 0x4a8,
+    0x4a4, 0x4a1, 0x49e, 0x49b, 0x498, 0x494, 0x491, 0x48e,
+    0x48b, 0x488, 0x485, 0x482, 0x47e, 0x47b, 0x478, 0x475,
+    0x472, 0x46f, 0x46c, 0x469, 0x466, 0x463, 0x460, 0x45d,
+    0x45a, 0x457, 0x454, 0x451, 0x44e, 0x44b, 0x448, 0x445,
+    0x442, 0x43f, 0x43c, 0x439, 0x436, 0x433, 0x430, 0x42d,
+    0x42a, 0x428, 0x425, 0x422, 0x41f, 0x41c, 0x419, 0x416,
+    0x414, 0x411, 0x40e, 0x40b, 0x408, 0x406, 0x403, 0x400
 };
 
-Operator::Operator() 
+Operator::Operator()
     : pg_count_(0), pg_diff_(0),
-      detune_(0), detune2_(0),
+      detune_(0), detune2_(0), kcode_adj_(0), pg_basefreq_(0),
       eg_phase_(EGPhase::Off), eg_level_(127), eg_count_(0),
       ar_(0), dr_(0), sr_(0), rr_(0), sl_(0),
       tl_(0), kc_(0), kf_(0), ks_(0), mul_(0),
@@ -251,12 +251,11 @@ void Operator::UpdateDetune() {
     }
 }
 
-// ===== Update PG difference =====
-// Nuked OPM pg_freqtable[64] and OPM_KCToFNum() based
-void Operator::UpdatePGDiff() {
+// ===== Update PG difference (Nuked OPM compatible with DT1/DT2/KF/LFO_PM) =====
+void Operator::UpdatePGDiff(int32_t pm) {
     // YM2151 frequency calculation using Nuked OPM reference
     // pg_freqtable[64]: basefreq, approxtype, slope for each KC high 6 bits
-    
+
     static const struct {
         int32_t basefreq;
         int32_t approxtype;  // 1=linear, 0=log
@@ -279,11 +278,35 @@ void Operator::UpdatePGDiff() {
         { 2452, 0, 30 }, { 2488, 0, 30 }, { 2524, 0, 30 }, { 2561, 0, 30 },
         { 0,    0, 16 }, { 0,    0, 16 }, { 0,    0, 16 }, { 0,    0, 16 }
     };
-    
-    // Calculate F-num from KC (Nuked OPM OPM_KCToFNum)
-    int32_t kcode_h = (kc_ >> 4) & 63;
-    int32_t kcode_l = kc_ & 15;
-    
+
+    static const int32_t pg_detune[8] = { 16, 17, 19, 20, 22, 24, 27, 29 };
+
+    // Step 1: Form kcf (13-bit combined KC + KF)
+    int32_t kcf = (kc_ << 6) | (kf_ & 0x3F);
+
+    // Step 2: Apply LFO pitch modulation (if provided)
+    if (pm != 0) {
+        kcf += (pm >> 10);  // Normalize PM to kcf scale
+    }
+
+    // Step 3: Apply DT2 (semitone-based detune, 0-3 = 0, +100, +200, +300 cents)
+    // Approximately: 1 semitone ≈ 100 cents ≈ 64 kcf units (rough approximation)
+    if (dt2_ > 0) {
+        kcf += (dt2_ << 6);  // dt2_=1,2,3 adds 64, 128, 192 to kcf
+    }
+
+    // Step 4: Clamp kcf to valid range (7-bit kcode at most = 448 kcf units)
+    if (kcf > 0x1FFF) kcf = 0x1FFF;  // Clamp high
+    if (kcf < 0) kcf = 0;            // Clamp low
+
+    // Step 5: Extract kcode_adj from kcf (7-bit value: block=3bits, note=2bits)
+    kcode_adj_ = (kcf >> 6) & 0x7F;
+
+    // Step 6: Calculate fnum using OPM_KCToFNum logic (from kcode_adj)
+    int32_t kcode_h = (kcode_adj_ >> 2) & 0x3F;
+    int32_t kcode_l = kcode_adj_ & 0x03;
+
+    // Interpolate fnum from pg_freqtable using kcode_l fraction
     int32_t sum = 0;
     if (pg_freqtable[kcode_h].approxtype) {
         // Linear interpolation
@@ -302,52 +325,46 @@ void Operator::UpdatePGDiff() {
         if ((kcode_l & 12) == 12 && (pg_freqtable[kcode_h].slope & 1) == 0) sum += 4;
     }
     int32_t fnum = pg_freqtable[kcode_h].basefreq + (sum >> 1);
-    
-    // Apply KF (Key Fraction) - Nuked OPM uses fnum directly
-    // KF adds fine tuning: 0-63 steps per note
-    if (kf_ > 0) {
-        fnum += (kf_ * pg_freqtable[kcode_h].slope) >> 6;
-    }
-    
-    // Apply block (octave): YM2151 uses 3-bit block from KC high bits
-    int32_t block = (kc_ >> 4) & 7;
-    int32_t basefreq = (fnum << block) >> 2;
-    
-    // Apply MUL (frequency multiplier)
-    // MUL=0 -> 0.5x, MUL=1-15 -> 1x-15x
-    int32_t mul = (mul_ == 0) ? 1 : mul_;
-    int32_t inc;
-    if (mul) {
-        inc = basefreq * mul;
-    } else {
-        inc = basefreq >> 1;
-    }
-    inc &= 0xfffff;  // 20-bit phase increment
-    
-    // Apply DT1 (detune)
-    if (dt1_ > 0) {
-        // Nuked OPM pg_detune[8] table
-        static const int32_t pg_detune[8] = { 16, 17, 19, 20, 22, 24, 27, 29 };
-        int32_t dt1_cents = (dt1_ > 3) ? -(7 - dt1_) : (dt1_ - 1);
-        if (dt1_cents != 0) {
-            // Calculate detune based on block and note
-            int32_t note = kc_ & 3;
-            int32_t detune = 0;
-            if (dt1_cents > 0) {
-                detune = pg_detune[(0 << 2) | note] >> (9 - (0));  // Simplified
-            }
-            if (dt1_ & 0x04) {
-                basefreq -= detune;
-            } else {
-                basefreq += detune;
-            }
-            inc = basefreq * mul;
-            inc &= 0xfffff;
+
+    // Step 7: Extract block and note from kcode_adj for DT1 calculation
+    int32_t block = kcode_adj_ >> 2;   // Upper 5 bits = block
+    int32_t note = kcode_adj_ & 0x03;  // Lower 2 bits = note
+
+    // Step 8: Calculate basefreq (before DT1 detune)
+    pg_basefreq_ = (fnum << block) >> 2;
+
+    // Step 9: Apply DT1 detune (Nuked OPM algorithm, fully block-dependent)
+    int32_t basefreq = pg_basefreq_;
+    uint8_t dt_l = dt1_ & 0x03;  // Lower 2 bits of DT1 register
+
+    if (dt_l != 0) {
+        // Clamp kcode_adj to 0x1C (max: block=7, note=0)
+        uint8_t kcode_clamped = kcode_adj_;
+        if (kcode_clamped > 0x1c) kcode_clamped = 0x1c;
+
+        // Compute detune index and shift amount
+        uint8_t block_c = kcode_clamped >> 2;
+        uint8_t note_c = kcode_clamped & 0x03;
+        uint8_t sum_dt = block_c + 9 + ((dt_l == 3) | (dt_l & 0x02));
+        uint8_t sum_h = sum_dt >> 1;
+        uint8_t sum_l = sum_dt & 0x01;
+
+        // Get detune value from table
+        int32_t detune = pg_detune[(sum_l << 2) | note_c] >> (9 - sum_h);
+
+        // Apply detune (sign from bit 2 of DT1)
+        if (dt1_ & 0x04) {
+            basefreq -= detune;  // DT negative
+        } else {
+            basefreq += detune;  // DT positive
         }
     }
-    
-    // Convert to our 21-bit phase counter, sample rate 44100 Hz
-    // Nuked OPM uses OPM clock (3.579545 MHz), we need to adapt
+
+    // Step 10: Apply MUL (frequency multiplier)
+    int32_t mul = (mul_ == 0) ? 1 : mul_;
+    int32_t inc = (basefreq * mul) & 0xFFFFF;  // 20-bit phase increment
+
+    // Step 11: Convert to sample-rate-adapted pg_diff (21-bit phase increment)
     const uint32_t OPM_CLOCK = 3579545;
     const uint32_t SAMPLE_RATE = 44100;
     pg_diff_ = ((uint64_t)inc * SAMPLE_RATE * 256) / OPM_CLOCK;
@@ -474,13 +491,9 @@ int32_t Operator::Calculate(int32_t in, int32_t am, int32_t pm) {
     
     // Phase calculation (10-bit phase from 21-bit counter)
     uint32_t phase = (pg_count_ >> 11) & 0x3FF;
-    
-    // Apply pitch modulation (PM from LFO)
-    if (pm != 0) {
-        phase = (phase + (pm >> 9)) & 0x3FF;
-    }
-    
+
     // Apply modulation input (from feedback or previous operator)
+    // Note: LFO pitch modulation (PM) is applied at frequency stage in Prepare()
     if (in != 0) {
         phase = (phase + (in >> 8)) & 0x3FF;
     }
@@ -540,7 +553,10 @@ int32_t Operator::Calculate(int32_t in, int32_t am, int32_t pm) {
 }
 
 // ===== Prepare for next sample =====
-void Operator::Prepare() {
+void Operator::Prepare(int32_t pm) {
+    // Update frequency with LFO pitch modulation
+    UpdatePGDiff(pm);
+
     // Update phase
     pg_count_ += pg_diff_;
 
