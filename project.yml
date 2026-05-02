@@ -59,13 +59,15 @@ targets:
           - "lzx.cpp"
       - path: Vendor/opm
         excludes:
-          - "backup/**"
-          - "reference_git/**"
-          - "reference/**"
-          - "datasheet/**"
-          - "opm_device_bridge.cpp"
+          - "**"
+      - path: Vendor/opm/backup
+        excludes:
+          - "opm_wrapper.cpp"
         includes:
-          - "*.c"
+          - "*.cpp"
+      - path: Vendor/opm
+        includes:
+          - "opm_device_bridge.cpp"
 
     settings:
       BRIDGING_HEADER: MP4M/Bridge/MP4M-Bridging-Header.h

@@ -504,13 +504,19 @@ void MXDRVG_SetData(
 	// L_0F() は再生準備状態にするが、OPM レジスタ設定は行わない。
 	// OPM レジスタは OPMINTFUNC() 経由で設定される。
 	// OPMINT_FUNC が NULL の可能性があるので明示的に設定。
+	fprintf(stderr, "[SetData] Before SETOPMINT: L002230=%p L002218=%p L001e0c=%p\n",
+		(void*)G.L002230, (void*)G.L002218, (void*)&G.L001e0c);
+
 	SETOPMINT( L_OPMINT );
 	fprintf(stderr, "[SetData] SETOPMINT done, calling OPMINTFUNC\n");
 	// OPMINTFUNC を数回呼び、OPM レジスタを初期化
+	int opmint_executed = 0;
 	for (int i = 0; i < 200 && !G.L001e13 && !G.FATALERROR; i++) {
+		opmint_executed++;
 		OPMINTFUNC();
 	}
-	fprintf(stderr, "[SetData] after OPMINTFUNC loop: L001e13=%d FATALERROR=%d\n", (int)G.L001e13, (int)G.FATALERROR);
+	fprintf(stderr, "[SetData] after OPMINTFUNC loop: executed=%d L001e13=%d FATALERROR=%d L002230=%p\n",
+		opmint_executed, (int)G.L001e13, (int)G.FATALERROR, (void*)G.L002230);
 
 	// OPM初期化後にシーケンス位置を冒頭へリセット
 	// 200回の OPMINTFUNC 呼び出しでシーケンスが進んでしまうため
@@ -3402,6 +3408,11 @@ static void L_OPMINT(
 	static int opmint_count = 0;
 	opmint_count++;
 
+	if (opmint_count <= 3) {
+		fprintf(stderr, "[L_OPMINT] #%d: start, L002218=%p L001e0c=%p\n",
+			opmint_count, (void*)G.L002218, (void*)&G.L001e0c);
+	}
+
 	if ( G.FATALERROR ) {
 		return;
 	}
@@ -3413,6 +3424,11 @@ static void L_OPMINT(
 	reg.d1 = 0;
 	reg.a1 = NULL;
 	MXDRVG( &reg );
+
+	if (opmint_count <= 3) {
+		fprintf(stderr, "[L_OPMINT] #%d: after MXDRVG(0x08), L001e0c=%p\n",
+			opmint_count, (void*)&G.L001e0c);
+	}
 
 	UPTRLONG d0,d1,d2,d3,d4,d5,d6,d7;
 	UBYTE volatile *a0,*a1,*a2,*a3,*a4,*a5;
