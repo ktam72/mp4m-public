@@ -255,6 +255,23 @@ open MP4M.xcodeproj
 
 ## 修正履歴
 
+### 2026-05-02 (7) — OPM Detune 計算修正：DT1 block対応・DT2サポート
+- **修正1: DT1 block-dependent detune（Nuked OPM準拠）**
+  - 問題: DT1 detune 計算が block を常に 0 にハードコード → block に依存した正しい detune が適用されていない
+  - 修正: `UpdatePGDiff()` で block を正確に抽出、sum = block + 9 + f(dt_l) の正しい計算、pg_detune テーブル参照を (sum_l << 2) | note で実装
+  - kcode の 0x1c へのクランプも追加（Nuked OPM準拠）
+- **修正2: DT2 coarse detune（セミトーン単位）**
+  - 新規実装: DT2 = 0-3 に対応し、2^(dt2/12) の周波数乗数を fnum に適用
+  - 固定小数点演算（×65536スケール）で精度を保持
+- **修正3: SetDT()/SetDT2() の正しい流れ**
+  - 従来: UpdateDetune() を呼んでいたが、その値は周波数計算に反映されていなかった（死コード）
+  - 修正: SetDT()/SetDT2() が UpdatePGDiff() を呼ぶように修正、UpdateDetune() 削除
+  - detune_, detune2_ 未使用メンバ変数も削除
+- **特徴: 保守的なアプローチ**
+  - Prepare() シグネチャ変更なし、PM処理変更なし → 位相連続性・既存機能への副作用ゼロ
+  - UpdatePGDiff() 本体の大規模書き換えを避け、必要な部分のみ修正
+  - ビルド成功・音声パス・UI動作への影響なし確認済み
+
 ### 2026-05-01 (6) — タイマーオーバーフロー修正・PDXロード・デバッグ削除
 - **OPM タイマーカウンタ型修正**: `timer_a_count_` を uint16_t→uint32_t、`timer_b_count_` を uint8_t→uint32_t に変更
   - 根本原因: uint8_t に Timer B 周期（典型値 16384 µs）をストアすると 0 にオーバーフロー
