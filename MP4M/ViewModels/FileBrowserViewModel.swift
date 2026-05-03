@@ -7,10 +7,26 @@ import Observation
 final class FileBrowserViewModel {
     // MARK: - 表示状態
 
-    var currentDirectory: URL?
+    var currentDirectory: URL? {
+        didSet {
+            if let url = currentDirectory {
+                UserDefaults.standard.set(url, forKey: "mp4m_currentDirectory")
+            }
+        }
+    }
     var fileItems: [FileItem] = []
     var selectedIndex: Int = -1
     var playingIndex: Int = -1
+
+    // MARK: - 初期化
+
+    init() {
+        // UserDefaults から設定を復帰
+        if let savedURL = UserDefaults.standard.url(forKey: "mp4m_currentDirectory") {
+            currentDirectory = savedURL
+            fileItems = FileItem.items(in: savedURL)
+        }
+    }
 
     // MARK: - 公開 API
 

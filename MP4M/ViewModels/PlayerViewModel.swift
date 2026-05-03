@@ -12,9 +12,21 @@ final class PlayerViewModel: @unchecked Sendable {
     var pdxFileName: String = ""
     var currentTimeMs: Int = 0
     var totalTimeMs: Int = 0
-    var loopCount: Int = 2
-    var autoMode: AutoMode = .normal
-    var repeatEnabled: Bool = true
+    var loopCount: Int = 2 {
+        didSet {
+            UserDefaults.standard.set(loopCount, forKey: "mp4m_loopCount")
+        }
+    }
+    var autoMode: AutoMode = .normal {
+        didSet {
+            UserDefaults.standard.set(autoMode.rawValue, forKey: "mp4m_autoMode")
+        }
+    }
+    var repeatEnabled: Bool = true {
+        didSet {
+            UserDefaults.standard.set(repeatEnabled, forKey: "mp4m_repeatEnabled")
+        }
+    }
 
     var channels: [ChannelDisplayState] = Array(repeating: ChannelDisplayState(), count: 16)
     var spectrumBars: [SpectrumBarState] = Array(repeating: SpectrumBarState(), count: 52)
@@ -42,6 +54,19 @@ final class PlayerViewModel: @unchecked Sendable {
     init(audioService: any AudioEngineService) {
         print("[PlayerViewModel.init] START")
         self.audioService = audioService
+
+        // UserDefaults から設定を復帰
+        if let savedLoopCount = UserDefaults.standard.object(forKey: "mp4m_loopCount") as? Int {
+            loopCount = savedLoopCount
+        }
+        if let savedAutoModeRaw = UserDefaults.standard.string(forKey: "mp4m_autoMode"),
+           let savedAutoMode = AutoMode(rawValue: savedAutoModeRaw) {
+            autoMode = savedAutoMode
+        }
+        if UserDefaults.standard.object(forKey: "mp4m_repeatEnabled") != nil {
+            repeatEnabled = UserDefaults.standard.bool(forKey: "mp4m_repeatEnabled")
+        }
+
         print("[PlayerViewModel.init] calling audioService.start()")
         audioService.start(sampleRate: 44100)
         print("[PlayerViewModel.init] audioService.start() done")
