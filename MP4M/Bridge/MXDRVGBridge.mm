@@ -383,29 +383,8 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
     MXDRVG_WORK_CH* pcmCh = (MXDRVG_WORK_CH*)MXDRVG_GetWork(MXDRVG_WORKADR_PCM);
     MXDRVG_WORK_GLOBAL* globalWork = (MXDRVG_WORK_GLOBAL*)MXDRVG_GetWork(MXDRVG_WORKADR_GLOBAL);
 
-    static int debugLogCount = 0;
-    if (debugLogCount++ % 60 == 0) {
-        fprintf(stderr, "[WORK_AREA_PTR] FM=%p, PCM=%p, hasPDX=%d\n", fmCh, pcmCh, g_hasPDX);
-        if (globalWork) {
-            // チャンネルマスク（L001e06）を確認: PCM1（bit8）が有効か？
-            uint16_t channelMask = globalWork->L001e06;
-            uint16_t channelEnable = globalWork->L001e1a;
-            uint8_t pcm1Enabled = (channelMask >> 8) & 1;
-            fprintf(stderr, "[CHANNEL_MASK] mask=0x%04x, enable=0x%04x, PCM1_bit8=%d\n",
-                channelMask, channelEnable, pcm1Enabled);
-        }
-        if (fmCh) {
-            fprintf(stderr, "[FM_RAW_CH0] S0016=%02x, S0012=%04x, S0022=%02x, S0018=%02x\n",
-                fmCh[0].S0016, fmCh[0].S0012, fmCh[0].S0022, fmCh[0].S0018);
-        }
-        if (pcmCh) {
-            fprintf(stderr, "[PCM_RAW_CH0] S0016=%02x, S0012=%04x, S0022=%02x, S0018=%02x\n",
-                pcmCh[0].S0016, pcmCh[0].S0012, pcmCh[0].S0022, pcmCh[0].S0018);
-        }
-    }
-
     OPM_GetChannelStates(opmStates, 8);
-    
+
     // Convert FM channels (0-7)
     for (int i = 0; i < 8; i++) {
         states[i].keyCode = opmStates[i].keyCode;
@@ -416,55 +395,6 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
         states[i].pan = opmStates[i].pan;
         states[i].keyOffset = opmStates[i].keyOffset;
         states[i].active = opmStates[i].active;
-    }
-
-    static int logCount = 0;
-    if (logCount++ % 60 == 0) {
-        fprintf(stderr, "[PCM_AREA] pcmCh=%p, hasPDX=%d\n", pcmCh, g_hasPDX);
-        if (pcmCh && g_hasPDX) {
-            fprintf(stderr, "[PCM_DETAILED_ANALYSIS] ");
-            for (int i = 0; i < 8; i++) {
-                uint8_t len = pcmCh[i].S001a;
-                uint8_t chNum = pcmCh[i].S0018 & 0x7F;
-                uint8_t flags16 = pcmCh[i].S0016;
-                uint8_t flags17 = pcmCh[i].S0017;
-                uint8_t gate = pcmCh[i].S001b;
-                uint16_t noteD = pcmCh[i].S0012;
-                UBYTE volatile* S0000 = pcmCh[i].S0000;
-                UBYTE volatile* S0004 = pcmCh[i].S0004;
-                fprintf(stderr, "ch%d(len=%d,num=%d,f16=%02x,f17=%02x,gate=%02x,noteD=%04x,S0000=%p,S0004=%p) ",
-                    i, len, chNum, flags16, flags17, gate, noteD, S0000, S0004);
-            }
-            fprintf(stderr, "\n");
-
-            // 動的フィールド分析：S0022(v), S0008(bend), S001f(keyon_delay), S0020(keyon_delay_counter)
-            fprintf(stderr, "[PCM_DYNAMIC_FIELDS] ");
-            for (int i = 0; i < 8; i++) {
-                uint32_t bendDelta = pcmCh[i].S0008;
-                uint8_t vol = pcmCh[i].S0022;
-                uint8_t keyonDelay = pcmCh[i].S001f;
-                uint8_t keyonCounter = pcmCh[i].S0020;
-                fprintf(stderr, "ch%d(bend=%lu,vol=%d,delay=%d,counter=%d) ",
-                    i, bendDelta, vol, keyonDelay, keyonCounter);
-            }
-            fprintf(stderr, "\n");
-
-            // PDX ファイルサイズと実際のサンプル構成を確認
-            MXDRVG_WORK_GLOBAL* globalWork = (MXDRVG_WORK_GLOBAL*)MXDRVG_GetWork(MXDRVG_WORKADR_GLOBAL);
-            if (globalWork) {
-                // グローバルワーク情報はログ出力しない（本番環境では不要）
-            }
-
-            // PCM8 エンジンの実際の再生状態を確認
-            // MXDRVG_WORKADR_PCM8 は X68K::X68PCM8 オブジェクトを返すはず
-            volatile void* pcm8Work = MXDRVG_GetWork(MXDRVG_WORKADR_PCM8);
-            if (pcm8Work) {
-                fprintf(stderr, "[PCM8_ENGINE] pcm8=%p\n", pcm8Work);
-                // pcm8Work は X68K::X68PCM8* として解釈できるが、
-                // Pcm8 クラスの内部構造は隠蔽されているため直接アクセスは困難
-                // ここは参考情報として出力するのみ
-            }
-        }
     }
 
     if (pcmCh) {
@@ -530,76 +460,6 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
             states[chIdx].volume = isPlaying ? 127 : 0;
             // Spectrum analyzer用：再生中に基づいた固定値を使用（スケール変更を防ぐ）
             states[chIdx].velocity = isPlaying ? 100 : 0;
-        }
-    } else {
-        fprintf(stderr, "[getChannelStates] WARNING: PCM work area is NULL\n");
-    }
-    
-    // Debug log for PAN detection
-    static int callCount = 0;
-    if (callCount++ % 60 == 0) {
-        fprintf(stderr, "[LevelMeter] ");
-        for (int i = 0; i < 16; i++) {
-            // 表示％を計算（LevelMeterView の計算と同じ）
-            double levelPercent = 0.0;
-            const char* panLabel = "N";  // No signal
-
-            if (states[i].keyOn) {
-                double v = (double)states[i].volume / 127.0;
-                levelPercent = pow(v, 3.0) * 100.0;  // パーセンテージに変換
-
-                // PAN ラベル
-                switch (states[i].pan) {
-                    case 0: panLabel = "L"; break;      // Left
-                    case 2: panLabel = "R"; break;      // Right
-                    case 3: panLabel = "S"; break;      // Stereo (L+R)
-                    default: panLabel = "C"; break;     // Center
-                }
-            }
-
-            fprintf(stderr, "ch%d:%5.1f%% %s ", i+1, levelPercent, panLabel);
-        }
-        fprintf(stderr, "\n");
-
-        // FM チャンネルの keyOn フラグと PAN 情報をログ出力
-        MXDRVG_WORK_CH* fmCh = (MXDRVG_WORK_CH*)MXDRVG_GetWork(MXDRVG_WORKADR_FM);
-        if (fmCh) {
-            fprintf(stderr, "[FM_DEBUG] ");
-            for (int i = 0; i < 8; i++) {
-                uint8_t flags16 = fmCh[i].S0016;
-                uint8_t keyOn = (flags16 >> 3) & 1;
-                uint8_t p = fmCh[i].S001c;
-                uint8_t pan_bits = p & 0x03;
-                const char* pan_label = "?";
-                if (pan_bits == 0x01) pan_label = "L";
-                else if (pan_bits == 0x02) pan_label = "R";
-                else pan_label = "C";
-                fprintf(stderr, "FM%d(keyOn=%d,pan=%s) ", i+1, keyOn, pan_label);
-            }
-            fprintf(stderr, "\n");
-        }
-
-        // PCM チャンネルの keyOn フラグと PAN 情報をログ出力
-        if (pcmCh) {
-            fprintf(stderr, "[PCM_DEBUG] ");
-            for (int i = 0; i < 8; i++) {
-                UBYTE volatile* S0000 = pcmCh[i].S0000;
-                int keyOn = (S0000 != NULL && S0000 != 0) ? 1 : 0;
-                int mode = MXDRVG_GetPCM8ChannelMode(i);
-                uint8_t pan_bits = mode & 0x03;
-                const char* pan_label = "?";
-                if (pan_bits == 0x01) {
-                    pan_label = "L";
-                } else if (pan_bits == 0x02) {
-                    pan_label = "R";
-                } else if (pan_bits == 0x03) {
-                    pan_label = "S";
-                } else {
-                    pan_label = "C";
-                }
-                fprintf(stderr, "PDX%d(keyOn=%d,pan=%s) ", i+1, keyOn, pan_label);
-            }
-            fprintf(stderr, "\n");
         }
     }
 }
