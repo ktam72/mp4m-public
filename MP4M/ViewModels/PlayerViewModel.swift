@@ -44,6 +44,11 @@ final class PlayerViewModel: @unchecked Sendable {
     private var fadeOutVolume: Float = 1.0
     weak var browserVM: FileBrowserViewModel?
 
+    // チャンネル状態キャッシング（優先度3: CPU 負荷低減）
+    private var lastChannelStateUpdateMs: Int = 0
+    private var cachedChannels: [ChannelDisplayState] = Array(repeating: ChannelDisplayState(), count: 16)
+    private let channelStateUpdateIntervalMs: Int = 50  // 50ms ごとにのみ取得
+
     // スペアナ計算用バッファ
     private var speaBF1 = [Float](repeating: 0, count: 52)
     private let routeTable: [Float] = [
@@ -92,6 +97,10 @@ final class PlayerViewModel: @unchecked Sendable {
     func load(url: URL) async {
         stop()
         mutedChannels = []
+
+        // キャッシュをリセット
+        lastChannelStateUpdateMs = 0
+        cachedChannels = Array(repeating: ChannelDisplayState(), count: 16)
 
         // 最初に "No PDX" を設定（PDX未指定や読み込み失敗時に使用）
         pdxFileName = "No PDX"
@@ -213,16 +222,24 @@ final class PlayerViewModel: @unchecked Sendable {
     private func updateDisplay() {
         guard status == .playing else { return }
 
-        // バックグラウンドタスクで C++ 呼び出しとスペアナ計算を実行
-        Task.detached(priority: .userInitiated) { [weak self] in
+        // DispatchQueue を使用してバックグラウンドで実行（優先度4: Task.detached より軽量）
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self else { return }
 
             let ms = self.audioService.currentPlayTimeMs()
-            let fmChannels = self.audioService.getChannelStates()
+
+            // 優先度3: チャンネル状態を 50ms ごとにのみ更新
+            var fmChannels = self.cachedChannels
+            if (ms - self.lastChannelStateUpdateMs) >= self.channelStateUpdateIntervalMs {
+                fmChannels = self.audioService.getChannelStates()
+                self.cachedChannels = fmChannels
+                self.lastChannelStateUpdateMs = ms
+            }
+
             let newBars = self.computeSpectrum(for: fmChannels)
 
             // メインスレッドで UI 更新
-            await MainActor.run {
+            DispatchQueue.main.async {
                 self.currentTimeMs = ms
                 self.channels = fmChannels
                 self.spectrumBars = newBars
