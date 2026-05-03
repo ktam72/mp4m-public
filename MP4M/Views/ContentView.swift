@@ -7,7 +7,7 @@ struct ContentView: View {
     var body: some View {
         VStack(spacing: 0) {
             TrackInfoView(viewModel: playerVM)
-                .frame(height: 48)
+                .frame(minHeight: 48)
             Divider().background(Color.mp4mBorder)
             HStack(spacing: 0) {
                 SpectrumAnalyzerView(viewModel: playerVM)
