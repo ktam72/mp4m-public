@@ -40,6 +40,14 @@ MDX/PDX 形式の音楽ファイルをリアルタイム再生し、スペクト
   - 根本原因: S001c の下位2ビット（bit0-1）を誤って抽出していた（YM2151のPANはbit6/bit7）
   - 修正: `(S001c >> 6) & 0x03` で正しいPAN値を抽出
   - マッピング: (bit6,bit7)=0b01→L、0b10→R、0b11→LR、0b00→C
+- **FileItem.swift 修正**:
+  - `extractMDXTitle(from:)` メソッド追加：MDXファイル先頭からタイトルを抽出（Shift-JIS/UTF-8対応）
+  - `items(in:)` でMDXファイル発見時にタイトルを自動抽出
+  - 表示形式：「ファイル名 + TAB + タイトル」
+- **KeyboardView.swift 修正**:
+  - Canvas左パディング：16px → 4pxに戻す
+  - CHラベル表示領域を3倍（leftMargin: 16 → 48）に拡大
+  - 再生中は Note名（C,C#,D...）を表示、非再生中は空白（スペース）を表示
 
 ---
 

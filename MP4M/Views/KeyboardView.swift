@@ -4,9 +4,9 @@ import SwiftUI
 struct KeyboardView: View {
     let viewModel: PlayerViewModel?
     private let octaveCount = 8
-    private let noteNames = ["E","F","F#","G","G#","A","A#","B","C","C#","D","D#"]
+    private let noteNames = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
     private let noteXOffsets: [CGFloat] = [0, 4, 6, 8, 10, 12, 14, 16, 20, 22, 24, 26]
-    private let isBlackKey: [Bool]       = [false, false, true, false, true, false, true, false, false, true, false, true]
+    private let isBlackKey: [Bool]       = [false, true, false, true, false, false, true, false, true, false, true, false, true]
 
     var body: some View {
         VStack(spacing: 1) {
@@ -19,7 +19,8 @@ struct KeyboardView: View {
             GeometryReader { geo in
                 let channels = viewModel?.channels ?? []
                 let keyH = (geo.size.height - 16) / 8
-                let totalOctW = geo.size.width / CGFloat(octaveCount)
+                let leftMargin: CGFloat = 48  // 元の16pxの3倍（48px）
+                let totalOctW = (geo.size.width - leftMargin) / CGFloat(octaveCount)
                 let whiteKeyW = totalOctW / 7
                 Canvas { ctx, size in
                     ctx.fill(Path(CGRect(origin: .zero, size: size)), with: .color(Color.mmdspBackground))
@@ -27,7 +28,7 @@ struct KeyboardView: View {
                         let chState = ch < channels.count ? channels[ch] : ChannelDisplayState()
                         let y = CGFloat(ch) * keyH + 2
                         for octave in 0..<octaveCount {
-                            let octX = CGFloat(octave) * totalOctW
+                            let octX = CGFloat(octave) * totalOctW + leftMargin
                             for (wi, wNote) in [0, 1, 3, 5, 7, 8, 10].enumerated() {
                                 let kx = octX + CGFloat(wi) * whiteKeyW
                                 let kr = CGRect(x: kx + 0.5, y: y + 0.5,
@@ -44,14 +45,16 @@ struct KeyboardView: View {
                                 ctx.fill(Path(br), with: .color(lit ? Color.mmdspBright.opacity(0.9) : Color(white: 0.15)))
                             }
                         }
+                        // チャンネルラベル：再生中は Note名、それ以外は空白
+                        let labelText = noteLabel(for: chState, channel: ch)
                         ctx.draw(
-                            Text("CH\(ch + 1)").font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 14)).foregroundColor(Color.mmdspCyan.opacity(0.6)),
+                            Text(labelText).font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 14)).foregroundColor(Color.mmdspCyan.opacity(0.6)),
                             at: CGPoint(x: 4, y: y + keyH / 2)
                         )
                     }
                 }
             }
-            .padding(.horizontal, 4)
+            .padding(.horizontal, 4)  // パディングを4pxに戻す
         }
         .background(Color.mmdspBackground)
     }
@@ -68,5 +71,14 @@ struct KeyboardView: View {
     private func blackKeyX(note: Int, whiteKeyW: CGFloat) -> CGFloat {
         let map: [Int: CGFloat] = [2: 1.65, 4: 2.65, 6: 3.65, 9: 5.65, 11: 6.65]
         return (map[note] ?? 0) * whiteKeyW - whiteKeyW * 0.3
+    }
+
+    /// チャンネルラベル：再生中は Note名、それ以外は空白（スペース）
+    private func noteLabel(for ch: ChannelDisplayState, channel: Int) -> String {
+        guard ch.keyOn else { return " " }  // 空白（1スペース）
+        let idx = Int(ch.keyCode) + Int(ch.keyOffset) - 15
+        guard idx >= 0, idx < 96 else { return " " }
+        let kNote = idx % 12
+        return noteNames[kNote]
     }
 }
