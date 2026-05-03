@@ -18,7 +18,7 @@ struct ContentView: View {
             .frame(height: 180)
             Divider().background(Color.mp4mBorder)
             KeyboardView(viewModel: playerVM)
-                .frame(height: 296)
+                .frame(height: 333)
             Divider().background(Color.mp4mBorder)
             if let playerVM {
                 FileSelectorView(browserVM: browserVM, playerVM: playerVM)
