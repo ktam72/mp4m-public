@@ -49,3 +49,4 @@ build_test/
 
 # Dependencies (if any)
 node_modules/
+release-app/
