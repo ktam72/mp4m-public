@@ -22,7 +22,7 @@ struct ContentView: View {
             Divider().background(Color.mp4mBorder)
             if let playerVM {
                 FileSelectorView(browserVM: browserVM, playerVM: playerVM)
-                    .frame(minHeight: 360)
+                    .frame(minHeight: 288)
             }
             Divider().background(Color.mp4mBorder)
             ControlPanelView(viewModel: playerVM, browserVM: browserVM)
