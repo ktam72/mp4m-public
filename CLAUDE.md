@@ -33,6 +33,9 @@ MDX/PDX 形式の音楽ファイルをリアルタイム再生し、スペクト
 - **mxdrvg_core.h 修正**:
   - PCM チャンネル PAN 取得ロジックを修正（pan=3 は S ステレオとして処理）
 - **ビルド成功**: `BUILD SUCCEEDED` を確認、UI の可読性向上と PDX 表示の整合性が改善
+- **ContentView.swift レイアウト調整**:
+  - KeyboardView の高さ: 148px → 296px（2倍）
+  - FileSelectorView の最小高さ: 180px → 360px（2倍）
 
 ---
 

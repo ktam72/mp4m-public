@@ -18,11 +18,11 @@ struct ContentView: View {
             .frame(height: 180)
             Divider().background(Color.mmdspBorder)
             KeyboardView(viewModel: playerVM)
-                .frame(height: 148)
+                .frame(height: 296)
             Divider().background(Color.mmdspBorder)
             if let playerVM {
                 FileSelectorView(browserVM: browserVM, playerVM: playerVM)
-                    .frame(minHeight: 180)
+                    .frame(minHeight: 360)
             }
             Divider().background(Color.mmdspBorder)
             ControlPanelView(viewModel: playerVM, browserVM: browserVM)
