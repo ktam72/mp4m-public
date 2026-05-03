@@ -16,7 +16,9 @@ struct LevelMeterView: View {
                 ForEach(0..<maxChannels, id: \.self) { ch in
                     ChannelMeterView(
                         channelIndex: ch,
-                        channel: ch < (viewModel?.channels.count ?? 0) ? viewModel?.channels[ch] : nil
+                        channel: ch < (viewModel?.channels.count ?? 0) ? viewModel?.channels[ch] : nil,
+                        isMuted: viewModel?.mutedChannels.contains(ch) ?? false,
+                        onDoubleTap: { viewModel?.toggleChannel(ch) }
                     )
                     .frame(maxWidth: .infinity)
                 }
@@ -31,6 +33,8 @@ struct LevelMeterView: View {
 private struct ChannelMeterView: View {
     let channelIndex: Int
     let channel: ChannelDisplayState?
+    let isMuted: Bool
+    let onDoubleTap: () -> Void
 
     private var panLabel: String {
         guard let ch = channel, ch.keyOn else { return "" }
@@ -83,6 +87,10 @@ private struct ChannelMeterView: View {
             .frame(height: maxBarHeight)
         }
         .frame(minWidth: 16, maxWidth: .infinity)
+        .opacity(isMuted ? 0.4 : 1.0)
+        .onTapGesture(count: 2) {
+            onDoubleTap()
+        }
     }
 
     private let maxBarHeight: CGFloat = 130

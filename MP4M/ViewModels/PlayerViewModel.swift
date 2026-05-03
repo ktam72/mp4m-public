@@ -30,6 +30,11 @@ final class PlayerViewModel: @unchecked Sendable {
 
     var channels: [ChannelDisplayState] = Array(repeating: ChannelDisplayState(), count: 16)
     var spectrumBars: [SpectrumBarState] = Array(repeating: SpectrumBarState(), count: 52)
+    var mutedChannels: Set<Int> = [] {
+        didSet {
+            UserDefaults.standard.set(Array(mutedChannels), forKey: "mp4m_mutedChannels")
+        }
+    }
 
     // MARK: - 内部
 
@@ -65,6 +70,9 @@ final class PlayerViewModel: @unchecked Sendable {
         }
         if UserDefaults.standard.object(forKey: "mp4m_repeatEnabled") != nil {
             repeatEnabled = UserDefaults.standard.bool(forKey: "mp4m_repeatEnabled")
+        }
+        if let savedMutedChannels = UserDefaults.standard.array(forKey: "mp4m_mutedChannels") as? [Int] {
+            mutedChannels = Set(savedMutedChannels)
         }
 
         print("[PlayerViewModel.init] calling audioService.start()")
@@ -156,6 +164,14 @@ final class PlayerViewModel: @unchecked Sendable {
 
     func toggleRepeat() {
         repeatEnabled.toggle()
+    }
+
+    func toggleChannel(_ channelIndex: Int) {
+        if mutedChannels.contains(channelIndex) {
+            mutedChannels.remove(channelIndex)
+        } else {
+            mutedChannels.insert(channelIndex)
+        }
     }
 
     // MARK: - 次の曲・前の曲 (ファイルリストは外部から注入)

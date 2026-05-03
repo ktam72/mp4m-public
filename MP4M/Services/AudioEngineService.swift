@@ -56,4 +56,7 @@ protocol AudioEngineService: AnyObject {
 
     /// 音量設定 (0.0〜1.0)
     func setVolume(_ volume: Float)
+
+    /// ミュート対象チャンネルを設定
+    func setMutedChannels(_ mutedChannels: Set<Int>)
 }

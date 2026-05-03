@@ -11,6 +11,7 @@ final class MXDRVAudioEngine: AudioEngineService {
     private static let maxFrameCount = 1024
     private static let pcmBufferSize = maxFrameCount * 2
     nonisolated(unsafe) private var pcmBuffer: [Int16] = [Int16](repeating: 0, count: pcmBufferSize)
+    nonisolated(unsafe) private var mutedChannels: Set<Int> = []
 
     init() {
         fputs("[MXDRVAudioEngine.init]\n", stderr)
@@ -94,6 +95,10 @@ final class MXDRVAudioEngine: AudioEngineService {
 
     func setVolume(_ volume: Float) {
         engine.mainMixerNode.outputVolume = max(0.0, min(volume, 1.0))
+    }
+
+    func setMutedChannels(_ mutedChannels: Set<Int>) {
+        self.mutedChannels = mutedChannels
     }
 
     private func setupAudioEngine() {
