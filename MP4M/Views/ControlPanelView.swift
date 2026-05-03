@@ -8,10 +8,10 @@ struct ControlPanelView: View {
     var body: some View {
         HStack(spacing: 0) {
             Group {
-                PanelButton(label: "◀◀", action: playPrev)
-                PanelButton(label: playPauseLabel, action: { viewModel?.togglePlay() })
-                PanelButton(label: "■", action: { viewModel?.stop() })
-                PanelButton(label: "▶▶", action: playNext)
+                PanelButton(label: "◀◀", action: playPrev, isEnabled: isFileSelected)
+                PanelButton(label: playPauseLabel, action: { viewModel?.togglePlay() }, isEnabled: isFileSelected)
+                PanelButton(label: "■", action: { viewModel?.stop() }, isEnabled: isFileSelected)
+                PanelButton(label: "▶▶", action: playNext, isEnabled: isFileSelected)
             }
             Divider().background(Color.mp4mBorder)
             HStack(spacing: 4) {
@@ -60,6 +60,13 @@ struct ControlPanelView: View {
                 .padding(.horizontal, 12)
         }
         .background(Color.mp4mBackground.opacity(0.95))
+    }
+
+    /// ファイルが選択されているかどうかを判定
+    private var isFileSelected: Bool {
+        guard let browserVM = browserVM else { return false }
+        let files = browserVM.fileItems.filter { !$0.isDirectory }
+        return browserVM.playingIndex >= 0 && browserVM.playingIndex < files.count
     }
 
     /// PDXファイル名の調整：拡張子がない場合は .pdx を補完
@@ -122,12 +129,17 @@ struct ControlPanelView: View {
 private struct PanelButton: View {
     let label: String
     let action: () -> Void
+    let isEnabled: Bool
+
     var body: some View {
         Button(action: action) {
-            Text(label).font(.mp4mMono).foregroundColor(Color.mp4mAmber)
+            Text(label)
+                .font(.mp4mMono)
+                .foregroundColor(isEnabled ? Color.mp4mAmber : Color.mp4mDim)
                 .frame(width: 36, height: 44)
         }
         .buttonStyle(.plain)
+        .disabled(!isEnabled)
         .background(Color.mp4mBackground)
         .overlay(Rectangle().stroke(Color.mp4mBorder, lineWidth: 0.5))
     }
