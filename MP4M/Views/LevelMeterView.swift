@@ -6,12 +6,12 @@ struct LevelMeterView: View {
     private let maxChannels = 16
 
     var body: some View {
-        VStack(spacing: 2) {
+        VStack(spacing: 1) {
             Text("LEVEL")
                 .font(.mp4mSmall)
                 .foregroundColor(Color.mp4mCyan)
                 .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.top, 4)
+                .padding(.top, 3)
             HStack(spacing: 3) {
                 ForEach(0..<maxChannels, id: \.self) { ch in
                     ChannelMeterView(
@@ -21,8 +21,8 @@ struct LevelMeterView: View {
                     .frame(maxWidth: .infinity)
                 }
             }
-            .padding(.horizontal, 4)
-            .padding(.bottom, 4)
+            .padding(.horizontal, 3)
+            .padding(.bottom, 2)
         }
         .background(Color.mp4mBackground)
     }
