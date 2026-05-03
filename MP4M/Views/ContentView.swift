@@ -32,6 +32,7 @@ struct ContentView: View {
         .foregroundColor(Color.mp4mText)
         .onAppear {
             playerVM = PlayerViewModel(audioService: MXDRVAudioEngine())
+            playerVM?.browserVM = browserVM
         }
         .onDisappear {
             playerVM?.cleanup()

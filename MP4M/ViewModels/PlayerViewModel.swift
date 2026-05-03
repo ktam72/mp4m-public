@@ -23,6 +23,9 @@ final class PlayerViewModel: @unchecked Sendable {
 
     private let audioService: any AudioEngineService
     private var displayTimer: Timer?
+    private var fadeOutTimer: Timer?
+    private var fadeOutVolume: Float = 1.0
+    weak var browserVM: FileBrowserViewModel?
 
     // スペアナ計算用バッファ
     private var speaBF1 = [Float](repeating: 0, count: 52)
@@ -244,7 +247,50 @@ final class PlayerViewModel: @unchecked Sendable {
         if repeatEnabled {
             play()
         } else {
-            stop()
+            // フェードアウト処理を開始
+            startFadeOut()
+        }
+    }
+
+    private func startFadeOut() {
+        fadeOutVolume = 1.0
+        let fadeOutDuration = 1.0 // 1 秒間でフェードアウト
+        let fadeOutInterval = 0.05 // 50ms ごとに音量を更新
+        let fadeOutSteps = Int(fadeOutDuration / fadeOutInterval)
+
+        fadeOutTimer = Timer.scheduledTimer(withTimeInterval: fadeOutInterval, repeats: true) { [weak self] timer in
+            self?.fadeOutVolume -= 1.0 / Float(fadeOutSteps)
+            if self?.fadeOutVolume ?? 0 <= 0 {
+                timer.invalidate()
+                self?.fadeOutTimer = nil
+                self?.fadeOutVolume = 1.0
+                self?.playNextTrack()
+            }
+        }
+    }
+
+    private func playNextTrack() {
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self, let browserVM = self.browserVM else {
+                self?.stop()
+                return
+            }
+
+            let files = browserVM.fileItems.filter { !$0.isDirectory }
+            guard !files.isEmpty else {
+                self.stop()
+                return
+            }
+
+            if let nextIdx = self.nextFileIndex(fileItems: browserVM.fileItems, playingIndex: browserVM.playingIndex) {
+                browserVM.playingIndex = nextIdx
+                Task {
+                    await self.load(url: files[nextIdx].url)
+                    self.play()
+                }
+            } else {
+                self.stop()
+            }
         }
     }
 
