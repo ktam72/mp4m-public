@@ -6,7 +6,7 @@ struct KeyboardView: View {
     private let octaveCount = 8
     private let noteNames = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
     private let noteXOffsets: [CGFloat] = [0, 4, 6, 8, 10, 12, 14, 16, 20, 22, 24, 26]
-    private let isBlackKey: [Bool]       = [false, true, false, true, false, false, true, false, true, false, true, false, true]
+    private let isBlackKey: [Bool]       = [false, true, false, true, false, false, true, false, true, false, true, false]
 
     var body: some View {
         VStack(spacing: 1) {
@@ -19,7 +19,7 @@ struct KeyboardView: View {
             GeometryReader { geo in
                 let channels = viewModel?.channels ?? []
                 let keyH = (geo.size.height - 16) / 8
-                let leftMargin: CGFloat = 48  // 元の16pxの3倍（48px）
+                let leftMargin: CGFloat = 64  // CHラベル用に調整（鍵盤全体を右にシフト）
                 let totalOctW = (geo.size.width - leftMargin) / CGFloat(octaveCount)
                 let whiteKeyW = totalOctW / 7
                 Canvas { ctx, size in
@@ -45,11 +45,11 @@ struct KeyboardView: View {
                                 ctx.fill(Path(br), with: .color(lit ? Color.mmdspBright.opacity(0.9) : Color(white: 0.15)))
                             }
                         }
-                        // チャンネルラベル：再生中は Note名、それ以外は空白
+                        // チャンネルラベル：再生中は Note名 + オクターヴ、それ以外は空白
                         let labelText = noteLabel(for: chState, channel: ch)
                         ctx.draw(
-                            Text(labelText).font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 14)).foregroundColor(Color.mmdspCyan.opacity(0.6)),
-                            at: CGPoint(x: 4, y: y + keyH / 2)
+                            Text(labelText).font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 21)).foregroundColor(Color.mmdspCyan.opacity(0.6)),
+                            at: CGPoint(x: 20, y: y + keyH / 2)  // 左から20pxの位置に移動
                         )
                     }
                 }
@@ -61,10 +61,12 @@ struct KeyboardView: View {
 
     private func isKeyOn(_ ch: ChannelDisplayState, octave: Int, note: Int) -> Bool {
         guard ch.keyOn else { return false }
-        let idx = Int(ch.keyCode) + Int(ch.keyOffset) - 15
-        guard idx >= 0, idx < 96 else { return false }
-        let kOct = idx / 12
-        let kNote = idx % 12
+        // MDX 音符 → MIDI 音符 の変換：MDX 0x80 = MIDI 3 (C1)
+        let mdxNote = Int(ch.keyCode) + Int(ch.keyOffset)
+        let midiNote = mdxNote  // MDX 音符をそのまま使用（0x80 = 3）
+        guard midiNote >= 0, midiNote < 96 else { return false }
+        let kOct = midiNote / 12
+        let kNote = midiNote % 12
         return kOct == octave && kNote == note
     }
 
@@ -73,12 +75,15 @@ struct KeyboardView: View {
         return (map[note] ?? 0) * whiteKeyW - whiteKeyW * 0.3
     }
 
-    /// チャンネルラベル：再生中は Note名、それ以外は空白（スペース）
+    /// チャンネルラベル：再生中は Note名 + オクターヴ、それ以外は空白（スペース）
     private func noteLabel(for ch: ChannelDisplayState, channel: Int) -> String {
         guard ch.keyOn else { return " " }  // 空白（1スペース）
-        let idx = Int(ch.keyCode) + Int(ch.keyOffset) - 15
-        guard idx >= 0, idx < 96 else { return " " }
-        let kNote = idx % 12
-        return noteNames[kNote]
+        // MDX 音符 → MIDI 音符：MDX 0x80 = MIDI 3
+        let mdxNote = Int(ch.keyCode) + Int(ch.keyOffset)
+        let midiNote = mdxNote  // 変換不要（MDX 音符がそのまま MIDI 音符として扱われる）
+        guard midiNote >= 0, midiNote < 96 else { return " " }
+        let kNote = midiNote % 12
+        let kOct = midiNote / 12
+        return "\(noteNames[kNote])\(kOct)"  // 例: C4, D#5
     }
 }
