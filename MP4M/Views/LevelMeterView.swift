@@ -27,6 +27,7 @@ struct LevelMeterView: View {
             .padding(.bottom, 2)
         }
         .background(Color.mp4mBackground)
+        .border(Color.mp4mBorder, width: 0.5)
     }
 }
 

@@ -46,7 +46,7 @@ struct TrackInfoView: View {
                 Text("/").font(.mp4mMono).foregroundColor(Color.mp4mText.opacity(0.5))
                 Text(totalStr).font(.mp4mMono).foregroundColor(Color.mp4mText.opacity(0.7))
             }
-            .frame(width: 130)
+            .frame(width: 160)
             .padding(.horizontal, 8)
         }
         .background(Color.mp4mBackground.opacity(0.95))
