@@ -15,8 +15,8 @@ configs:
 targets:
   MP4M:
     type: application
-    platform: iOS
-    deploymentTarget: "17.0"
+    platform: macOS
+    deploymentTarget: "14.0"
 
     info:
       path: MP4M/Resources/Info.plist
@@ -26,13 +26,8 @@ targets:
         CFBundleIdentifier: com.ktam.MP4M
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "1"
+        CFBundleIconFile: MP4M
         NSHumanReadableCopyright: "Copyright © 2026 ktam"
-        UISupportedInterfaceOrientations:
-          - UIInterfaceOrientationPortrait
-          - UIInterfaceOrientationPortraitUpsideDown
-        UISupportedInterfaceOrientations~ipad:
-          - UIInterfaceOrientationPortrait
-          - UIInterfaceOrientationPortraitUpsideDown
 
     entitlements:
       path: MP4M/Resources/MP4M.entitlements
@@ -93,3 +88,4 @@ targets:
           - "*.ttf"
           - "*.dat"
           - "*.xcassets"
+          - "*.icns"
