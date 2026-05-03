@@ -59,4 +59,7 @@ protocol AudioEngineService: AnyObject {
 
     /// ミュート対象チャンネルを設定
     func setMutedChannels(_ mutedChannels: Set<Int>)
+
+    /// チャンネルマュート制御 (出力レベル制御)
+    func setChannelMute(_ ch: Int, isMuted: Bool)
 }

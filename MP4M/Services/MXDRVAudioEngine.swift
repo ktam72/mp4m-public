@@ -101,6 +101,10 @@ final class MXDRVAudioEngine: AudioEngineService {
         self.mutedChannels = mutedChannels
     }
 
+    func setChannelMute(_ ch: Int, isMuted: Bool) {
+        MXDRVGBridge.setChannelMute(Int32(ch), isMuted: isMuted)
+    }
+
     private func setupAudioEngine() {
         let format = AVAudioFormat(
             commonFormat: .pcmFormatFloat32,

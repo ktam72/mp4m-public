@@ -3,6 +3,43 @@
 SHARP X68000 用音楽プレーヤー「MP4M」の macOS SwiftUI 移植版。
 MDX/PDX 形式の音楽ファイルをリアルタイム再生し、スペクトラムアナライザー・レベルメーター・キーボード表示を持つ。
 
+### 2026-05-03 (13) — チャンネルマュート機能実装（方法B）
+- **チャンネル出力レベル制御によるマュート実装**:
+  - **FM チャンネル (0-7)**: YM2151 TL（Total Level）レジスタで制御
+    - マュート時：S001f (TL) = 127（最大減衰 = 無音）
+    - 非マュート時：保存した元の TL 値に復元
+    - 元の値を `g_fmMutedTL[8]` 配列で保存
+  - **PCM チャンネル (8-15)**: PCM8 volume フィールドで制御
+    - マュート時：S0022 (volume) = 0
+    - 非マュート時：保存した元の volume に復元
+    - 元の値を `g_pcmMutedVol[8]` 配列で保存
+  - マュート状態フラグ（`g_fmMuteState[8]`, `g_pcmMuteState[8]`）で重複マウント防止
+- **MXDRVGBridge の実装**:
+  - `MXDRVGBridge.h` に `setChannelMute(int ch, isMuted: BOOL)` メソッド追加
+  - `MXDRVGBridge.mm` に実装：FM/PCM ワークエリアに直接アクセスして出力レベルを制御
+- **AudioEngineService プロトコル拡張**:
+  - `setChannelMute(_ ch: Int, isMuted: Bool)` メソッド追加
+  - `MXDRVAudioEngine` で実装（MXDRVGBridge 呼び出し）
+- **UIダブルクリック対象の変更**:
+  - LEVELメーターのバー部分 → **チャンネル番号（テキスト）** に変更
+  - 理由：ミュート状態ではバーが非表示になるため、チャンネル番号は常に表示されている
+  - LevelMeterView.swift で `Text("\(channelIndex + 1)")` に `.onTapGesture(count: 2)` を追加
+  - VStack 全体の onTapGesture を削除
+- **ファイルロード時のミュート設定リセット**:
+  - PlayerViewModel の `load()` メソッドで `mutedChannels = []` を実行
+  - 新しいファイルをロードするたびにすべてのチャンネルがミュート解除される
+  - ユーザー体験：各ファイルは常にミュート解除状態で始まる
+- **PlayerViewModel チャンネルマウント処理**:
+  - `toggleChannel()` メソッドで マウント状態と同時に `audioService.setChannelMute()` を呼び出し
+  - マウント時と非マウント時を同じメソッドで処理（isMusted フラグで判定）
+- **修正ファイル**:
+  - `MXDRVGBridge.h`: `setChannelMute()` メソッド追加
+  - `MXDRVGBridge.mm`: グローバル配列追加、`setChannelMute()` 実装
+  - `AudioEngineService.swift`: `setChannelMute()` メソッド追加
+  - `MXDRVAudioEngine.swift`: `setChannelMute()` 実装
+  - `PlayerViewModel.swift`: `toggleChannel()` 修正、`load()` で mutedChannels リセット追加
+  - `LevelMeterView.swift`: ダブルクリック対象をチャンネル番号に変更
+
 ### 2026-05-03 (12) — フェードアウト実装・曲終了判定修正
 - **再生時間に基づいた曲終了判定実装**:
   - `updateDisplay()` で `currentTimeMs >= totalTimeMs` に到達したら `handleTrackEnd()` を呼び出す

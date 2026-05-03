@@ -71,6 +71,9 @@ private struct ChannelMeterView: View {
             Text("\(channelIndex + 1)")
                 .font(.mp4mTiny)
                 .foregroundColor(Color.mp4mCyan.opacity(0.7))
+                .onTapGesture(count: 2) {
+                    onDoubleTap()
+                }
             Text(panLabel)
                 .font(.mp4mTiny)
                 .foregroundColor(channel?.keyOn == true ? panColor : Color.mp4mDim.opacity(0.3))
@@ -88,9 +91,6 @@ private struct ChannelMeterView: View {
         }
         .frame(minWidth: 16, maxWidth: .infinity)
         .opacity(isMuted ? 0.4 : 1.0)
-        .onTapGesture(count: 2) {
-            onDoubleTap()
-        }
     }
 
     private let maxBarHeight: CGFloat = 130

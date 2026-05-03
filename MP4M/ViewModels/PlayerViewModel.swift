@@ -91,6 +91,7 @@ final class PlayerViewModel: @unchecked Sendable {
 
     func load(url: URL) async {
         stop()
+        mutedChannels = []
 
         // 最初に "No PDX" を設定（PDX未指定や読み込み失敗時に使用）
         pdxFileName = "No PDX"
@@ -167,10 +168,13 @@ final class PlayerViewModel: @unchecked Sendable {
     }
 
     func toggleChannel(_ channelIndex: Int) {
-        if mutedChannels.contains(channelIndex) {
+        let isMuted = mutedChannels.contains(channelIndex)
+        if isMuted {
             mutedChannels.remove(channelIndex)
+            audioService.setChannelMute(channelIndex, isMuted: false)
         } else {
             mutedChannels.insert(channelIndex)
+            audioService.setChannelMute(channelIndex, isMuted: true)
         }
     }
 
