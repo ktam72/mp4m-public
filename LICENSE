@@ -232,18 +232,6 @@ WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
 ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-========================================
-(6) KH-Dot-Kodenmachou Font
-========================================
-
-Copyright (c) Teiji Kakigi (柿木定吉)
-
-KH-Dot-Kodenmachou Font は個人・商用の区別なく自由に使用、改変、配布できます。
-著作権表記は不要ですが、フォントの出典を明記することを推奨します。
-
-Font: https://kakie.github.io/font_description.html
-
-========================================
 SUMMARY OF INCLUDED LICENSES
 ========================================
 
@@ -252,7 +240,6 @@ fmgen:               cisc Copyright (Commercial use requires prior agreement)
 MXDRVG:              Apache 2.0 License
 pcm8/x68pcm8:        Apache 2.0 License
 LZX Decompression:   0BSD License (商用利用可能)
-KH-Dot Font:         Kakigi Copyright (自由利用)
 
 ========================================
 USAGE NOTES
