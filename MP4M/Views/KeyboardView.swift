@@ -1,0 +1,163 @@
+import SwiftUI
+
+// MARK: - PianoKey: 個別の鍵
+struct PianoKey: Identifiable {
+    let id: Int  // MIDI ノート番号
+    let midiNote: Int
+    let isBlackKey: Bool
+
+    var octave: Int { midiNote / 12 }
+    var note: Int { midiNote % 12 }
+
+    private let noteNames = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
+
+    var label: String {
+        "\(noteNames[note])\(octave)"
+    }
+}
+
+// MARK: - PianoKeyboard: キーボード全体を管理
+struct PianoKeyboard {
+    private(set) var keys: [PianoKey]
+    let startMidiNote: Int
+    let endMidiNote: Int
+
+    init(startMidiNote: Int = 0, endMidiNote: Int = 96) {
+        self.startMidiNote = startMidiNote
+        self.endMidiNote = endMidiNote
+        self.keys = (startMidiNote..<endMidiNote).map { midiNote in
+            PianoKey(
+                id: midiNote,
+                midiNote: midiNote,
+                isBlackKey: Self.isBlackNote(midiNote % 12)
+            )
+        }
+    }
+
+    // MIDI ノートに対応する鍵を取得
+    func key(for midiNote: Int) -> PianoKey? {
+        guard midiNote >= startMidiNote && midiNote < endMidiNote else { return nil }
+        return keys[midiNote - startMidiNote]
+    }
+
+    // 現在点灯すべき MIDI ノートを取得
+    func litMidiNotes(channels: [ChannelDisplayState]) -> Set<Int> {
+        var result: Set<Int> = []
+
+        for ch in channels {
+            guard ch.keyOn else { continue }
+            let midiNote = Int(ch.keyCode) + Int(ch.keyOffset)
+            if midiNote >= startMidiNote && midiNote < endMidiNote {
+                result.insert(midiNote)
+            }
+        }
+
+        return result
+    }
+
+    // note が黒鍵か判定
+    private static func isBlackNote(_ note: Int) -> Bool {
+        [1, 3, 6, 8, 10].contains(note)
+    }
+
+    // 白鍵リスト
+    var whiteKeys: [PianoKey] {
+        keys.filter { !$0.isBlackKey }
+    }
+
+    // 黒鍵リスト
+    var blackKeys: [PianoKey] {
+        keys.filter { $0.isBlackKey }
+    }
+}
+
+// MARK: - KeyboardView
+struct KeyboardView: View {
+    let viewModel: PlayerViewModel?
+    @State private var keyboard = PianoKeyboard(startMidiNote: 0, endMidiNote: 96)
+
+    private let noteNames = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
+
+    var body: some View {
+        VStack(spacing: 1) {
+            Text("KEYBOARD")
+                .font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 15))
+                .foregroundColor(Color.mp4mCyan)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.leading, 8)
+                .padding(.top, 3)
+
+            GeometryReader { geo in
+                let channels = viewModel?.channels ?? []
+                let keyH = (geo.size.height - 16) / 16
+                let leftMargin: CGFloat = 50
+                let drawWidth = geo.size.width - leftMargin
+                let whiteKeyW = drawWidth / CGFloat(keyboard.whiteKeys.count)
+
+                Canvas { ctx, size in
+                    // 背景
+                    ctx.fill(Path(CGRect(origin: .zero, size: size)),
+                            with: .color(Color.mp4mBackground))
+
+                    // 白鍵・黒鍵をフィルタ
+                    let whiteKeys = keyboard.keys.filter { !$0.isBlackKey }
+                    let blackKeys = keyboard.keys.filter { $0.isBlackKey }
+
+                    // 16チャンネル分のキーボード行を描画（FM 8ch + PCM 8ch）
+                    for ch in 0..<16 {
+                        let y = CGFloat(ch) * keyH + 2
+
+                        // 現在のチャンネルが再生中のノートを取得（このチャンネルのみ）
+                        let chState = ch < channels.count ? channels[ch] : ChannelDisplayState()
+                        let litMidiNote: Int? = chState.keyOn ? Int(chState.keyCode) + Int(chState.keyOffset) : nil
+
+                        // 白鍵を描画
+                        for (whiteIndex, whiteKey) in whiteKeys.enumerated() {
+                            let kx = leftMargin + CGFloat(whiteIndex) * whiteKeyW
+                            let kr = CGRect(x: kx + 0.5, y: y + 0.5,
+                                           width: whiteKeyW - 1, height: keyH - 1)
+                            let isLit = litMidiNote == whiteKey.midiNote
+                            let color = isLit ? Color.mp4mBright : Color(white: 0.7)
+
+                            ctx.fill(Path(kr), with: .color(color))
+                        }
+
+                        // 黒鍵を描画
+                        for blackKey in blackKeys {
+                            // 黒鍵の前にある白鍵の数を数える
+                            let whitesBefore = whiteKeys
+                                .filter { $0.midiNote < blackKey.midiNote }.count
+
+                            // 黒鍵の X 位置: 前の白鍵の右端付近
+                            let bx = leftMargin + CGFloat(whitesBefore - 1) * whiteKeyW + whiteKeyW * 0.65
+                            let bw = whiteKeyW * 0.6
+                            let bh = keyH * 0.6
+                            let br = CGRect(x: bx, y: y, width: bw, height: bh)
+
+                            let isLit = litMidiNote == blackKey.midiNote
+                            let color = isLit ? Color.mp4mBright.opacity(0.9) : Color(white: 0.15)
+                            ctx.fill(Path(br), with: .color(color))
+                        }
+
+                        // CHラベル：再生中は Note名 + オクターブ、それ以外は空白
+                        let labelText = chLabel(for: chState, keyboard: keyboard)
+                        ctx.draw(
+                            Text(labelText).font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 21))
+                                .foregroundColor(Color.mp4mCyan.opacity(0.6)),
+                            at: CGPoint(x: 20, y: y + keyH / 2)
+                        )
+                    }
+                }
+            }
+            .padding(.horizontal, 4)
+        }
+        .background(Color.mp4mBackground)
+    }
+
+    private func chLabel(for ch: ChannelDisplayState, keyboard: PianoKeyboard) -> String {
+        guard ch.keyOn else { return " " }
+        let midiNote = Int(ch.keyCode) + Int(ch.keyOffset)
+        guard let pianoKey = keyboard.key(for: midiNote) else { return " " }
+        return pianoKey.label
+    }
+}
