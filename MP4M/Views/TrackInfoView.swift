@@ -37,12 +37,6 @@ struct TrackInfoView: View {
             }
             .frame(width: 130)
             .padding(.horizontal, 8)
-            Divider().background(Color.mmdspBorder)
-            Text("MXDRV")
-                .font(.mmdspSmall)
-                .foregroundColor(Color.mmdspCyan)
-                .frame(width: 60)
-                .padding(.horizontal, 4)
         }
         .background(Color.mmdspBackground.opacity(0.95))
     }
