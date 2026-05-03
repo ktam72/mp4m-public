@@ -244,6 +244,7 @@ final class PlayerViewModel: @unchecked Sendable {
     // MARK: - 曲終了ハンドリング
 
     private func handleTrackEnd() {
+        print("[TrackEnd] repeatEnabled=\(repeatEnabled)")
         if repeatEnabled {
             play()
         } else {
@@ -253,6 +254,7 @@ final class PlayerViewModel: @unchecked Sendable {
     }
 
     private func startFadeOut() {
+        print("[FadeOut] Starting fadeout")
         fadeOutVolume = 1.0
         let fadeOutDuration = 1.0 // 1 秒間でフェードアウト
         let fadeOutInterval = 0.05 // 50ms ごとに音量を更新
@@ -261,6 +263,7 @@ final class PlayerViewModel: @unchecked Sendable {
         fadeOutTimer = Timer.scheduledTimer(withTimeInterval: fadeOutInterval, repeats: true) { [weak self] timer in
             self?.fadeOutVolume -= 1.0 / Float(fadeOutSteps)
             if self?.fadeOutVolume ?? 0 <= 0 {
+                print("[FadeOut] Complete, playing next track")
                 timer.invalidate()
                 self?.fadeOutTimer = nil
                 self?.fadeOutVolume = 1.0
@@ -270,25 +273,30 @@ final class PlayerViewModel: @unchecked Sendable {
     }
 
     private func playNextTrack() {
+        print("[NextTrack] Starting next track")
         DispatchQueue.main.async { [weak self] in
             guard let self = self, let browserVM = self.browserVM else {
+                print("[NextTrack] browserVM is nil, stopping")
                 self?.stop()
                 return
             }
 
             let files = browserVM.fileItems.filter { !$0.isDirectory }
             guard !files.isEmpty else {
+                print("[NextTrack] No files, stopping")
                 self.stop()
                 return
             }
 
             if let nextIdx = self.nextFileIndex(fileItems: browserVM.fileItems, playingIndex: browserVM.playingIndex) {
+                print("[NextTrack] Playing next file at index \(nextIdx)")
                 browserVM.playingIndex = nextIdx
                 Task {
                     await self.load(url: files[nextIdx].url)
                     self.play()
                 }
             } else {
+                print("[NextTrack] No next file, stopping")
                 self.stop()
             }
         }
