@@ -3,6 +3,48 @@
 SHARP X68000 用音楽プレーヤー「MP4M」の macOS SwiftUI 移植版。
 MDX/PDX 形式の音楽ファイルをリアルタイム再生し、スペクトラムアナライザー・レベルメーター・キーボード表示を持つ。
 
+### 2026-05-03 (14) — マルチコア対応：マルチスレッド改善（フェーズ1 最終版）
+- **実装方針**: macOS 向けのみ（iPad 対応は別アプローチで将来検討）
+- **データ競合修正（os_unfair_lock 導入）**:
+  - `MXDRVAudioEngine.swift` に `import os` + `os_unfair_lock` を追加
+  - オーディオスレッド（`MXDRVG_GetPCM`）とメインスレッド（`MXDRVG_GetWork`）のアクセスを排他制御
+  - リアルタイムオーディオ処理との両立のため最軽量ロック採用
+- **メインスレッド負荷軽減（Task.detached 導入）**:
+  - `PlayerViewModel.updateDisplay()` を `Task.detached(priority: .userInitiated)` に変更
+  - `getChannelStates()` + スペアナ計算をバックグラウンド実行（Performance コア優先）
+  - 結果を `@MainActor.run` でメインスレッドに集約 → UI レスポンス向上
+  - `updateSpectrum()` を `computeSpectrum(for:)` に分離（副作用なし純粋関数）
+- **検証結果**:
+  - ✅ Thread Sanitizer: データ競合検出なし
+  - ✅ パフォーマンス: CPU 0%（アイドル）、MEM 1.2%（安定）
+  - ✅ MDX 再生テスト: 音声・UI・パフォーマンス良好
+- **修正ファイル**:
+  - `MXDRVAudioEngine.swift`: os_unfair_lock 追加、renderAudioCallback ロック保護
+  - `PlayerViewModel.swift`: updateDisplay Task化、computeSpectrum 分離
+- **本番環境対応**: ✅ 完全対応可能（Thread Sanitizer で確認済み）
+
+### 2026-05-03 iOS 対応試行 — 教訓の記録
+- **試行内容**: macOS + iPadOS Universal App（縦向き固定）を目指して実装
+- **レイアウト破損の根本原因**:
+  1. **GeometryReader の導入**: レイアウト計算が複雑化
+  2. **SpectrumAnalyzerView の幅変更**: 480px（固定）→ geometry.size.width（画面幅）
+  3. **LevelMeterView の条件分岐**: `#if os(macOS)` で非表示 → HStack のレイアウト混乱
+  - macOS では LevelMeterView が非表示になると、SpectrumAnalyzerView が 480px から 900px に拡大
+  - 条件分岐が多重化するとプラットフォーム間の互換性が崩れる
+- **失敗から学んだ教訓**:
+  - ✗ 単一ファイルで条件分岐を多数追加 → 保守性低下、予期しないレイアウト崩れ
+  - ✅ **推奨アプローチ**: ファイルレベルで分割（`#if os(macOS)` で ContentView 自体を選択）
+    ```swift
+    #if os(macOS)
+        macOSContentView()
+    #else
+        iOSContentView()
+    #endif
+    ```
+  - ✅ 複数プラットフォーム対応時は「条件分岐」より「ファイル分割」を優先
+  - ✅ レイアウト変更（固定幅 → 動的幅）は全体に波及するため、影響度を事前評価
+- **結論**: iOS 対応は別プロジェクト化またはファイル分割を前提に検討する
+
 ### 2026-05-03 (13) — チャンネルマュート機能実装（方法B）
 - **チャンネル出力レベル制御によるマュート実装**:
   - **FM チャンネル (0-7)**: YM2151 TL（Total Level）レジスタで制御
