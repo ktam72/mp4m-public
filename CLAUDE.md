@@ -3,6 +3,38 @@
 SHARP X68000 用音楽プレーヤー「MP4M」の macOS SwiftUI 移植版。
 MDX/PDX 形式の音楽ファイルをリアルタイム再生し、スペクトラムアナライザー・レベルメーター・キーボード表示を持つ。
 
+### 2026-05-03 (12) — フェードアウト実装・曲終了判定修正
+- **再生時間に基づいた曲終了判定実装**:
+  - `updateDisplay()` で `currentTimeMs >= totalTimeMs` に到達したら `handleTrackEnd()` を呼び出す
+  - `isTerminated()` フラグに依存せず、設定されたループ回数の再生時間に基づいて判定
+- **handleTrackEnd() の重複呼び出し防止**:
+  - `handleTrackEnd()` の最初で `status` を `.stopped` に変更して重複呼び出しを防止
+  - `displayTimer?.invalidate()` で `updateDisplay()` の呼び出しを停止
+  - `audioService.stop()` を明示的に呼び出して MXDRVG エンジンをクリーンアップ
+- **フェードアウト実装（5秒間で音量を0に）**:
+  - `startFadeOut()` で 5秒かけて `fadeOutVolume` を 1.0 から 0.0 に減少
+  - `fadeOutDuration = 5.0` 秒、`fadeOutInterval = 0.05` 秒（50ms）
+  - `fadeOutSteps = 100` ステップで段階的に減少
+- **AVAudioEngine での実際の音量制御**:
+  - `AudioEngineService` プロトコルに `setVolume(_ volume: Float)` メソッドを追加
+  - `MXDRVAudioEngine` で `engine.mainMixerNode.outputVolume` を制御
+  - `startFadeOut()` のタイマーで毎フレーム `audioService.setVolume(fadeOutVolume)` を呼び出し
+  - フェードアウト完了後に `audioService.setVolume(1.0)` で音量を復帰してから `playNextTrack()` を呼び出す
+- **デバッグログの削除**:
+  - `MXDRVGBridge.mm` から PCM・FM チャンネル関連のデバッグログ（[FM_RAW_CH0], [PCM_RAW_CH0], [PCM_AREA], [PCM_DETAILED_ANALYSIS], [PCM_DYNAMIC_FIELDS], [PCM8_ENGINE], [LevelMeter], [FM_DEBUG], [PCM_DEBUG]）を削除
+  - `MXDRVAudioEngine.swift` から [AUDIO] callback ログを削除
+- **フェードアウト動作フロー**:
+  1. ループ回数分の再生が完了（`currentTimeMs >= totalTimeMs`）
+  2. `handleTrackEnd()` が呼び出される
+  3. `repeatEnabled = false` の場合 → `startFadeOut()` を実行
+  4. 5秒かけて音量を 1.0 → 0.0 に減少（AVAudioEngine で制御）
+  5. フェードアウト完了 → `playNextTrack()` で次の曲を読み込み・再生
+- **修正ファイル**:
+  - `PlayerViewModel.swift`: `updateDisplay()`, `handleTrackEnd()`, `startFadeOut()` 修正
+  - `AudioEngineService.swift`: `setVolume()` メソッド追加
+  - `MXDRVAudioEngine.swift`: `setVolume()` 実装追加
+  - `MXDRVGBridge.mm`: デバッグログ削除
+
 ### 2026-05-03 (8) — UI フォントサイズ拡大・PDX ファイル名表示修正
 - **FileSelectorView フォント拡大**:
   - "FILE SELECTOR" タイトル: mmdspSmall (10pt) → カスタム 15pt
