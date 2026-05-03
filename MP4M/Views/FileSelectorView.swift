@@ -1,15 +1,10 @@
 import SwiftUI
-#if os(macOS)
 import AppKit
-#endif
 
 /// ファイルセレクター: MDX ファイルのディレクトリブラウザ
 struct FileSelectorView: View {
     let browserVM: FileBrowserViewModel
     let playerVM: PlayerViewModel?
-    #if os(iOS)
-    @State private var isImporting = false
-    #endif
 
     var body: some View {
         VStack(spacing: 0) {
@@ -51,20 +46,6 @@ struct FileSelectorView: View {
             }
             .background(Color.mp4mBackground)
         }
-        #if os(iOS)
-        .fileImporter(
-            isPresented: $isImporting,
-            allowedContentTypes: [.folder],
-            onCompletion: { result in
-                switch result {
-                case .success(let url):
-                    browserVM.openDirectory(url)
-                case .failure(let error):
-                    print("フォルダ選択エラー: \(error)")
-                }
-            }
-        )
-        #endif
     }
 
     private func doubleTap(item: FileItem) {
@@ -84,7 +65,6 @@ struct FileSelectorView: View {
     }
 
     private func openFolder() {
-        #if os(macOS)
         let panel = NSOpenPanel()
         panel.canChooseFiles = false
         panel.canChooseDirectories = true
@@ -93,9 +73,6 @@ struct FileSelectorView: View {
         if panel.runModal() == .OK, let url = panel.url {
             browserVM.openDirectory(url)
         }
-        #else
-        isImporting = true
-        #endif
     }
 }
 

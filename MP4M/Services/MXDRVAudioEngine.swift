@@ -1,15 +1,11 @@
 import AVFoundation
 import Foundation
-import os
 
 /// MXDRVGBridge + AVAudioEngine を組み合わせたオーディオエンジン実装
 final class MXDRVAudioEngine: AudioEngineService {
     private let sampleRate: Int = 44100
     private var engine = AVAudioEngine()
     private var node: AVAudioSourceNode?
-
-    // C++エンジンアクセスの排他制御（オーディオスレッドとメインスレッド間）
-    private var engineLock = os_unfair_lock()
 
     // オーディオスレッド用バッファ
     private static let maxFrameCount = 1024
@@ -24,16 +20,6 @@ final class MXDRVAudioEngine: AudioEngineService {
     var sourceNode: AVAudioSourceNode? { node }
 
     func start(sampleRate: Int32) {
-        #if os(iOS)
-        do {
-            let session = AVAudioSession.sharedInstance()
-            try session.setCategory(.playback, mode: .default)
-            try session.setActive(true)
-        } catch {
-            print("[MXDRVAudioEngine] AVAudioSession setup failed: \(error)")
-        }
-        #endif
-
         MXDRVGBridge.start(withSampleRate: sampleRate)
         setupAudioEngine()
     }
@@ -78,9 +64,6 @@ final class MXDRVAudioEngine: AudioEngineService {
     }
 
     func getChannelStates() -> [ChannelDisplayState] {
-        os_unfair_lock_lock(&engineLock)
-        defer { os_unfair_lock_unlock(&engineLock) }
-
         var raw = [MP4MChannelState](repeating: MP4MChannelState(), count: 16)
         MXDRVGBridge.getChannelStates(&raw)
 
@@ -151,10 +134,7 @@ final class MXDRVAudioEngine: AudioEngineService {
               frameCount * 2 <= Self.pcmBufferSize
         else { return }
 
-        os_unfair_lock_lock(&engineLock)
         let ret = renderPCM(into: &pcmBuffer, frameCount: Int32(frameCount))
-        os_unfair_lock_unlock(&engineLock)
-
         guard ret > 0 else { return }
 
         for i in 0..<frameCount {

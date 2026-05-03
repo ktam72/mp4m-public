@@ -5,35 +5,31 @@ struct ContentView: View {
     @State private var browserVM = FileBrowserViewModel()
 
     var body: some View {
-        GeometryReader { geometry in
-            VStack(spacing: 0) {
-                TrackInfoView(viewModel: playerVM)
-                    .frame(minHeight: 48)
+        VStack(spacing: 0) {
+            TrackInfoView(viewModel: playerVM)
+                .frame(minHeight: 48)
+            Divider().background(Color.mp4mBorder)
+            HStack(spacing: 0) {
+                SpectrumAnalyzerView(viewModel: playerVM)
+                    .frame(width: 480)
                 Divider().background(Color.mp4mBorder)
-                HStack(spacing: 0) {
-                    SpectrumAnalyzerView(viewModel: playerVM)
-                        .frame(width: geometry.size.width)
-                    #if os(macOS)
-                    Divider().background(Color.mp4mBorder)
-                    LevelMeterView(viewModel: playerVM)
-                    #endif
-                }
-                .frame(height: 180)
-                Divider().background(Color.mp4mBorder)
-                KeyboardView(viewModel: playerVM)
-                    .frame(height: 300)
-                Divider().background(Color.mp4mBorder)
-                if let playerVM {
-                    FileSelectorView(browserVM: browserVM, playerVM: playerVM)
-                        .frame(minHeight: 288)
-                }
-                Divider().background(Color.mp4mBorder)
-                ControlPanelView(viewModel: playerVM, browserVM: browserVM)
-                    .frame(height: 44)
+                LevelMeterView(viewModel: playerVM)
             }
-            .background(Color.mp4mBackground)
-            .foregroundColor(Color.mp4mText)
+            .frame(height: 180)
+            Divider().background(Color.mp4mBorder)
+            KeyboardView(viewModel: playerVM)
+                .frame(height: 600)
+            Divider().background(Color.mp4mBorder)
+            if let playerVM {
+                FileSelectorView(browserVM: browserVM, playerVM: playerVM)
+                    .frame(minHeight: 288)
+            }
+            Divider().background(Color.mp4mBorder)
+            ControlPanelView(viewModel: playerVM, browserVM: browserVM)
+                .frame(height: 44)
         }
+        .background(Color.mp4mBackground)
+        .foregroundColor(Color.mp4mText)
         .onAppear {
             playerVM = PlayerViewModel(audioService: MXDRVAudioEngine())
             playerVM?.browserVM = browserVM
