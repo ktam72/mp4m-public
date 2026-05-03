@@ -10,21 +10,21 @@ struct FileSelectorView: View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
                 Text("FILE SELECTOR")
-                    .font(.mmdspSmall)
+                    .font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 15))
                     .foregroundColor(Color.mmdspCyan)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
                 Spacer()
                 if let dir = browserVM.currentDirectory {
                     Text(dir.path)
-                        .font(.mmdspTiny)
+                        .font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 14))
                         .foregroundColor(Color.mmdspText.opacity(0.5))
                         .lineLimit(1)
                         .truncationMode(.head)
                         .padding(.horizontal, 8)
                 }
                 Button { openFolder() } label: {
-                    Text("[OPEN]").font(.mmdspSmall).foregroundColor(Color.mmdspAmber)
+                    Text("[OPEN]").font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 15)).foregroundColor(Color.mmdspAmber)
                 }
                 .buttonStyle(.plain)
                 .padding(.horizontal, 8)
@@ -84,17 +84,17 @@ private struct FileRowView: View {
     var body: some View {
         HStack(spacing: 6) {
             Text(item.isDirectory ? "►" : "♪")
-                .font(.mmdspTiny)
+                .font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 14))
                 .foregroundColor(item.isDirectory ? Color.mmdspAmber : Color.mmdspText.opacity(0.5))
                 .frame(width: 14)
             Text(item.displayName)
-                .font(.mmdspText)
+                .font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 18))
                 .foregroundColor(isPlaying ? Color.mmdspBright : Color.mmdspText)
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .frame(maxWidth: .infinity, alignment: .leading)
             if isPlaying {
-                Text("▶").font(.mmdspTiny).foregroundColor(Color.mmdspBright)
+                Text("▶").font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 14)).foregroundColor(Color.mmdspBright)
             }
         }
         .padding(.horizontal, 8)

@@ -111,6 +111,7 @@ void OPM_GetChannelStates(void* states, int max_channels) {
 
     // MXDRVG の FM チャンネルワークエリアから状態を取得
     // MXDRVG_WORK_CH: S0016 (flags, bit3=keyon), S0012 (note+D), S0022 (volume)
+    static int log_count = 0;
     for (int i = 0; i < 8 && i < max_channels; i++) {
         uint8_t flags = MXDRVG_WORK_CHBUF_FM[i].S0016;
         uint8_t keyOn = (flags >> 3) & 1;  // bit3 = keyon（0 or 1）
@@ -134,15 +135,18 @@ void OPM_GetChannelStates(void* states, int max_channels) {
             ch_states[i].pan = 1;  // C（中央）
         }
 
-        // FM ボリューム：keyOn のときは最大値 127、オフのときは 0
-        // S0022 の値は小さすぎるため、keyOn フラグとリンクさせる
-        ch_states[i].volume = keyOn ? 127 : 0;  // keyOn ≡ 音量 127（最大値）
+        // FM ボリューム：S0022 の値を動的に取得
+        // S0022 は MXDRVG シーケンサーが設定する音量値
+        // keyOn フラグが false の場合は 0（エンベロープの Release フェーズで自動的に 0 に下がる）
+        uint8_t raw_volume = MXDRVG_WORK_CHBUF_FM[i].S0022;
+        ch_states[i].volume = keyOn ? raw_volume : 0;
         // Spectrum analyzer用：keyOnに基づいた固定値を使用（スケール変更を防ぐ）
         ch_states[i].velocity = keyOn ? 127 : 0;
 
         ch_states[i].bend = 0;
         ch_states[i].keyOffset = 0;
     }
+
 }
 }
 

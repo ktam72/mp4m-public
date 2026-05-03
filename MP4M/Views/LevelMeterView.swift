@@ -34,9 +34,14 @@ private struct ChannelMeterView: View {
 
     private var panLabel: String {
         guard let ch = channel, ch.keyOn else { return "" }
+        // PCMチャンネル (9-16ch, index 8-15) はステレオでも C 表示
+        if channelIndex >= 8 && ch.pan == 3 {
+            return "C"
+        }
         switch ch.pan {
         case 0: return "L"
         case 2: return "R"
+        case 3: return "LR"
         default: return "C"
         }
     }
@@ -52,9 +57,9 @@ private struct ChannelMeterView: View {
 
     private var level: CGFloat {
         guard let ch = channel, ch.keyOn else { return 0 }
-        // volume を 0-127 スケール（最大値を 100% として）で表示
-        let v = CGFloat(ch.volume) / 127.0
-        return pow(v, 3.0)
+        // volume を 0-15 スケール（最大値 15 = 100%）で線形表示
+        let normalized = min(CGFloat(ch.volume) / 15.0, 1.0)
+        return normalized
     }
 
     var body: some View {

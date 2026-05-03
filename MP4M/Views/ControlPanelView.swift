@@ -51,8 +51,8 @@ struct ControlPanelView: View {
             }
             .buttonStyle(.plain)
             Spacer()
-            Text(viewModel?.pdxFileName ?? "(no PDX)")
-                .font(.mmdspSmall)
+            Text(adjustedPdxFileName)
+                .font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 15))
                 .foregroundColor(Color.mmdspCyan)
                 .lineLimit(1)
                 .truncationMode(.tail)
@@ -60,6 +60,23 @@ struct ControlPanelView: View {
                 .padding(.horizontal, 12)
         }
         .background(Color.mmdspBackground.opacity(0.95))
+    }
+
+    /// PDXファイル名の調整：拡張子がない場合は .pdx を補完
+    private var adjustedPdxFileName: String {
+        guard let raw = viewModel?.pdxFileName, !raw.isEmpty else {
+            return "No PDX"
+        }
+        // あらゆる "no pdx" の変種（大文字小文字問わず）を検出して統一
+        if raw.lowercased().contains("no pdx") {
+            return "No PDX"
+        }
+        // 有効なPDXファイル名の場合のみ拡張子処理
+        if raw.lowercased().hasSuffix(".pdx") {
+            return raw
+        } else {
+            return raw + ".pdx"
+        }
     }
 
     private var playPauseLabel: String {

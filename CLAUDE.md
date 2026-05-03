@@ -3,6 +3,37 @@
 SHARP X68000 用音楽プレーヤー「MP4M」の macOS SwiftUI 移植版。
 MDX/PDX 形式の音楽ファイルをリアルタイム再生し、スペクトラムアナライザー・レベルメーター・キーボード表示を持つ。
 
+### 2026-05-03 (8) — UI フォントサイズ拡大・PDX ファイル名表示修正
+- **FileSelectorView フォント拡大**:
+  - "FILE SELECTOR" タイトル: mmdspSmall (10pt) → カスタム 15pt
+  - MDX ルートパス: mmdspTiny (9pt) → カスタム 14pt
+  - "[OPEN]" ボタン: mmdspSmall (10pt) → カスタム 15pt
+  - ファイルリスト（FileRowView）: mmdspText (12pt) → カスタム 18pt、アイコン類も 14pt に拡大
+- **ControlPanelView PDX ファイル名表示**:
+  - フォントサイズ: mmdspSmall (10pt) → カスタム 15pt
+  - PDX 未指定・読み込み失敗時のデフォルト表示: `"No PDX"` に統一
+  - あらゆる "no pdx" の変種（大文字小文字問わず）を検出して `"No PDX"` に統一
+  - 拡張子がない場合の `.pdx` 補完ロジックを維持
+- **MXDRVGBridge.mm PDX 読み込み修正**:
+  - `findPDXFile()` 関数追加: 大文字小文字を区別せずに PDX ファイルを検索
+  - PDX 指定があるが読み込み失敗時: `g_lastPDXFileName` に `"No PDX"` を設定
+  - PDX 未指定時: `g_lastPDXFileName` に `"No PDX"` を設定
+  - `pdxFileName` メソッド: `"no pdx"` を含む値を強制的に `"No PDX"` に変換
+- **PlayerViewModel.swift 修正**:
+  - `load()` メソッドで `audioService.pdxFileName()` の値をチェック
+  - `"no pdx"` を含む場合は `pdxFileName` に `"No PDX"` を設定
+  - PDX 未指定時のデフォルト値を `"(no PDX)"` から `"No PDX"` に変更
+- **KeyboardView フォント拡大**:
+  - "KEYBOARD" タイトル: mmdspSmall (10pt) → カスタム 15pt
+  - CH1〜CH8 ラベル: mmdspTiny (9pt) → カスタム 14pt
+- **LevelMeterView.swift PAN 表示修正**:
+  - PAN 値の定義に合わせて表示ロジックを修正: pan=0→L、pan=1→C、pan=2→R、pan=3→LR（ステレオ）
+  - PCM チャンネル（9-16ch）の場合、pan=3（ステレオ）でも "C" を表示するよう修正
+  - panLabel と panColor のスイッチ文を C++ 側の定義（mxdrvg_core.h, x68pcm8.h）に合わせて修正
+- **mxdrvg_core.h 修正**:
+  - PCM チャンネル PAN 取得ロジックを修正（pan=3 は S ステレオとして処理）
+- **ビルド成功**: `BUILD SUCCEEDED` を確認、UI の可読性向上と PDX 表示の整合性が改善
+
 ---
 
 ## 技術スタック

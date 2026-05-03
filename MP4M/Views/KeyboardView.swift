@@ -11,7 +11,7 @@ struct KeyboardView: View {
     var body: some View {
         VStack(spacing: 1) {
             Text("KEYBOARD")
-                .font(.mmdspSmall)
+                .font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 15))
                 .foregroundColor(Color.mmdspCyan)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, 8)
@@ -45,7 +45,7 @@ struct KeyboardView: View {
                             }
                         }
                         ctx.draw(
-                            Text("CH\(ch + 1)").font(.mmdspTiny).foregroundColor(Color.mmdspCyan.opacity(0.6)),
+                            Text("CH\(ch + 1)").font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 14)).foregroundColor(Color.mmdspCyan.opacity(0.6)),
                             at: CGPoint(x: 4, y: y + keyH / 2)
                         )
                     }

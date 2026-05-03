@@ -62,11 +62,15 @@ final class PlayerViewModel: @unchecked Sendable {
 
         title = loadedTitle ?? url.deletingPathExtension().lastPathComponent
 
-        // PDX ファイル名を audioService から取得
+        // PDX ファイル名を audioService から取得（"no pdx" を含む場合は統一）
         if let pdxName = audioService.pdxFileName() {
-            pdxFileName = pdxName
+            if pdxName.lowercased().contains("no pdx") {
+                pdxFileName = "No PDX"
+            } else {
+                pdxFileName = pdxName
+            }
         } else {
-            pdxFileName = "(no PDX)"
+            pdxFileName = "No PDX"
         }
 
         currentTimeMs = 0
