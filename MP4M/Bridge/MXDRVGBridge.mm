@@ -442,13 +442,6 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
             states[chIdx].keyCode = noteD & 0x7F;
             states[chIdx].keyOffset = 0;
 
-            // PCM チャンネルのノート値をデバッグログ出力（60フレーム毎）
-            static int pcmLogCount = 0;
-            if (pcmLogCount++ % 60 == 0) {
-                fprintf(stderr, "[PCM_NOTE_DEBUG] ch%d: noteD=0x%04x, keyCode=%d, isPlaying=%d\n",
-                    i+1, noteD, states[chIdx].keyCode, isPlaying);
-            }
-
             // PCM パン：PCM8::GetChannelMode() から取得
             // Mode の下位2ビット: bit0=Left, bit1=Right
             // 0b00: Center, 0b01: Left, 0b10: Right, 0b11: Stereo
