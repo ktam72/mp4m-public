@@ -21,24 +21,7 @@ typedef struct {
     uint8_t active;     // 追加：opm::ChannelState と一致
 } MP4MChannelState;
 
-// ObjC インターフェース
-@interface MXDRVGBridge : NSObject
-
-+ (void)startWithSampleRate:(int32_t)sampleRate;
-+ (void)end;
-+ (nullable NSString *)loadMDXFile:(NSString *)mdxPath;
-+ (nullable NSString *)loadMDXData:(NSData *)mdxData pdxData:(nullable NSData *)pdxData;
-+ (void)playWithLoopCount:(int32_t)loopCount;
-+ (void)stop;
-+ (void)pause;
-+ (void)resume;
-+ (BOOL)isTerminated;
-+ (int32_t)currentPlayTimeMs;
-+ (int32_t)totalPlayTimeMs;
-+ (int32_t)getPCM:(int16_t *)buf frameCount:(int32_t)frameCount;
-+ (void)getChannelStates:(MP4MChannelState *)states;
-+ (nullable NSString *)pdxFileName;
-
-@end
+// ObjC インターフェース (MXDRVGBridge.h で定義)
+#import "MXDRVGBridge.h"
 
 #endif // MP4M_BRIDGING_HEADER_H

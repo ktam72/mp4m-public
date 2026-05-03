@@ -11,7 +11,7 @@ struct MP4MApp: App {
     }
 
     var body: some Scene {
-        WindowGroup {
+        Window("MP4M", id: "main") {
             ContentView()
         }
         .windowStyle(.hiddenTitleBar)

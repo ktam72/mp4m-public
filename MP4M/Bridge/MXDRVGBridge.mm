@@ -6,11 +6,13 @@
 #import "MXDRVGBridge.h"
 #include "../Vendor/gamdx/jni/mxdrvg/mxdrvg.h"
 #include "../Vendor/lzx/lzx.h"
-#include "../Vendor/opm/opm_wrapper.h"
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
-extern void OPM_GetChannelStates(MP4MChannelState* states, int max_channels);
+extern "C" {
+void OPM_GetChannelStates(MP4MChannelState* states, int max_channels);
+}
 
 // グローバル状態
 static NSData* g_mdxData = nil;
@@ -321,11 +323,38 @@ static NSString* getTitleFromData(NSData* data) {
 + (void)getChannelStates:(MP4MChannelState *)states {
     if (!states) return;
     memset(states, 0, sizeof(MP4MChannelState) * 16);
-    
+
     // Get OPM channel states (FM 8ch)
     MP4MChannelState opmStates[8];
     memset(opmStates, 0, sizeof(opmStates));
-    
+
+    // Get PCM8 channel states (channels 8-15) from MXDRVG work area
+    // MXDRVG_WORK_CH: S0016 (flags, bit3=keyon), S0012 (note+D, UWORD), S0018 (ch, bits 0-2 for ch number)
+    MXDRVG_WORK_CH* fmCh = (MXDRVG_WORK_CH*)MXDRVG_GetWork(MXDRVG_WORKADR_FM);
+    MXDRVG_WORK_CH* pcmCh = (MXDRVG_WORK_CH*)MXDRVG_GetWork(MXDRVG_WORKADR_PCM);
+    MXDRVG_WORK_GLOBAL* globalWork = (MXDRVG_WORK_GLOBAL*)MXDRVG_GetWork(MXDRVG_WORKADR_GLOBAL);
+
+    static int debugLogCount = 0;
+    if (debugLogCount++ % 60 == 0) {
+        fprintf(stderr, "[WORK_AREA_PTR] FM=%p, PCM=%p, hasPDX=%d\n", fmCh, pcmCh, g_hasPDX);
+        if (globalWork) {
+            // チャンネルマスク（L001e06）を確認: PCM1（bit8）が有効か？
+            uint16_t channelMask = globalWork->L001e06;
+            uint16_t channelEnable = globalWork->L001e1a;
+            uint8_t pcm1Enabled = (channelMask >> 8) & 1;
+            fprintf(stderr, "[CHANNEL_MASK] mask=0x%04x, enable=0x%04x, PCM1_bit8=%d\n",
+                channelMask, channelEnable, pcm1Enabled);
+        }
+        if (fmCh) {
+            fprintf(stderr, "[FM_RAW_CH0] S0016=%02x, S0012=%04x, S0022=%02x, S0018=%02x\n",
+                fmCh[0].S0016, fmCh[0].S0012, fmCh[0].S0022, fmCh[0].S0018);
+        }
+        if (pcmCh) {
+            fprintf(stderr, "[PCM_RAW_CH0] S0016=%02x, S0012=%04x, S0022=%02x, S0018=%02x\n",
+                pcmCh[0].S0016, pcmCh[0].S0012, pcmCh[0].S0022, pcmCh[0].S0018);
+        }
+    }
+
     OPM_GetChannelStates(opmStates, 8);
     
     // Convert FM channels (0-7)
@@ -339,43 +368,105 @@ static NSString* getTitleFromData(NSData* data) {
         states[i].keyOffset = opmStates[i].keyOffset;
         states[i].active = opmStates[i].active;
     }
-    
-    // Get PCM8 channel states (channels 8-15) from MXDRVG work area
-    // MXDRVG_WORK_CH: S0016 (flags, bit3=keyon), S0012 (note+D, UWORD), S0018 (ch, bits 0-2 for ch number)
-    MXDRVG_WORK_CH* pcmCh = (MXDRVG_WORK_CH*)MXDRVG_GetWork(MXDRVG_WORKADR_PCM);
 
     static int logCount = 0;
     if (logCount++ % 60 == 0) {
         fprintf(stderr, "[PCM_AREA] pcmCh=%p, hasPDX=%d\n", pcmCh, g_hasPDX);
+        if (pcmCh && g_hasPDX) {
+            fprintf(stderr, "[PCM_DETAILED_ANALYSIS] ");
+            for (int i = 0; i < 8; i++) {
+                uint8_t len = pcmCh[i].S001a;
+                uint8_t chNum = pcmCh[i].S0018 & 0x7F;
+                uint8_t flags16 = pcmCh[i].S0016;
+                uint8_t flags17 = pcmCh[i].S0017;
+                uint8_t gate = pcmCh[i].S001b;
+                uint16_t noteD = pcmCh[i].S0012;
+                UBYTE volatile* S0000 = pcmCh[i].S0000;
+                UBYTE volatile* S0004 = pcmCh[i].S0004;
+                fprintf(stderr, "ch%d(len=%d,num=%d,f16=%02x,f17=%02x,gate=%02x,noteD=%04x,S0000=%p,S0004=%p) ",
+                    i, len, chNum, flags16, flags17, gate, noteD, S0000, S0004);
+            }
+            fprintf(stderr, "\n");
+
+            // 動的フィールド分析：S0022(v), S0008(bend), S001f(keyon_delay), S0020(keyon_delay_counter)
+            fprintf(stderr, "[PCM_DYNAMIC_FIELDS] ");
+            for (int i = 0; i < 8; i++) {
+                uint32_t bendDelta = pcmCh[i].S0008;
+                uint8_t vol = pcmCh[i].S0022;
+                uint8_t keyonDelay = pcmCh[i].S001f;
+                uint8_t keyonCounter = pcmCh[i].S0020;
+                fprintf(stderr, "ch%d(bend=%lu,vol=%d,delay=%d,counter=%d) ",
+                    i, bendDelta, vol, keyonDelay, keyonCounter);
+            }
+            fprintf(stderr, "\n");
+
+            // PDX ファイルサイズと実際のサンプル構成を確認
+            MXDRVG_WORK_GLOBAL* globalWork = (MXDRVG_WORK_GLOBAL*)MXDRVG_GetWork(MXDRVG_WORKADR_GLOBAL);
+            if (globalWork) {
+                // グローバルワーク情報はログ出力しない（本番環境では不要）
+            }
+
+            // PCM8 エンジンの実際の再生状態を確認
+            // MXDRVG_WORKADR_PCM8 は X68K::X68PCM8 オブジェクトを返すはず
+            volatile void* pcm8Work = MXDRVG_GetWork(MXDRVG_WORKADR_PCM8);
+            if (pcm8Work) {
+                fprintf(stderr, "[PCM8_ENGINE] pcm8=%p\n", pcm8Work);
+                // pcm8Work は X68K::X68PCM8* として解釈できるが、
+                // Pcm8 クラスの内部構造は隠蔽されているため直接アクセスは困難
+                // ここは参考情報として出力するのみ
+            }
+        }
     }
 
     if (pcmCh) {
+        // チャンネルマスクから有効な PCM チャンネル数を判定
+        // L001e1a のビット 8-15 が PCM チャンネルに対応
+        // bit 8: PCM1, bit 9: PCM2, ..., bit 15: PCM8
+        MXDRVG_WORK_GLOBAL* globalWork = (MXDRVG_WORK_GLOBAL*)MXDRVG_GetWork(MXDRVG_WORKADR_GLOBAL);
+        uint16_t channelMask = globalWork ? globalWork->L001e1a : 0;
+
         for (int i = 0; i < 8; i++) {
-            uint8_t chNum = pcmCh[i].S0018 & 0x7F;  // Extract actual channel number (0-7)
-            int chIdx = 8 + chNum;  // Map to display positions 8-15 (ch 9-16)
+            // 配列インデックス i がそのまま PCM1-8ch に対応
+            // i=0 → PDX1ch (ch9), i=1 → PDX2ch (ch10), ..., i=7 → PDX8ch (ch16)
+            int chIdx = 8 + i;  // Map array index directly to display positions
+            int pcmBit = 8 + i;  // PCM channel bit position (bit 8-15)
+
+            // チャンネルマスクでこの PCM チャンネルが有効か確認
+            int isChannelEnabled = (channelMask & (1 << pcmBit)) ? 1 : 0;
+
+            if (!isChannelEnabled || !g_hasPDX) {
+                // このチャンネルはマスクで無効化されている、または PDX がない
+                states[chIdx].keyOn = 0;
+                states[chIdx].active = 0;
+                states[chIdx].volume = 0;
+                states[chIdx].velocity = 0;
+                continue;
+            }
 
             uint8_t flags = pcmCh[i].S0016;
             uint8_t keyOn = (flags >> 3) & 1;  // bit3 = keyon
 
-            // MXDRVG エンジンが PCM の state を記録していないため、
-            // PDX が存在する場合は PCM チャンネルを常に active と判定
-            if (g_hasPDX) {
-                keyOn = 1;
-            }
+            // PCM チャンネルが使用可能か判定
+            UBYTE volatile* S0000 = pcmCh[i].S0000;  // Ptr フィールド
+            uint8_t vol = pcmCh[i].S0022;  // volume
 
-            states[chIdx].keyOn = keyOn;
-            states[chIdx].active = keyOn;
+            // マスクで有効なチャンネルは、vol > 0 で判定
+            uint8_t isPlaying = (vol > 0) ? 1 : 0;
+
+            states[chIdx].keyOn = isPlaying;
+            states[chIdx].active = isPlaying;
 
             // note+D is UWORD, lower bits = note
             uint16_t noteD = pcmCh[i].S0012;
             states[chIdx].keyCode = noteD & 0x7F;
 
             // Pan from PCM8 channel mode
-            states[chIdx].pan = 3;  // Default L+R (stereo)
+            states[chIdx].pan = 3;  // Default L+R (stereo) - PCM は通常ステレオ
 
-            // Volume (PCM doesn't have TL, estimate from keyOn)
-            states[chIdx].volume = keyOn ? 64 : 127;
-            states[chIdx].velocity = keyOn ? 100 : 0;
+            // Volume: 実際に再生中のときは 100、オフのときは 0
+            states[chIdx].volume = isPlaying ? 100 : 0;
+            // Spectrum analyzer用：再生中に基づいた固定値を使用（スケール変更を防ぐ）
+            states[chIdx].velocity = isPlaying ? 100 : 0;
         }
     } else {
         fprintf(stderr, "[getChannelStates] WARNING: PCM work area is NULL\n");
@@ -384,20 +475,65 @@ static NSString* getTitleFromData(NSData* data) {
     // Debug log
     static int callCount = 0;
     if (callCount++ % 60 == 0) {
-        fprintf(stderr, "[ChannelStates] ");
+        fprintf(stderr, "[LevelMeter] ");
         for (int i = 0; i < 16; i++) {
-            fprintf(stderr, "ch%d:on=%d,vel=%d ", i, states[i].keyOn, states[i].velocity);
+            // 表示％を計算（LevelMeterView の計算と同じ）
+            double levelPercent = 0.0;
+            const char* panLabel = "N";  // No signal
+
+            if (states[i].keyOn) {
+                double v = (double)states[i].volume / 127.0;
+                levelPercent = pow(v, 3.0) * 100.0;  // パーセンテージに変換
+
+                // PAN ラベル
+                switch (states[i].pan) {
+                    case 0: panLabel = "L"; break;      // Left
+                    case 2: panLabel = "R"; break;      // Right
+                    case 3: panLabel = "S"; break;      // Stereo (L+R)
+                    default: panLabel = "C"; break;     // Center
+                }
+            }
+
+            fprintf(stderr, "ch%d:%5.1f%% %s ", i+1, levelPercent, panLabel);
+        }
+        fprintf(stderr, "\n");
+
+        // FM チャンネルのワークエリア詳細ダンプ
+        fprintf(stderr, "[FM_DETAIL] ");
+        for (int i = 0; i < 8; i++) {
+            fprintf(stderr, "FM%d:keyOn=%d,vol=%d,vel=%d,key=%d,pan=%d ",
+                i+1,
+                opmStates[i].keyOn,
+                opmStates[i].volume,
+                opmStates[i].velocity,
+                opmStates[i].keyCode,
+                opmStates[i].pan);
         }
         fprintf(stderr, "\n");
 
         // PCM チャンネルのワークエリア詳細ダンプ
         if (pcmCh) {
-            fprintf(stderr, "[PCM_DEBUG] ");
+            fprintf(stderr, "[PCM_DETAIL] ");
             for (int i = 0; i < 8; i++) {
-                uint8_t chNum = pcmCh[i].S0018 & 0x7F;  // Extract actual channel number (0-7)
                 uint8_t flags = pcmCh[i].S0016;
+                uint8_t keyOn = (flags >> 3) & 1;
+                UBYTE volatile* S0000 = pcmCh[i].S0000;
+                uint8_t len = pcmCh[i].S001a;
+                uint8_t chNum = pcmCh[i].S0018 & 0x7F;
                 uint16_t noteD = pcmCh[i].S0012;
-                fprintf(stderr, "pcm%d:flags=0x%02x,note=0x%04x ", chNum, flags, noteD);
+                uint8_t gate = pcmCh[i].S001b;
+                uint8_t keyonDelay = pcmCh[i].S001f;
+                uint8_t keyonDelayCounter = pcmCh[i].S0020;
+                uint8_t vol = pcmCh[i].S0022;
+                int chIdx = 8 + i;  // 配列インデックス i が PDX1-8ch に直接対応
+                int pdxChNum = i + 1;  // PDX1ch = i0, PDX2ch = i1, ..., PDX8ch = i7
+                uint8_t isAllocated = g_hasPDX || keyOn || (S0000 != NULL);
+                // 実際の表示ロジックと同じ判定
+                uint8_t isPlaying = (g_hasPDX && vol > 0) ? 1 : keyOn;
+
+                // 配列インデックス、PDX チャンネル番号、表示位置、状態をダンプ
+                fprintf(stderr, "PDX%dch(i%d→ch%d):alloc=%d,play=%d,key=%d,vol=%d,gate=%d,kdly=%d,kdcnt=%d,note=%d ",
+                    pdxChNum, i, chIdx+1, isAllocated, isPlaying, keyOn, vol, gate, keyonDelay, keyonDelayCounter, noteD & 0x7F);
             }
             fprintf(stderr, "\n");
         }

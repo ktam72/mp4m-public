@@ -4,7 +4,7 @@
 //
 
 #import <Foundation/Foundation.h>
-#include "../Vendor/opm/opm_wrapper.h"
+#include "MP4M-Bridging-Header.h"
 
 @interface MXDRVGBridge : NSObject
 

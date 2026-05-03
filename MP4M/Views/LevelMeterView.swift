@@ -51,8 +51,9 @@ private struct ChannelMeterView: View {
     }
 
     private var level: CGFloat {
-        guard let ch = channel, ch.keyOn, ch.velocity > 0 else { return 0 }
-        let v = CGFloat(ch.velocity) / 127.0
+        guard let ch = channel, ch.keyOn else { return 0 }
+        // volume を 0-127 スケール（最大値を 100% として）で表示
+        let v = CGFloat(ch.volume) / 127.0
         return pow(v, 3.0)
     }
 
