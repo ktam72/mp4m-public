@@ -35,7 +35,7 @@ struct TrackInfoView: View {
                 Text(viewModel?.title.isEmpty ?? true ? "---" : viewModel?.title ?? "---")
                     .font(.mp4mText)
                     .foregroundColor(Color.mp4mBright)
-                    .lineLimit(1)
+                    .lineLimit(isScrolling ? nil : 1)
                     .offset(x: scrollOffset)
                     .background(
                         GeometryReader { geo in
