@@ -16,10 +16,6 @@ final class MXDRVAudioEngine: AudioEngineService {
         fputs("[MXDRVAudioEngine.init]\n", stderr)
     }
 
-    nonisolated(unsafe) private static var diag_callCount: Int = 0
-    nonisolated(unsafe) private static var diag_totalFrames: Int = 0
-    nonisolated(unsafe) private static var diag_prevTime: CFAbsoluteTime = 0
-
     var sourceNode: AVAudioSourceNode? { node }
 
     func start(sampleRate: Int32) {
@@ -124,15 +120,6 @@ final class MXDRVAudioEngine: AudioEngineService {
         guard frameCount <= Self.maxFrameCount,
               frameCount * 2 <= Self.pcmBufferSize
         else { return }
-
-        Self.diag_callCount += 1
-        Self.diag_totalFrames += frameCount
-        let now = CFAbsoluteTimeGetCurrent()
-        if Self.diag_callCount <= 3 || Self.diag_callCount % 500 == 0 {
-            let interval = (Self.diag_prevTime > 0) ? (now - Self.diag_prevTime) * 1000 : 0
-            print("[AUDIO] callback#\(Self.diag_callCount), frames=\(frameCount), totalFrames=\(Self.diag_totalFrames), interval_ms=\(String(format: "%.3f", interval))")
-            Self.diag_prevTime = now
-        }
 
         let ret = renderPCM(into: &pcmBuffer, frameCount: Int32(frameCount))
         guard ret > 0 else { return }
