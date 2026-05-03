@@ -43,9 +43,9 @@ struct AboutView: View {
                         license: "0BSD (Commercial use permitted)"
                     )
                     LicenseRow(
-                        name: "KH-Dot-Kodenmachou-16",
-                        author: "柿木定吉",
-                        license: "Free use"
+                        name: "Monaspace Neon",
+                        author: "GitHub Next",
+                        license: "SIL OFL v1.1"
                     )
                 }
                 .padding(.trailing, 8)
