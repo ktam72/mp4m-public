@@ -46,19 +46,25 @@ private:
 
 unsigned int check(const uint8_t* data, size_t len) {
     if (len < 22) return 0;
-    
+
     // LZX シグネチャを確認: bytes[4..7] = "LZX "
     if (data[4] != 0x4c || data[5] != 0x5a || data[6] != 0x58 || data[7] != 0x20) {
         return 0;
     }
-    
+
     // 展開後のサイズを bytes[0x12..0x15] から取得
-    unsigned int decompressed_size = 
+    unsigned int decompressed_size =
         ((unsigned int)data[0x12] << 24) |
         ((unsigned int)data[0x13] << 16) |
         ((unsigned int)data[0x14] << 8) |
         data[0x15];
-    
+
+    // LZX 展開サイズ上限チェック（DoS 防止）
+    #define MAX_LZX_DECOMPRESSED_SIZE (64 * 1024 * 1024)  // 64MB上限
+    if (decompressed_size > MAX_LZX_DECOMPRESSED_SIZE) {
+        return 0;  // 異常なサイズ、展開拒否
+    }
+
     return decompressed_size;
 }
 

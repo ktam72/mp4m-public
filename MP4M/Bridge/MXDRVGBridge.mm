@@ -180,13 +180,20 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
     }
     fprintf(stderr, "[loadMDXFile] Loaded file, size: %lu\n", (unsigned long)fileData.length);
 
+    // ファイルサイズチェック（INT_MAX および実用上限）
+    #define MAX_MDX_FILE_SIZE (100 * 1024 * 1024)  // 100MB上限
+    if (fileData.length == 0 || fileData.length > MAX_MDX_FILE_SIZE) {
+        fprintf(stderr, "[loadMDXFile] ERROR: File size invalid (0 or >100MB)\n");
+        return nil;
+    }
+
     NSString* mdxDir = [mdxPath stringByDeletingLastPathComponent];
     NSData* pdxData = nil;
 
     // MDX 内部からPDXファイル名を抽出
     const unsigned char* ptr = (const unsigned char*)fileData.bytes;
     int titleEndPos;
-    for (titleEndPos = 0; titleEndPos < (int)fileData.length; titleEndPos++) {
+    for (titleEndPos = 0; titleEndPos < (int)fileData.length - 1; titleEndPos++) {
         if (ptr[titleEndPos] == 0x0d && ptr[titleEndPos + 1] == 0x0a) break;
     }
 
@@ -199,13 +206,16 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
         if (mdxBodyStartPos < (int)fileData.length) {
             mdxBodyStartPos++;  // 0x1A をスキップ
 
-            // PDX ファイル名を抽出
+            // PDX ファイル名を抽出（最大 255 バイト）
+            #define MAX_PDX_NAME_LEN 255
             int pdxNameEnd = mdxBodyStartPos;
-            while (pdxNameEnd < (int)fileData.length && ptr[pdxNameEnd] != 0) {
+            int pdxNameMaxLen = (int)fileData.length - mdxBodyStartPos;
+            while (pdxNameEnd < (int)fileData.length && ptr[pdxNameEnd] != 0 &&
+                   (pdxNameEnd - mdxBodyStartPos) < MAX_PDX_NAME_LEN) {
                 pdxNameEnd++;
             }
 
-            if (pdxNameEnd > mdxBodyStartPos) {
+            if (pdxNameEnd > mdxBodyStartPos && ptr[pdxNameEnd] == 0) {
                 NSString* pdxFileName = [[NSString alloc] initWithBytes:&ptr[mdxBodyStartPos]
                                                                    length:(pdxNameEnd - mdxBodyStartPos)
                                                                  encoding:NSShiftJISStringEncoding];
@@ -261,12 +271,12 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
 
 + (nullable NSString *)loadMDXData:(NSData *)mdxData pdxData:(nullable NSData *)pdxData {
     if (!mdxData) return nil;
-    
+
     const unsigned char* ptr = (const unsigned char*)mdxData.bytes;
-    
+
     // タイトル終端を探す
     int titleEndPos;
-    for (titleEndPos = 0; titleEndPos < (int)mdxData.length; titleEndPos++) {
+    for (titleEndPos = 0; titleEndPos < (int)mdxData.length - 1; titleEndPos++) {
         if (ptr[titleEndPos] == 0x0d && ptr[titleEndPos + 1] == 0x0a) break;
     }
     if (titleEndPos >= (int)mdxData.length) return nil;
