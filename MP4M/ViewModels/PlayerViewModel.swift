@@ -264,7 +264,7 @@ final class PlayerViewModel: @unchecked Sendable {
     private func startFadeOut() {
         print("[FadeOut] Starting fadeout")
         fadeOutVolume = 1.0
-        let fadeOutDuration = 0.5 // 0.5秒で音量が半分になるまでフェードアウト
+        let fadeOutDuration = 5.0 // 5秒で音量が半分になるまでフェードアウト
         let fadeOutInterval = 0.05 // 50ms ごとに音量を更新
         let fadeOutSteps = Int(fadeOutDuration / fadeOutInterval)
 
