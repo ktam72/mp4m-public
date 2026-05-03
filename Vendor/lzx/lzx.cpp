@@ -2,7 +2,6 @@
 //  lzx.cpp
 //  X68000 MDX 用 LZX 解凍 (0BSD ライセンス)
 //
-//  lzx042 のロジックをC++で清潔に再実装
 //  X68000 独自の LZX バリアント対応
 //
 
@@ -46,7 +45,6 @@ private:
 };
 
 unsigned int check(const uint8_t* data, size_t len) {
-    // lzx042check のロジック移植
     if (len < 22) return 0;
     
     // LZX シグネチャを確認: bytes[4..7] = "LZX "
@@ -77,7 +75,6 @@ unsigned int decompress(uint8_t* output, size_t output_len,
     const uint8_t* data_start = output;  // 相対参照用の基準位置
 
     // ヘッダーをスキップして、マーカー 0x7F 0xFF 0xFF 0x4C を探す
-    // lzx042 の Line 42 を移植
     in_pos += 0x26;
     while (in_pos + 3 < in_end) {
         if (in_pos[0] == 0x7f && in_pos[1] == 0xff && in_pos[2] == 0xff && in_pos[3] == 0x4c) {
@@ -93,7 +90,6 @@ unsigned int decompress(uint8_t* output, size_t output_len,
     BitReader reader(in_pos, in_end - in_pos);
 
     while (!reader.is_eof()) {
-        // lzx042 Line 48: 最初のビットを読む
         bool is_literal = reader.read_bit();
 
         if (is_literal) {
@@ -103,7 +99,6 @@ unsigned int decompress(uint8_t* output, size_t output_len,
             if (out_pos >= out_end) return 0;
             *out_pos++ = byte;
         } else {
-            // 参照 (lzx042 Line 56-80 を移植)
             bool extended = reader.read_bit();
 
             int offset;
@@ -111,7 +106,6 @@ unsigned int decompress(uint8_t* output, size_t output_len,
 
             if (!extended) {
                 // 短い参照: 2-5 バイト
-                // lzx042 Line 62-66
                 bool bit0 = reader.read_bit();
                 bool bit1 = reader.read_bit();
                 count = (bit0 ? 2 : 0) + (bit1 ? 1 : 0) + 2;
@@ -121,7 +115,6 @@ unsigned int decompress(uint8_t* output, size_t output_len,
                 offset = offset_byte - 256;  // Line 66
             } else {
                 // 長い参照: 2+ バイト
-                // lzx042 Line 69-79
                 uint8_t offset_hi, offset_lo;
                 if (!reader.read_byte(offset_hi)) return 0;
                 if (!reader.read_byte(offset_lo)) return 0;
@@ -140,12 +133,10 @@ unsigned int decompress(uint8_t* output, size_t output_len,
                 }
             }
 
-            // 相対参照の妥当性チェック (lzx042 Line 81)
             if (out_pos + offset < data_start) {
                 return 0;  // 範囲外参照
             }
 
-            // コピー (lzx042 Line 82)
             while (count-- > 0) {
                 if (out_pos >= out_end) return 0;
                 *out_pos++ = out_pos[offset];
