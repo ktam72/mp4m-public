@@ -65,6 +65,23 @@ MDX/PDX 形式の音楽ファイルをリアルタイム再生し、スペクト
 - **修正ファイル**: `MP4M/Views/KeyboardView.swift`
 - **テスト**: ビルド成功（BUILD SUCCEEDED）、複数チャンネル同時再生時に各行が独立した単一ノート表示を確認
 
+### 2026-05-03 (11) — UI リブランディング・フォントサイズ拡大：mmdsp → mp4m、サイズ1.5倍
+- **ブランド名変更**:
+  - 公式表記を "MDXPlayer for macOS β" → "mp4m β版" に変更
+  - **修正ファイル**: `MP4M/Views/TrackInfoView.swift`
+- **フォント・カラー定義の統一名称変更**:
+  - ソースコード全体で "mmdsp" プレフィックスを "mp4m" に統一
+  - 対象: Color 定義、Font 定義、すべての使用箇所
+  - **修正ファイル**: `MP4M/Views/Theme.swift`（定義）、全Swift ファイル（使用箇所）
+- **画面上部フォントサイズ拡大（1.5倍）**:
+  - `mp4mTitle`: 14pt → 21pt
+  - `mp4mText`: 12pt → 18pt
+  - `mp4mMono`: 12pt → 18pt
+  - `mp4mSmall`: 10pt → 15pt
+  - `mp4mTiny`: 9pt → 14pt
+- **結果**: ブランド表記の統一化、UI フォントサイズの拡大により画面上部が見やすくなった
+- **テスト**: ビルド成功（BUILD SUCCEEDED）
+
 ---
 
 ## 技術スタック

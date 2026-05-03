@@ -16,29 +16,29 @@ struct TrackInfoView: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            Text("MDXPlayer for macOS β")
-                .font(.mmdspTitle)
-                .foregroundColor(Color.mmdspAmber)
+            Text("mp4m β版")
+                .font(.mp4mTitle)
+                .foregroundColor(Color.mp4mAmber)
                 .frame(width: 160)
                 .padding(.horizontal, 8)
-            Divider().background(Color.mmdspBorder)
+            Divider().background(Color.mp4mBorder)
             Text(viewModel?.title.isEmpty ?? true ? "---" : viewModel?.title ?? "---")
-                .font(.mmdspText)
-                .foregroundColor(Color.mmdspBright)
+                .font(.mp4mText)
+                .foregroundColor(Color.mp4mBright)
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 8)
-            Divider().background(Color.mmdspBorder)
+            Divider().background(Color.mp4mBorder)
             HStack(spacing: 4) {
-                Text(elapsedStr).font(.mmdspMono).foregroundColor(Color.mmdspAmber)
-                Text("/").font(.mmdspMono).foregroundColor(Color.mmdspText.opacity(0.5))
-                Text(totalStr).font(.mmdspMono).foregroundColor(Color.mmdspText.opacity(0.7))
+                Text(elapsedStr).font(.mp4mMono).foregroundColor(Color.mp4mAmber)
+                Text("/").font(.mp4mMono).foregroundColor(Color.mp4mText.opacity(0.5))
+                Text(totalStr).font(.mp4mMono).foregroundColor(Color.mp4mText.opacity(0.7))
             }
             .frame(width: 130)
             .padding(.horizontal, 8)
         }
-        .background(Color.mmdspBackground.opacity(0.95))
+        .background(Color.mp4mBackground.opacity(0.95))
     }
 
     private func formatTime(_ ms: Int) -> String {

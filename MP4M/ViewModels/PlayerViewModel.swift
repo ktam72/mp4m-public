@@ -34,6 +34,9 @@ final class PlayerViewModel: @unchecked Sendable {
     private let riseTable: [Int] = [1, 1, 2, 2, 4, 4, 4, 4, 8, 8, 8, 8, 8, 8, 8,
                                      8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8]
 
+    // デバッグ用フレームカウンター
+    private var debugFrameCount = 0
+
     // MARK: - 初期化
 
     init(audioService: any AudioEngineService) {
@@ -168,8 +171,28 @@ final class PlayerViewModel: @unchecked Sendable {
         currentTimeMs = audioService.currentPlayTimeMs()
         let fmChannels = audioService.getChannelStates()
 
-        // @Observable が配列要素の変更を検出できないため、配列全体を置き換える
+        // @Observable が配列要素の変更を検出できないため、配列全体を置き替える
         channels = fmChannels
+
+        // デバッグログ：60フレーム毎に keyCode を出力
+        debugFrameCount += 1
+        if debugFrameCount >= 60 {
+            debugFrameCount = 0
+            var logMsg = "[KeyboardDebug]"
+            for ch in 0..<8 {
+                if channels[ch].keyOn {
+                    let keyCode = Int(channels[ch].keyCode)
+                    let keyOffset = Int(channels[ch].keyOffset)
+                    let calcNote = keyCode + keyOffset
+                    let octave = calcNote / 12
+                    let note = calcNote % 12
+                    logMsg += " FM\(ch+1):KC=\(keyCode),KO=\(keyOffset),Calc=\(calcNote),Oct=\(octave),Note=\(note);"
+                }
+            }
+            if logMsg != "[KeyboardDebug]" {
+                print(logMsg)
+            }
+        }
 
         updateSpectrum()
 

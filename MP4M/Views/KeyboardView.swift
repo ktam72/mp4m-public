@@ -91,7 +91,7 @@ struct KeyboardView: View {
         VStack(spacing: 1) {
             Text("KEYBOARD")
                 .font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 15))
-                .foregroundColor(Color.mmdspCyan)
+                .foregroundColor(Color.mp4mCyan)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, 8)
                 .padding(.top, 3)
@@ -106,7 +106,7 @@ struct KeyboardView: View {
                 Canvas { ctx, size in
                     // 背景
                     ctx.fill(Path(CGRect(origin: .zero, size: size)),
-                            with: .color(Color.mmdspBackground))
+                            with: .color(Color.mp4mBackground))
 
                     // 白鍵・黒鍵をフィルタ
                     let whiteKeys = keyboard.keys.filter { !$0.isBlackKey }
@@ -126,7 +126,7 @@ struct KeyboardView: View {
                             let kr = CGRect(x: kx + 0.5, y: y + 0.5,
                                            width: whiteKeyW - 1, height: keyH - 1)
                             let isLit = litMidiNote == whiteKey.midiNote
-                            let color = isLit ? Color.mmdspBright : Color(white: 0.7)
+                            let color = isLit ? Color.mp4mBright : Color(white: 0.7)
 
                             ctx.fill(Path(kr), with: .color(color))
                         }
@@ -144,7 +144,7 @@ struct KeyboardView: View {
                             let br = CGRect(x: bx, y: y, width: bw, height: bh)
 
                             let isLit = litMidiNote == blackKey.midiNote
-                            let color = isLit ? Color.mmdspBright.opacity(0.9) : Color(white: 0.15)
+                            let color = isLit ? Color.mp4mBright.opacity(0.9) : Color(white: 0.15)
                             ctx.fill(Path(br), with: .color(color))
                         }
 
@@ -152,7 +152,7 @@ struct KeyboardView: View {
                         let labelText = chLabel(for: chState, keyboard: keyboard)
                         ctx.draw(
                             Text(labelText).font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 21))
-                                .foregroundColor(Color.mmdspCyan.opacity(0.6)),
+                                .foregroundColor(Color.mp4mCyan.opacity(0.6)),
                             at: CGPoint(x: 20, y: y + keyH / 2)
                         )
                     }
@@ -160,7 +160,7 @@ struct KeyboardView: View {
             }
             .padding(.horizontal, 4)
         }
-        .background(Color.mmdspBackground)
+        .background(Color.mp4mBackground)
     }
 
     private func chLabel(for ch: ChannelDisplayState, keyboard: PianoKeyboard) -> String {

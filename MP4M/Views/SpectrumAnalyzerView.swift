@@ -25,8 +25,8 @@ struct SpectrumAnalyzerView: View {
                         height: barHeight
                     )
                     let gradient = Gradient(colors: [
-                        Color.mmdspBright.opacity(0.7),
-                        Color.mmdspBright
+                        Color.mp4mBright.opacity(0.7),
+                        Color.mp4mBright
                     ])
                     ctx.fill(
                         Path(barRect),
@@ -39,7 +39,7 @@ struct SpectrumAnalyzerView: View {
                     if bar.peak > 0 {
                         let py = size.height - peakRatio * size.height - 2
                         let peakRect = CGRect(x: x + gap / 2, y: py, width: barW - gap, height: 2)
-                        ctx.fill(Path(peakRect), with: .color(Color.mmdspPeak))
+                        ctx.fill(Path(peakRect), with: .color(Color.mp4mPeak))
                     }
                 }
                 for level in [0.25, 0.5, 0.75] {
@@ -47,10 +47,10 @@ struct SpectrumAnalyzerView: View {
                     var path = Path()
                     path.move(to: CGPoint(x: 0, y: y))
                     path.addLine(to: CGPoint(x: size.width, y: y))
-                    ctx.stroke(path, with: .color(Color.mmdspDim), lineWidth: 0.5)
+                    ctx.stroke(path, with: .color(Color.mp4mDim), lineWidth: 0.5)
                 }
             }
-            .background(Color.mmdspBackground)
+            .background(Color.mp4mBackground)
         }
     }
 }

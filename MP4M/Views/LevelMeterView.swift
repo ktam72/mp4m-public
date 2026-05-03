@@ -8,8 +8,8 @@ struct LevelMeterView: View {
     var body: some View {
         VStack(spacing: 2) {
             Text("LEVEL")
-                .font(.mmdspSmall)
-                .foregroundColor(Color.mmdspCyan)
+                .font(.mp4mSmall)
+                .foregroundColor(Color.mp4mCyan)
                 .frame(maxWidth: .infinity, alignment: .center)
                 .padding(.top, 4)
             HStack(spacing: 3) {
@@ -24,7 +24,7 @@ struct LevelMeterView: View {
             .padding(.horizontal, 4)
             .padding(.bottom, 4)
         }
-        .background(Color.mmdspBackground)
+        .background(Color.mp4mBackground)
     }
 }
 
@@ -49,9 +49,9 @@ private struct ChannelMeterView: View {
     private var panColor: Color {
         guard let ch = channel, ch.keyOn else { return .clear }
         switch ch.pan {
-        case 0: return Color.mmdspCyan.opacity(0.8)
-        case 2: return Color.mmdspAmber.opacity(0.8)
-        default: return Color.mmdspBright.opacity(0.8)
+        case 0: return Color.mp4mCyan.opacity(0.8)
+        case 2: return Color.mp4mAmber.opacity(0.8)
+        default: return Color.mp4mBright.opacity(0.8)
         }
     }
 
@@ -65,18 +65,18 @@ private struct ChannelMeterView: View {
     var body: some View {
         VStack(spacing: 1) {
             Text("\(channelIndex + 1)")
-                .font(.mmdspTiny)
-                .foregroundColor(Color.mmdspCyan.opacity(0.7))
+                .font(.mp4mTiny)
+                .foregroundColor(Color.mp4mCyan.opacity(0.7))
             Text(panLabel)
-                .font(.mmdspTiny)
-                .foregroundColor(channel?.keyOn == true ? panColor : Color.mmdspDim.opacity(0.3))
+                .font(.mp4mTiny)
+                .foregroundColor(channel?.keyOn == true ? panColor : Color.mp4mDim.opacity(0.3))
                 .frame(width: 10)
             ZStack(alignment: .bottom) {
                 if channel?.keyOn == true {
                     Rectangle()
-                        .fill(Color.mmdspDim.opacity(0.15))
+                        .fill(Color.mp4mDim.opacity(0.15))
                     Rectangle()
-                        .fill(Color.mmdspBright)
+                        .fill(Color.mp4mBright)
                         .frame(height: maxBarHeight * level)
                 }
             }

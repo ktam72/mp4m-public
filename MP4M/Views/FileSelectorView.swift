@@ -11,26 +11,26 @@ struct FileSelectorView: View {
             HStack(spacing: 0) {
                 Text("FILE SELECTOR")
                     .font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 15))
-                    .foregroundColor(Color.mmdspCyan)
+                    .foregroundColor(Color.mp4mCyan)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
                 Spacer()
                 if let dir = browserVM.currentDirectory {
                     Text(dir.path)
                         .font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 14))
-                        .foregroundColor(Color.mmdspText.opacity(0.5))
+                        .foregroundColor(Color.mp4mText.opacity(0.5))
                         .lineLimit(1)
                         .truncationMode(.head)
                         .padding(.horizontal, 8)
                 }
                 Button { openFolder() } label: {
-                    Text("[OPEN]").font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 15)).foregroundColor(Color.mmdspAmber)
+                    Text("[OPEN]").font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 15)).foregroundColor(Color.mp4mAmber)
                 }
                 .buttonStyle(.plain)
                 .padding(.horizontal, 8)
             }
-            .background(Color.mmdspBackground.opacity(0.8))
-            Divider().background(Color.mmdspBorder)
+            .background(Color.mp4mBackground.opacity(0.8))
+            Divider().background(Color.mp4mBorder)
             ScrollView {
                 LazyVStack(spacing: 0) {
                     ForEach(Array(browserVM.fileItems.enumerated()), id: \.element.id) { idx, item in
@@ -44,7 +44,7 @@ struct FileSelectorView: View {
                     }
                 }
             }
-            .background(Color.mmdspBackground)
+            .background(Color.mp4mBackground)
         }
     }
 
@@ -85,20 +85,20 @@ private struct FileRowView: View {
         HStack(spacing: 6) {
             Text(item.isDirectory ? "►" : "♪")
                 .font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 14))
-                .foregroundColor(item.isDirectory ? Color.mmdspAmber : Color.mmdspText.opacity(0.5))
+                .foregroundColor(item.isDirectory ? Color.mp4mAmber : Color.mp4mText.opacity(0.5))
                 .frame(width: 14)
             Text(item.displayName)
                 .font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 18))
-                .foregroundColor(isPlaying ? Color.mmdspBright : Color.mmdspText)
+                .foregroundColor(isPlaying ? Color.mp4mBright : Color.mp4mText)
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .frame(maxWidth: .infinity, alignment: .leading)
             if isPlaying {
-                Text("▶").font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 14)).foregroundColor(Color.mmdspBright)
+                Text("▶").font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 14)).foregroundColor(Color.mp4mBright)
             }
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 3)
-        .background(isSelected ? Color.mmdspSelected : Color.clear)
+        .background(isSelected ? Color.mp4mSelected : Color.clear)
     }
 }

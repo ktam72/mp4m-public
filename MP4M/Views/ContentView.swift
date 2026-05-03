@@ -8,28 +8,28 @@ struct ContentView: View {
         VStack(spacing: 0) {
             TrackInfoView(viewModel: playerVM)
                 .frame(height: 48)
-            Divider().background(Color.mmdspBorder)
+            Divider().background(Color.mp4mBorder)
             HStack(spacing: 0) {
                 SpectrumAnalyzerView(viewModel: playerVM)
                     .frame(width: 480)
-                Divider().background(Color.mmdspBorder)
+                Divider().background(Color.mp4mBorder)
                 LevelMeterView(viewModel: playerVM)
             }
             .frame(height: 180)
-            Divider().background(Color.mmdspBorder)
+            Divider().background(Color.mp4mBorder)
             KeyboardView(viewModel: playerVM)
                 .frame(height: 296)
-            Divider().background(Color.mmdspBorder)
+            Divider().background(Color.mp4mBorder)
             if let playerVM {
                 FileSelectorView(browserVM: browserVM, playerVM: playerVM)
                     .frame(minHeight: 360)
             }
-            Divider().background(Color.mmdspBorder)
+            Divider().background(Color.mp4mBorder)
             ControlPanelView(viewModel: playerVM, browserVM: browserVM)
                 .frame(height: 44)
         }
-        .background(Color.mmdspBackground)
-        .foregroundColor(Color.mmdspText)
+        .background(Color.mp4mBackground)
+        .foregroundColor(Color.mp4mText)
         .onAppear {
             playerVM = PlayerViewModel(audioService: MXDRVAudioEngine())
         }

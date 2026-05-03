@@ -13,53 +13,53 @@ struct ControlPanelView: View {
                 PanelButton(label: "■", action: { viewModel?.stop() })
                 PanelButton(label: "▶▶", action: playNext)
             }
-            Divider().background(Color.mmdspBorder)
+            Divider().background(Color.mp4mBorder)
             HStack(spacing: 4) {
-                Text("LOOP:").font(.mmdspSmall).foregroundColor(Color.mmdspText.opacity(0.7))
+                Text("LOOP:").font(.mp4mSmall).foregroundColor(Color.mp4mText.opacity(0.7))
                 Button { viewModel?.setLoopCount((viewModel?.loopCount ?? 2) - 1) } label: {
-                    Text("-").font(.mmdspMono).foregroundColor(Color.mmdspAmber)
+                    Text("-").font(.mp4mMono).foregroundColor(Color.mp4mAmber)
                 }
                 .buttonStyle(.plain)
                 Text(viewModel?.loopCount == 0 ? "∞" : "\(viewModel?.loopCount ?? 2)")
-                    .font(.mmdspMono).foregroundColor(Color.mmdspBright).frame(width: 20)
+                    .font(.mp4mMono).foregroundColor(Color.mp4mBright).frame(width: 20)
                 Button { viewModel?.setLoopCount((viewModel?.loopCount ?? 2) + 1) } label: {
-                    Text("+").font(.mmdspMono).foregroundColor(Color.mmdspAmber)
+                    Text("+").font(.mp4mMono).foregroundColor(Color.mp4mAmber)
                 }
                 .buttonStyle(.plain)
             }
             .padding(.horizontal, 10)
-            Divider().background(Color.mmdspBorder)
+            Divider().background(Color.mp4mBorder)
             HStack(spacing: 6) {
                 ForEach(AutoMode.allCases, id: \.self) { mode in
                     Button { viewModel?.setAutoMode(mode) } label: {
                         Text(mode.rawValue)
-                            .font(.mmdspTiny)
-                            .foregroundColor(viewModel?.autoMode == mode ? Color.mmdspBright : Color.mmdspText.opacity(0.5))
+                            .font(.mp4mTiny)
+                            .foregroundColor(viewModel?.autoMode == mode ? Color.mp4mBright : Color.mp4mText.opacity(0.5))
                             .padding(.horizontal, 6)
                             .padding(.vertical, 3)
-                            .background(viewModel?.autoMode == mode ? Color.mmdspSelected : Color.clear)
+                            .background(viewModel?.autoMode == mode ? Color.mp4mSelected : Color.clear)
                     }
                     .buttonStyle(.plain)
                 }
             }
             .padding(.horizontal, 8)
-            Divider().background(Color.mmdspBorder)
+            Divider().background(Color.mp4mBorder)
             Button { viewModel?.toggleRepeat() } label: {
-                Text("REPEAT").font(.mmdspTiny)
-                    .foregroundColor(viewModel?.repeatEnabled ?? true ? Color.mmdspBright : Color.mmdspText.opacity(0.4))
+                Text("REPEAT").font(.mp4mTiny)
+                    .foregroundColor(viewModel?.repeatEnabled ?? true ? Color.mp4mBright : Color.mp4mText.opacity(0.4))
                     .padding(.horizontal, 8)
             }
             .buttonStyle(.plain)
             Spacer()
             Text(adjustedPdxFileName)
                 .font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 15))
-                .foregroundColor(Color.mmdspCyan)
+                .foregroundColor(Color.mp4mCyan)
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .frame(maxWidth: 200, alignment: .trailing)
                 .padding(.horizontal, 12)
         }
-        .background(Color.mmdspBackground.opacity(0.95))
+        .background(Color.mp4mBackground.opacity(0.95))
     }
 
     /// PDXファイル名の調整：拡張子がない場合は .pdx を補完
@@ -124,11 +124,11 @@ private struct PanelButton: View {
     let action: () -> Void
     var body: some View {
         Button(action: action) {
-            Text(label).font(.mmdspMono).foregroundColor(Color.mmdspAmber)
+            Text(label).font(.mp4mMono).foregroundColor(Color.mp4mAmber)
                 .frame(width: 36, height: 44)
         }
         .buttonStyle(.plain)
-        .background(Color.mmdspBackground)
-        .overlay(Rectangle().stroke(Color.mmdspBorder, lineWidth: 0.5))
+        .background(Color.mp4mBackground)
+        .overlay(Rectangle().stroke(Color.mp4mBorder, lineWidth: 0.5))
     }
 }

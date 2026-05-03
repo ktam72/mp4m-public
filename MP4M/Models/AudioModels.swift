@@ -23,7 +23,7 @@ struct ChannelDisplayState {
     var volume: UInt8 = 0
     var bend: Int16 = 0
     var pan: UInt8 = 1
-    var keyOffset: UInt8 = 15
+    var keyOffset: UInt8 = 0
 }
 
 // MARK: - スペアナバー状態
