@@ -3,10 +3,12 @@ import SwiftUI
 struct ContentView: View {
     @State private var playerVM: PlayerViewModel?
     @State private var browserVM = FileBrowserViewModel()
+    @State private var showAbout = false
 
     var body: some View {
-        VStack(spacing: 0) {
-            TrackInfoView(viewModel: playerVM)
+        ZStack {
+            VStack(spacing: 0) {
+                TrackInfoView(viewModel: playerVM, showAbout: $showAbout)
                 .frame(minHeight: 48)
             Divider().background(Color.mp4mBorder)
             HStack(spacing: 0) {
@@ -27,18 +29,28 @@ struct ContentView: View {
             Divider().background(Color.mp4mBorder)
             ControlPanelView(viewModel: playerVM, browserVM: browserVM)
                 .frame(height: 44)
-        }
-        .background(Color.mp4mBackground)
-        .foregroundColor(Color.mp4mText)
-        .onAppear {
-            playerVM = PlayerViewModel(audioService: MXDRVAudioEngine())
-            playerVM?.browserVM = browserVM
-        }
-        .onDisappear {
-            playerVM?.cleanup()
-        }
-        .onDrop(of: [.fileURL], isTargeted: nil) { providers in
-            handleDrop(providers: providers)
+            }
+            .disabled(showAbout)
+            .background(Color.mp4mBackground)
+            .foregroundColor(Color.mp4mText)
+            .onAppear {
+                playerVM = PlayerViewModel(audioService: MXDRVAudioEngine())
+                playerVM?.browserVM = browserVM
+            }
+            .onDisappear {
+                playerVM?.cleanup()
+            }
+            .onDrop(of: [.fileURL], isTargeted: nil) { providers in
+                handleDrop(providers: providers)
+            }
+
+            // About ダイアログオーバーレイ
+            if showAbout {
+                Color.black.opacity(0.55)
+                    .ignoresSafeArea()
+                    .onTapGesture { showAbout = false }
+                AboutView(isPresented: $showAbout)
+            }
         }
     }
 

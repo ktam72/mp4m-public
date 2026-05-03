@@ -14,8 +14,8 @@ struct SpectrumAnalyzerView: View {
                 let gap: CGFloat = 1
                 for i in 0..<barCount {
                     let bar = i < bars.count ? bars[i] : SpectrumBarState()
-                    let ratio = CGFloat(bar.current / maxLevel)
-                    let peakRatio = CGFloat(bar.peak / maxLevel)
+                    let ratio = min(CGFloat(bar.current / maxLevel), 1.0)
+                    let peakRatio = min(CGFloat(bar.peak / maxLevel), 1.0)
                     let x = CGFloat(i) * barW
                     let barHeight = ratio * size.height
                     let barRect = CGRect(

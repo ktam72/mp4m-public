@@ -3,6 +3,7 @@ import SwiftUI
 /// 曲情報バー: タイトル / 経過時間 / 総時間
 struct TrackInfoView: View {
     let viewModel: PlayerViewModel?
+    @Binding var showAbout: Bool
 
     private var elapsedStr: String {
         guard let vm = viewModel else { return "--:--" }
@@ -21,6 +22,14 @@ struct TrackInfoView: View {
                 .foregroundColor(Color.mp4mAmber)
                 .frame(width: 160)
                 .padding(.horizontal, 8)
+                .onTapGesture { showAbout = true }
+                .onHover { isHovered in
+                    if isHovered {
+                        NSCursor.pointingHand.push()
+                    } else {
+                        NSCursor.pop()
+                    }
+                }
             Divider().background(Color.mp4mBorder)
 
             // 曲名折り返し表示
