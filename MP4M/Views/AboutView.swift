@@ -15,7 +15,7 @@ struct AboutView: View {
 
             // バージョン情報
             Text("Version 1.0 β").font(.mp4mSmall).foregroundColor(.mp4mText)
-            Text("macOS MDX Player for X68000").font(.mp4mTiny).foregroundColor(.mp4mDim)
+            Text("MDX Player for macOS").font(.mp4mTiny).foregroundColor(.mp4mDim)
 
             Divider().background(Color.mp4mBorder)
 
