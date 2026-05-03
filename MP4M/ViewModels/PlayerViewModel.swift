@@ -245,8 +245,15 @@ final class PlayerViewModel: @unchecked Sendable {
     // MARK: - 曲終了ハンドリング
 
     private func handleTrackEnd() {
+        guard status == .playing else { return }
+
+        // 重複呼び出し防止：一度停止状態に変更
+        status = .stopped
+        displayTimer?.invalidate()
+
         print("[TrackEnd] repeatEnabled=\(repeatEnabled)")
         if repeatEnabled {
+            audioService.stop()
             play()
         } else {
             // フェードアウト処理を開始
