@@ -462,10 +462,10 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
                 states[chIdx].pan = 1;  // C（中央）
             }
 
-            // Volume: 実際に再生中のときは 100、オフのときは 0
+            // Volume: 実際に再生中のときは 127、オフのときは 0
             states[chIdx].volume = isPlaying ? 127 : 0;
-            // Spectrum analyzer用：再生中に基づいた固定値を使用（スケール変更を防ぐ）
-            states[chIdx].velocity = isPlaying ? 100 : 0;
+            // Spectrum analyzer用：再生中は 127、オフは 0（FM と統一）
+            states[chIdx].velocity = isPlaying ? 127 : 0;
         }
     }
 }

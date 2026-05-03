@@ -11,6 +11,7 @@ struct MP4MApp: App {
     }
 
     var body: some Scene {
+        #if os(macOS)
         Window("MP4M", id: "main") {
             ContentView()
         }
@@ -20,5 +21,10 @@ struct MP4MApp: App {
         .commands {
             CommandGroup(replacing: .newItem) {}
         }
+        #else
+        WindowGroup {
+            ContentView()
+        }
+        #endif
     }
 }

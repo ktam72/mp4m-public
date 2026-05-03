@@ -213,50 +213,59 @@ final class PlayerViewModel: @unchecked Sendable {
     private func updateDisplay() {
         guard status == .playing else { return }
 
-        currentTimeMs = audioService.currentPlayTimeMs()
-        let fmChannels = audioService.getChannelStates()
+        // バックグラウンドタスクで C++ 呼び出しとスペアナ計算を実行
+        Task.detached(priority: .userInitiated) { [weak self] in
+            guard let self else { return }
 
-        // @Observable が配列要素の変更を検出できないため、配列全体を置き替える
-        channels = fmChannels
+            let ms = self.audioService.currentPlayTimeMs()
+            let fmChannels = self.audioService.getChannelStates()
+            let newBars = self.computeSpectrum(for: fmChannels)
 
-        updateSpectrum()
+            // メインスレッドで UI 更新
+            await MainActor.run {
+                self.currentTimeMs = ms
+                self.channels = fmChannels
+                self.spectrumBars = newBars
 
-        // 再生時間が総時間に到達したら曲終了
-        if totalTimeMs > 0 && currentTimeMs >= totalTimeMs {
-            handleTrackEnd()
+                // 再生時間が総時間に到達したら曲終了
+                if self.totalTimeMs > 0 && self.currentTimeMs >= self.totalTimeMs {
+                    self.handleTrackEnd()
+                }
+            }
         }
     }
 
     // MARK: - スペアナ計算
 
-    private func updateSpectrum() {
+    private func computeSpectrum(for channels: [ChannelDisplayState]) -> [SpectrumBarState] {
         // 1. ビンクリア
-        for i in 0..<52 { speaBF1[i] = 0 }
+        var speaBuf = [Float](repeating: 0, count: 52)
 
         // 2. チャンネル→ビンマッピング + 拡散処理（元のSpeanaBitmap.m準拠）
         for ch in channels where ch.keyOn {
             let d = (Int(ch.keyCode) + Int(ch.keyOffset)) / 3
             if d < 42 {
                 let x = UInt16(ch.velocity)
-                speaBF1[d]   += Float(x)
-                if d > 0 { speaBF1[d-1] += Float((x * 3) / 4) }
-                speaBF1[d+1] += Float((x * 3) / 4)
-                if d > 1 { speaBF1[d-2] += Float((x * 5) / 16) }
-                speaBF1[d+2] += Float((x * 5) / 16)
-                if d > 2 { speaBF1[d-3] += Float(x / 8) }
-                speaBF1[d+3] += Float(x / 8)
-                if d > 3 { speaBF1[d-4] += Float(x / 4) }
-                speaBF1[d+4] += Float(x / 4)
-                if d > 4 { speaBF1[d-5] += Float(x / 16) }
-                speaBF1[d+5] += Float(x / 16)
+                speaBuf[d]   += Float(x)
+                if d > 0 { speaBuf[d-1] += Float((x * 3) / 4) }
+                speaBuf[d+1] += Float((x * 3) / 4)
+                if d > 1 { speaBuf[d-2] += Float((x * 5) / 16) }
+                speaBuf[d+2] += Float((x * 5) / 16)
+                if d > 2 { speaBuf[d-3] += Float(x / 8) }
+                speaBuf[d+3] += Float(x / 8)
+                if d > 3 { speaBuf[d-4] += Float(x / 4) }
+                speaBuf[d+4] += Float(x / 4)
+                if d > 4 { speaBuf[d-5] += Float(x / 16) }
+                speaBuf[d+5] += Float(x / 16)
             }
         }
 
         // 3. バー状態更新
+        var newBars = spectrumBars
         let maxBars = Float(routeTable.count - 1)
         for i in 0..<32 {
-            var bar = spectrumBars[i]
-            let raw = speaBF1[i + 5]
+            var bar = newBars[i]
+            let raw = speaBuf[i + 5]
             var targetBar: Float = 0
 
             if raw > 0 {
@@ -283,8 +292,10 @@ final class PlayerViewModel: @unchecked Sendable {
                 bar.peak = targetBar
                 bar.peakTimer = 10
             }
-            spectrumBars[i] = bar
+            newBars[i] = bar
         }
+
+        return newBars
     }
 
     // MARK: - 曲終了ハンドリング

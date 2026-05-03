@@ -3,6 +3,7 @@ options:
   bundleIdPrefix: com.ktam
   deploymentTarget:
     macOS: "14.0"
+    iOS: "17.0"
   createIntermediateGroups: true
   xcodeVersion: "16.0"
   defaultConfig: Debug
@@ -14,8 +15,8 @@ configs:
 targets:
   MP4M:
     type: application
-    platform: macOS
-    deploymentTarget: "14.0"
+    platform: iOS
+    deploymentTarget: "17.0"
 
     info:
       path: MP4M/Resources/Info.plist
@@ -25,9 +26,13 @@ targets:
         CFBundleIdentifier: com.ktam.MP4M
         CFBundleShortVersionString: "1.0"
         CFBundleVersion: "1"
-        NSPrincipalClass: NSApplication
         NSHumanReadableCopyright: "Copyright © 2026 ktam"
-        LSMinimumSystemVersion: "14.0"
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+        UISupportedInterfaceOrientations~ipad:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
 
     entitlements:
       path: MP4M/Resources/MP4M.entitlements
@@ -72,7 +77,10 @@ targets:
       CLANG_ENABLE_OBJC_ARC: YES
       SWIFT_OBJC_BRIDGING_HEADER: MP4M/Bridge/MP4M-Bridging-Header.h
       FRAMEWORK_SEARCH_PATHS: $(inherited)
-      LINK_FLAGS: -framework AVFoundation -framework AppKit -framework CoreGraphics
+      LINK_FLAGS: -framework AVFoundation -framework CoreGraphics
+      SUPPORTED_PLATFORMS: macosx iphoneos iphonesimulator
+      MACOSX_DEPLOYMENT_TARGET: "14.0"
+      IPHONEOS_DEPLOYMENT_TARGET: "17.0"
 
     dependencies: []
 
