@@ -56,9 +56,12 @@ final class PlayerViewModel: @unchecked Sendable {
     func load(url: URL) async {
         stop()
 
-        let loadedTitle = await Task.detached(priority: .userInitiated) { [weak self] in
-            self?.audioService.loadMDXFile(path: url.path)
-        }.value
+        // 最初に "No PDX" を設定（PDX未指定や読み込み失敗時に使用）
+        pdxFileName = "No PDX"
+
+    let loadedTitle = await Task.detached(priority: .userInitiated) { [weak self] in
+        self?.audioService.loadMDXFile(path: url.path)
+    }.value
 
         title = loadedTitle ?? url.deletingPathExtension().lastPathComponent
 

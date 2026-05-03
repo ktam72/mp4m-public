@@ -164,6 +164,9 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
 }
 
 + (nullable NSString *)loadMDXFile:(NSString *)mdxPath {
+    // 最初に "No PDX" を設定（PDX未指定や読み込み失敗時に使用）
+    strncpy(g_lastPDXFileName, "No PDX", sizeof(g_lastPDXFileName) - 1);
+    g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
     fprintf(stderr, "[loadMDXFile] Loading: %s\n", [mdxPath UTF8String]);
     NSData* fileData = [NSData dataWithContentsOfFile:mdxPath];
     if (!fileData) {
