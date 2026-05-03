@@ -39,9 +39,19 @@ struct TrackInfoView: View {
                     .offset(x: scrollOffset)
                     .background(
                         GeometryReader { geo in
-                            Color.clear.onAppear {
-                                textWidth = geo.size.width
-                            }
+                            Color.clear
+                                .onAppear {
+                                    textWidth = geo.size.width
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                        startScrolling()
+                                    }
+                                }
+                                .onChange(of: viewModel?.title) { oldValue, newValue in
+                                    textWidth = geo.size.width
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                                        handleTitleChange(newValue ?? "")
+                                    }
+                                }
                         }
                     )
             }
@@ -50,9 +60,10 @@ struct TrackInfoView: View {
             .padding(.horizontal, 8)
             .background(
                 GeometryReader { geo in
-                    Color.clear.onAppear {
-                        viewportWidth = geo.size.width
-                    }
+                    Color.clear
+                        .onAppear {
+                            viewportWidth = geo.size.width
+                        }
                 }
             )
 
