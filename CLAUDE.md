@@ -52,6 +52,19 @@ MDX/PDX 形式の音楽ファイルをリアルタイム再生し、スペクト
   - CHラベル文字サイズ：14pt → 21pt（1.5倍）
   - CHラベル位置：左から20pxの位置に移動
 
+### 2026-05-03 (10) — KeyboardView per-channel 独立表示修正
+- **問題**: グローバルな `litMidiNotes` (全チャンネル音を結合した Set) を使用していたため、8チャンネル行すべてが同じ点灯パターンを表示していた
+  - ユーザー要件: "Chごとに、鍵盤は常に1箇所のみが点灯している状態"
+  - 実装: `let litMidiNotes = keyboard.litMidiNotes(channels: channels)` で全チャンネル(16ch)の音を結合 → 複数チャンネルが同時に点灯している場合、すべての行に反映
+- **修正アーキテクチャ**: per-channel 独立管理に変更
+  - Canvas 内の `for ch in 0..<8` ループで、各イテレーション時に該当チャンネルのみの状態を管理
+  - `let chState = ch < channels.count ? channels[ch] : ChannelDisplayState()` で該当チャンネルの状態を取得
+  - `let litMidiNote: Int? = chState.keyOn ? Int(chState.keyCode) + Int(chState.keyOffset) : nil` で、そのチャンネルのみの点灯ノートを計算
+  - 白鍵・黒鍵の点灯判定を `litMidiNote == whiteKey.midiNote` （Set 検索ではなく完全一致比較）に変更
+- **結果**: 各チャンネル行は独立した1箇所のみの点灯状態を持つようになり、ユーザー要件を満たす
+- **修正ファイル**: `MP4M/Views/KeyboardView.swift`
+- **テスト**: ビルド成功（BUILD SUCCEEDED）、複数チャンネル同時再生時に各行が独立した単一ノート表示を確認
+
 ---
 
 ## 技術スタック
