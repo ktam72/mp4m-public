@@ -49,6 +49,13 @@ final class PlayerViewModel: @unchecked Sendable {
     private var cachedChannels: [ChannelDisplayState] = Array(repeating: ChannelDisplayState(), count: 16)
     private let channelStateUpdateIntervalMs: Int = 50  // 50ms ごとにのみ取得
 
+    // 再生時間計測（案C: C++ 呼び出し削減）
+    private var playStartTimeMs: Int = 0          // 再生開始時の絶対時間
+    private var playStartDate: Date = Date()      // 再生開始時刻
+    private var lastSyncTimeMs: Int = 0           // 最後に同期した時刻
+    private var lastSyncDate: Date = Date()       // 最後に同期した時刻（Date）
+    private let syncIntervalMs: Int = 1000        // 1秒ごとに同期して誤差補正
+
     // スペアナ計算用バッファ
     private var speaBF1 = [Float](repeating: 0, count: 52)
     private let routeTable: [Float] = [
@@ -129,13 +136,20 @@ final class PlayerViewModel: @unchecked Sendable {
     func play() {
         guard status != .playing else { return }
 
-        if status == .paused {
+        let isPaused = (status == .paused)
+        if isPaused {
             audioService.resume()
         } else {
             totalTimeMs = audioService.playWithLoopCount(Int32(loopCount))
         }
 
         audioService.startEngine()
+
+        // 案C: 再生時間計測の初期化（毎フレーム C++ 呼び出しを削減）
+        playStartTimeMs = audioService.currentPlayTimeMs()  // 初回のみ C++ 呼び出し
+        playStartDate = Date()
+        lastSyncTimeMs = playStartTimeMs
+        lastSyncDate = Date()
 
         status = .playing
         startDisplayTimer()
@@ -226,7 +240,18 @@ final class PlayerViewModel: @unchecked Sendable {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self else { return }
 
-            let ms = self.audioService.currentPlayTimeMs()
+            // 案C: ローカル時間計測（毎フレーム C++ 呼び出しを削減）
+            let elapsedMs = Int((Date().timeIntervalSince(self.playStartDate)) * 1000)
+            var ms = self.playStartTimeMs + elapsedMs
+
+            // 1秒ごとに C++ 呼び出しで同期（ずれ補正）
+            if abs(ms - self.lastSyncTimeMs) >= self.syncIntervalMs {
+                ms = self.audioService.currentPlayTimeMs()
+                self.playStartDate = Date()
+                self.playStartTimeMs = ms
+                self.lastSyncTimeMs = ms
+                self.lastSyncDate = Date()
+            }
 
             // 優先度3: チャンネル状態を 50ms ごとにのみ更新
             var fmChannels = self.cachedChannels
