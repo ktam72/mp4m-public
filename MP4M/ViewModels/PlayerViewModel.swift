@@ -208,8 +208,10 @@ final class PlayerViewModel: @unchecked Sendable {
         for i in 0..<52 { speaBF1[i] = 0 }
 
         // 2. チャンネル→ビンマッピング + 拡散処理（元のSpeanaBitmap.m準拠）
-        for ch in channels where ch.keyOn {
+        var debugLog = "[Spectrum] "
+        for (chIdx, ch) in channels.enumerated() where ch.keyOn {
             let d = (Int(ch.keyCode) + Int(ch.keyOffset)) / 3
+            debugLog += "ch\(chIdx+1):KC=\(ch.keyCode),KO=\(ch.keyOffset),d=\(d),vel=\(ch.velocity) "
             if d < 42 {
                 let x = UInt16(ch.velocity)
                 speaBF1[d]   += Float(x)
@@ -224,6 +226,9 @@ final class PlayerViewModel: @unchecked Sendable {
                 if d > 4 { speaBF1[d-5] += Float(x / 16) }
                 speaBF1[d+5] += Float(x / 16)
             }
+        }
+        if !debugLog.hasSuffix("[Spectrum] ") {
+            print(debugLog)
         }
 
         // 3. バー状態更新

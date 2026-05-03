@@ -43,24 +43,15 @@ struct PianoKeyboard {
     // 現在点灯すべき MIDI ノートを取得
     func litMidiNotes(channels: [ChannelDisplayState]) -> Set<Int> {
         var result: Set<Int> = []
-        var debugLog = "[litMidiNotes] "
 
-        for (chIndex, ch) in channels.enumerated() {
-            let keyStatus = ch.keyOn ? "ON" : "OFF"
-            let midiNote = Int(ch.keyCode) + Int(ch.keyOffset)
-            debugLog += "CH\(chIndex+1):\(keyStatus)(\(midiNote)) "
-
+        for ch in channels {
             guard ch.keyOn else { continue }
-
+            let midiNote = Int(ch.keyCode) + Int(ch.keyOffset)
             if midiNote >= startMidiNote && midiNote < endMidiNote {
                 result.insert(midiNote)
-                if let key = key(for: midiNote) {
-                    debugLog += "[→\(key.label)] "
-                }
             }
         }
 
-        print(debugLog + "→ litMidiNotes=\(result.sorted())")
         return result
     }
 
