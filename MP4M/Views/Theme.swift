@@ -13,13 +13,13 @@ extension Color {
     static let mp4mSelected   = Color(red: 0.05, green: 0.20, blue: 0.10)
 }
 
-// ドットフォント (KH-Dot-Kodenmachou-16) / フォールバックは SF Mono
+// Monaspace Neon フォント / フォールバックは SF Mono
 extension Font {
-    private static let dotFontName = "KH-Dot-Kodenmachou-16-Ki"
+    private static let neonFontName = "MonaspaceNeon-Regular"
 
-    static let mp4mTitle = Font.custom(dotFontName, size: 21).bold()
-    static let mp4mText  = Font.custom(dotFontName, size: 18)
-    static let mp4mMono  = Font.custom(dotFontName, size: 18)
-    static let mp4mSmall = Font.custom(dotFontName, size: 15)
-    static let mp4mTiny  = Font.custom(dotFontName, size: 14)
+    static let mp4mTitle = Font.custom("MonaspaceNeon-Bold", size: 21)
+    static let mp4mText  = Font.custom(neonFontName, size: 18)
+    static let mp4mMono  = Font.custom(neonFontName, size: 18)
+    static let mp4mSmall = Font.custom(neonFontName, size: 15)
+    static let mp4mTiny  = Font.custom(neonFontName, size: 14)
 }

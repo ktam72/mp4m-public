@@ -4,9 +4,12 @@ import CoreText
 @main
 struct MP4MApp: App {
     init() {
-        // カスタムドットフォントを登録 (KH-Dot-Kodenmachou-16)
-        if let url = Bundle.main.url(forResource: "KH-Dot-Kodenmachou-16-Ki", withExtension: "ttf") {
-            CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
+        // Monaspace Neon フォントを登録
+        let fontNames = ["MonaspaceNeon-Regular", "MonaspaceNeon-Bold"]
+        for fontName in fontNames {
+            if let url = Bundle.main.url(forResource: fontName, withExtension: "otf") {
+                CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
+            }
         }
     }
 

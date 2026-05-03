@@ -86,6 +86,7 @@ targets:
       - path: MP4M/Resources
         includes:
           - "*.ttf"
+          - "*.otf"
           - "*.dat"
           - "*.xcassets"
           - "*.icns"
