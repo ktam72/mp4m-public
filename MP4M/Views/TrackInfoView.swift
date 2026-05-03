@@ -6,6 +6,9 @@ struct TrackInfoView: View {
     @State private var scrollOffset: CGFloat = 0
     @State private var scrollTimer: Timer?
     @State private var lastTitle: String = ""
+    @State private var isScrolling: Bool = false
+    @State private var textWidth: CGFloat = 0
+    @State private var viewportWidth: CGFloat = 300
 
     private var elapsedStr: String {
         guard let vm = viewModel else { return "--:--" }
@@ -34,10 +37,24 @@ struct TrackInfoView: View {
                     .foregroundColor(Color.mp4mBright)
                     .lineLimit(1)
                     .offset(x: scrollOffset)
+                    .background(
+                        GeometryReader { geo in
+                            Color.clear.onAppear {
+                                textWidth = geo.size.width
+                            }
+                        }
+                    )
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .clipped()
             .padding(.horizontal, 8)
+            .background(
+                GeometryReader { geo in
+                    Color.clear.onAppear {
+                        viewportWidth = geo.size.width
+                    }
+                }
+            )
 
             Divider().background(Color.mp4mBorder)
             HStack(spacing: 4) {
@@ -74,21 +91,37 @@ struct TrackInfoView: View {
             return
         }
 
-        let titleWidth = displayTitle.count * 8
-        let viewportWidth = 300
+        // テキスト幅がビューポート幅より大きい場合のみスクロール
+        guard textWidth > viewportWidth else {
+            scrollOffset = 0
+            isScrolling = false
+            return
+        }
 
-        if titleWidth > viewportWidth {
-            scrollTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { _ in
-                withAnimation(.linear(duration: 0)) {
-                    scrollOffset -= 1
-                    if abs(scrollOffset) > CGFloat(titleWidth) {
-                        scrollOffset = 0
+        isScrolling = true
+        scrollOffset = 0
+
+        let scrollDistance = textWidth + 30
+        let scrollDuration = scrollDistance * 0.05
+        let startTime = Date()
+
+        scrollTimer = Timer.scheduledTimer(withTimeInterval: 0.05, repeats: true) { timer in
+            let elapsed = Date().timeIntervalSince(startTime)
+
+            if elapsed >= scrollDuration {
+                // スクロール完了
+                DispatchQueue.main.async {
+                    self.scrollOffset = -scrollDistance
+                    self.isScrolling = false
+                }
+                timer.invalidate()
+            } else {
+                DispatchQueue.main.async {
+                    withAnimation(.linear(duration: 0)) {
+                        self.scrollOffset = -CGFloat(elapsed / 0.05)
                     }
                 }
             }
-        } else {
-            scrollOffset = 0
-            stopScrolling()
         }
     }
 
