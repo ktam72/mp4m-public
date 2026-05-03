@@ -31,11 +31,15 @@ MDX/PDX 形式の音楽ファイルをリアルタイム再生し、スペクト
   - PCM チャンネル（9-16ch）の場合、pan=3（ステレオ）でも "C" を表示するよう修正
   - panLabel と panColor のスイッチ文を C++ 側の定義（mxdrvg_core.h, x68pcm8.h）に合わせて修正
 - **mxdrvg_core.h 修正**:
+  - FM チャンネル PAN 取得ロジックを修正（bit6/bit7 から抽出）
   - PCM チャンネル PAN 取得ロジックを修正（pan=3 は S ステレオとして処理）
-- **ビルド成功**: `BUILD SUCCEEDED` を確認、UI の可読性向上と PDX 表示の整合性が改善
 - **ContentView.swift レイアウト調整**:
   - KeyboardView の高さ: 148px → 296px（2倍）
   - FileSelectorView の最小高さ: 180px → 360px（2倍）
+- **FM PAN 表示修正**:
+  - 根本原因: S001c の下位2ビット（bit0-1）を誤って抽出していた（YM2151のPANはbit6/bit7）
+  - 修正: `(S001c >> 6) & 0x03` で正しいPAN値を抽出
+  - マッピング: (bit6,bit7)=0b01→L、0b10→R、0b11→LR、0b00→C
 
 ---
 

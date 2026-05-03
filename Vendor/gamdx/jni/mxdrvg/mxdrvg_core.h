@@ -122,10 +122,9 @@ void OPM_GetChannelStates(void* states, int max_channels) {
         uint16_t noteD = MXDRVG_WORK_CHBUF_FM[i].S0012;
         ch_states[i].keyCode = noteD & 0x7F;
 
-        // FM パン：S001c フィールドをビット値で解釈
-        // bit0=Left, bit1=Right
-        // 0b00: Center, 0b01: Left, 0b10: Right, 0b11: Center（L+R）
-        uint8_t fm_pan_bits = MXDRVG_WORK_CHBUF_FM[i].S001c & 0x03;
+        // FM PAN：YM2151 チャンネルレジスタ（0x20-0x27）の bit6(L)/bit7(R) を抽出
+        // (bit6,bit7) = 0b01→L, 0b10→R, 0b11→LR, 0b00→C
+        uint8_t fm_pan_bits = (MXDRVG_WORK_CHBUF_FM[i].S001c >> 6) & 0x03;
         if (fm_pan_bits == 0x01) {
             ch_states[i].pan = 0;  // L（左）
         } else if (fm_pan_bits == 0x02) {
