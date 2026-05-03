@@ -176,7 +176,8 @@ final class PlayerViewModel: @unchecked Sendable {
 
         updateSpectrum()
 
-        if audioService.isTerminated() {
+        // 再生時間が総時間に到達したら曲終了
+        if totalTimeMs > 0 && currentTimeMs >= totalTimeMs {
             handleTrackEnd()
         }
     }
