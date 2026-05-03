@@ -267,15 +267,20 @@ final class PlayerViewModel: @unchecked Sendable {
         let fadeOutDuration = 5.0 // 5秒で音量が半分になるまでフェードアウト
         let fadeOutInterval = 0.05 // 50ms ごとに音量を更新
         let fadeOutSteps = Int(fadeOutDuration / fadeOutInterval)
+        print("[FadeOut] fadeOutSteps=\(fadeOutSteps), decrement=\(1.0 / Float(fadeOutSteps))")
 
         fadeOutTimer = Timer.scheduledTimer(withTimeInterval: fadeOutInterval, repeats: true) { [weak self] timer in
-            self?.fadeOutVolume -= 1.0 / Float(fadeOutSteps)
-            if self?.fadeOutVolume ?? 0 <= 0.5 {
-                print("[FadeOut] Complete, playing next track")
+            guard let self = self else { return }
+            self.fadeOutVolume -= 1.0 / Float(fadeOutSteps)
+            if self.fadeOutVolume.truncatingRemainder(dividingBy: 0.2) < 0.01 {
+                print("[FadeOut] fadeOutVolume=\(String(format: "%.2f", self.fadeOutVolume))")
+            }
+            if self.fadeOutVolume <= 0.5 {
+                print("[FadeOut] Complete (fadeOutVolume=\(String(format: "%.2f", self.fadeOutVolume))), playing next track")
                 timer.invalidate()
-                self?.fadeOutTimer = nil
-                self?.fadeOutVolume = 1.0
-                self?.playNextTrack()
+                self.fadeOutTimer = nil
+                self.fadeOutVolume = 1.0
+                self.playNextTrack()
             }
         }
     }
