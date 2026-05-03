@@ -34,9 +34,6 @@ final class PlayerViewModel: @unchecked Sendable {
     private let riseTable: [Int] = [1, 1, 2, 2, 4, 4, 4, 4, 8, 8, 8, 8, 8, 8, 8,
                                      8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8]
 
-    // デバッグ用フレームカウンター
-    private var debugFrameCount = 0
-
     // MARK: - 初期化
 
     init(audioService: any AudioEngineService) {
@@ -174,26 +171,6 @@ final class PlayerViewModel: @unchecked Sendable {
         // @Observable が配列要素の変更を検出できないため、配列全体を置き替える
         channels = fmChannels
 
-        // デバッグログ：60フレーム毎に keyCode を出力
-        debugFrameCount += 1
-        if debugFrameCount >= 60 {
-            debugFrameCount = 0
-            var logMsg = "[KeyboardDebug]"
-            for ch in 0..<8 {
-                if channels[ch].keyOn {
-                    let keyCode = Int(channels[ch].keyCode)
-                    let keyOffset = Int(channels[ch].keyOffset)
-                    let calcNote = keyCode + keyOffset
-                    let octave = calcNote / 12
-                    let note = calcNote % 12
-                    logMsg += " FM\(ch+1):KC=\(keyCode),KO=\(keyOffset),Calc=\(calcNote),Oct=\(octave),Note=\(note);"
-                }
-            }
-            if logMsg != "[KeyboardDebug]" {
-                print(logMsg)
-            }
-        }
-
         updateSpectrum()
 
         if audioService.isTerminated() {
@@ -208,10 +185,8 @@ final class PlayerViewModel: @unchecked Sendable {
         for i in 0..<52 { speaBF1[i] = 0 }
 
         // 2. チャンネル→ビンマッピング + 拡散処理（元のSpeanaBitmap.m準拠）
-        var debugLog = "[Spectrum] "
-        for (chIdx, ch) in channels.enumerated() where ch.keyOn {
+        for ch in channels where ch.keyOn {
             let d = (Int(ch.keyCode) + Int(ch.keyOffset)) / 3
-            debugLog += "ch\(chIdx+1):KC=\(ch.keyCode),KO=\(ch.keyOffset),d=\(d),vel=\(ch.velocity) "
             if d < 42 {
                 let x = UInt16(ch.velocity)
                 speaBF1[d]   += Float(x)
@@ -226,9 +201,6 @@ final class PlayerViewModel: @unchecked Sendable {
                 if d > 4 { speaBF1[d-5] += Float(x / 16) }
                 speaBF1[d+5] += Float(x / 16)
             }
-        }
-        if !debugLog.hasSuffix("[Spectrum] ") {
-            print(debugLog)
         }
 
         // 3. バー状態更新
