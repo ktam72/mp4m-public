@@ -81,6 +81,9 @@ targets:
       SUPPORTED_PLATFORMS: macosx iphoneos iphonesimulator
       MACOSX_DEPLOYMENT_TARGET: "14.0"
       IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+      CODE_SIGN_IDENTITY: ""
+      CODE_SIGNING_REQUIRED: NO
+      CODE_SIGNING_ALLOWED: NO
 
     dependencies: []
 
