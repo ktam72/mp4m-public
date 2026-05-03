@@ -264,13 +264,13 @@ final class PlayerViewModel: @unchecked Sendable {
     private func startFadeOut() {
         print("[FadeOut] Starting fadeout")
         fadeOutVolume = 1.0
-        let fadeOutDuration = 1.0 // 1 秒間でフェードアウト
+        let fadeOutDuration = 0.5 // 0.5秒で音量が半分になるまでフェードアウト
         let fadeOutInterval = 0.05 // 50ms ごとに音量を更新
         let fadeOutSteps = Int(fadeOutDuration / fadeOutInterval)
 
         fadeOutTimer = Timer.scheduledTimer(withTimeInterval: fadeOutInterval, repeats: true) { [weak self] timer in
             self?.fadeOutVolume -= 1.0 / Float(fadeOutSteps)
-            if self?.fadeOutVolume ?? 0 <= 0 {
+            if self?.fadeOutVolume ?? 0 <= 0.5 {
                 print("[FadeOut] Complete, playing next track")
                 timer.invalidate()
                 self?.fadeOutTimer = nil
