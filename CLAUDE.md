@@ -486,6 +486,38 @@ open MP4M.xcodeproj
   - ユーザーは FileSelectorView で「フォルダを選択」ダイアログを使用して MDX ファイルを開く必要あり
 - **ビルド成功**: `BUILD SUCCEEDED` を確認
 
+### 2026-05-03 (6) — PAN 動的表示実装・チャンネルフィルタリング修正
+- **FM チャンネル PAN 動的表示**:
+  - 実装場所: `mxdrvg_core.h` の `OPM_GetChannelStates()`
+  - PAN 情報取得: MXDRVG_WORK_CH の S001c フィールドのビット値から検出
+  - マッピング: `0x01 = Left(pan=0)`, `0x02 = Right(pan=2)`, `0x00/0x03 = Center(pan=1)`
+  - ビット判定: `(S001c & 0x03)` で PAN 値を抽出
+- **PCM チャンネル PAN 動的表示**:
+  - 実装場所: `x68pcm8.h` と `MXDRVGBridge.mm`
+  - PAN 情報取得: PCM8 の Mode フィールドのビット値から検出
+  - 新規関数 `MXDRVG_GetPCM8ChannelMode()` で Mode フィールドに直接アクセス
+  - マッピング: `0x01 = Left(pan=0)`, `0x02 = Right(pan=2)`, `0x03 = Stereo(pan=3)`, else `= Center(pan=1)`
+- **チャンネルフィルタリング修正**:
+  - 問題: 配列内のすべてのチャンネルが表示されていた（実際には未使用チャンネルも含まれていた）
+  - 修正: S0000（サンプルデータポインタ）で判定。NULL または 0 の場合はチャンネル非使用
+  - FM チャンネル: 既に正しく S0016 bit3 で keyOn 判定
+  - PCM チャンネル: S0000 ポインタが有効 かつ keyOn フラグで判定
+- **keyOn フラグの正確な取得**:
+  - FM: `S0016` ビット 3 で keyOn 判定、有効時は volume=127 に固定化
+  - PCM: S0000 ポインタが有効な場合のみ keyOn フラグを信頼
+- **デバッグログ実装**:
+  - `[FM_DEBUG]`: FM1-8 の keyOn 状態と PAN 情報を 60フレーム毎に出力（形式: `FM1(keyOn=1,pan=C)` など）
+  - `[PCM_DEBUG]`: PCM1-8（PDX9-16）の keyOn 状態と PAN 情報を 60フレーム毎に出力（形式: `PDX1(keyOn=1,pan=S)` など）
+  - `[LevelMeter]`: 全 16ch のレベル（%）と PAN 情報を 60フレーム毎に出力。keyOn=0 時は「0.0% N」表示
+- **修正ファイル**:
+  - `mxdrvg_core.h`: OPM_GetChannelStates() で FM PAN 検出、MXDRVG_GetPCM8ChannelMode() 関数追加
+  - `x68pcm8.h`: X68PCM8::GetChannelMode(int ch) メソッド追加
+  - `MXDRVGBridge.mm`: PCM PAN 検出ロジック、S0000 ポインタチェック、デバッグログ実装
+- **UI への反映**:
+  - LevelMeterView.swift: keyOn=false 時は PAN ラベル「N」表示、keyOn=true 時は L/R/C/S 表示
+  - レベルバーの高さは keyOn=true のときのみ値に応じて表示、false で 0
+- **ビルド成功**: `BUILD SUCCEEDED` を確認、PAN 動的表示・チャンネルフィルタリング・デバッグログが正常に動作
+
 ---
 
 ## 依存ライブラリ

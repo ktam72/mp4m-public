@@ -29,6 +29,7 @@ namespace X68K
 		void Mix(Sample *buffer, int nsamples);
 		void SetVolume(int db);
 		void SetChannelMask(uint mask);
+		int GetChannelMode(int ch) { return ch >= 0 && ch < PCM8_NCH ? mPcm8[ch].GetMode() : 0; }
 
 	private:
 		Pcm8 mPcm8[PCM8_NCH];

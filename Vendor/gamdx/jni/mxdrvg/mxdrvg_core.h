@@ -121,18 +121,36 @@ void OPM_GetChannelStates(void* states, int max_channels) {
         uint16_t noteD = MXDRVG_WORK_CHBUF_FM[i].S0012;
         ch_states[i].keyCode = noteD & 0x7F;
 
-        // FM パン：デフォルト L+R （PAN レジスタ値は後で実装可能）
-        ch_states[i].pan = 3;  // デフォルト L+R
+        // FM パン：S001c フィールドをビット値で解釈
+        // bit0=Left, bit1=Right
+        // 0b00: Center, 0b01: Left, 0b10: Right, 0b11: Center（L+R）
+        uint8_t fm_pan_bits = MXDRVG_WORK_CHBUF_FM[i].S001c & 0x03;
+        if (fm_pan_bits == 0x01) {
+            ch_states[i].pan = 0;  // L（左）
+        } else if (fm_pan_bits == 0x02) {
+            ch_states[i].pan = 2;  // R（右）
+        } else {
+            // 0b00 (Center) または 0b11 (L+R = Center)
+            ch_states[i].pan = 1;  // C（中央）
+        }
 
-        // FM ボリューム：keyOn のときは velocity ベース、オフのときは 0
+        // FM ボリューム：keyOn のときは最大値 127、オフのときは 0
         // S0022 の値は小さすぎるため、keyOn フラグとリンクさせる
-        ch_states[i].volume = keyOn ? 100 : 0;  // keyOn ≡ 音量 100
+        ch_states[i].volume = keyOn ? 127 : 0;  // keyOn ≡ 音量 127（最大値）
         // Spectrum analyzer用：keyOnに基づいた固定値を使用（スケール変更を防ぐ）
-        ch_states[i].velocity = keyOn ? 100 : 0;
+        ch_states[i].velocity = keyOn ? 127 : 0;
 
         ch_states[i].bend = 0;
         ch_states[i].keyOffset = 0;
     }
+}
+}
+
+// PCM8 チャンネルの Mode を取得する C インターフェース
+extern "C" {
+int MXDRVG_GetPCM8ChannelMode(int ch) {
+    if (ch < 0 || ch >= 8) return 0;
+    return PCM8.GetChannelMode(ch);
 }
 }
 

@@ -12,6 +12,7 @@
 
 extern "C" {
 void OPM_GetChannelStates(MP4MChannelState* states, int max_channels);
+int MXDRVG_GetPCM8ChannelMode(int ch);
 }
 
 // グローバル状態
@@ -449,9 +450,11 @@ static NSString* getTitleFromData(NSData* data) {
             // PCM チャンネルが使用可能か判定
             UBYTE volatile* S0000 = pcmCh[i].S0000;  // Ptr フィールド
             uint8_t vol = pcmCh[i].S0022;  // volume
+            uint8_t len = pcmCh[i].S001a;  // len
 
-            // マスクで有効なチャンネルは、vol > 0 で判定
-            uint8_t isPlaying = (vol > 0) ? 1 : 0;
+            // 実際に割り当て済みか判定：S0000 ポインタが有効（非ゼロ）
+            // S0000 はサンプルデータへのポインタ。ゼロなら割り当てなし
+            uint8_t isPlaying = (S0000 != NULL && S0000 != 0) ? 1 : 0;
 
             states[chIdx].keyOn = isPlaying;
             states[chIdx].active = isPlaying;
@@ -460,11 +463,23 @@ static NSString* getTitleFromData(NSData* data) {
             uint16_t noteD = pcmCh[i].S0012;
             states[chIdx].keyCode = noteD & 0x7F;
 
-            // Pan from PCM8 channel mode
-            states[chIdx].pan = 3;  // Default L+R (stereo) - PCM は通常ステレオ
+            // PCM パン：PCM8::GetChannelMode() から取得
+            // Mode の下位2ビット: bit0=Left, bit1=Right
+            // 0b00: Center, 0b01: Left, 0b10: Right, 0b11: Stereo
+            int pcm_mode = MXDRVG_GetPCM8ChannelMode(i);
+            uint8_t pan_bits = pcm_mode & 0x03;
+            if (pan_bits == 0x01) {
+                states[chIdx].pan = 0;  // L（左）
+            } else if (pan_bits == 0x02) {
+                states[chIdx].pan = 2;  // R（右）
+            } else if (pan_bits == 0x03) {
+                states[chIdx].pan = 3;  // S（ステレオ）
+            } else {
+                states[chIdx].pan = 1;  // C（中央）
+            }
 
             // Volume: 実際に再生中のときは 100、オフのときは 0
-            states[chIdx].volume = isPlaying ? 100 : 0;
+            states[chIdx].volume = isPlaying ? 127 : 0;
             // Spectrum analyzer用：再生中に基づいた固定値を使用（スケール変更を防ぐ）
             states[chIdx].velocity = isPlaying ? 100 : 0;
         }
@@ -472,7 +487,7 @@ static NSString* getTitleFromData(NSData* data) {
         fprintf(stderr, "[getChannelStates] WARNING: PCM work area is NULL\n");
     }
     
-    // Debug log
+    // Debug log for PAN detection
     static int callCount = 0;
     if (callCount++ % 60 == 0) {
         fprintf(stderr, "[LevelMeter] ");
@@ -498,42 +513,43 @@ static NSString* getTitleFromData(NSData* data) {
         }
         fprintf(stderr, "\n");
 
-        // FM チャンネルのワークエリア詳細ダンプ
-        fprintf(stderr, "[FM_DETAIL] ");
-        for (int i = 0; i < 8; i++) {
-            fprintf(stderr, "FM%d:keyOn=%d,vol=%d,vel=%d,key=%d,pan=%d ",
-                i+1,
-                opmStates[i].keyOn,
-                opmStates[i].volume,
-                opmStates[i].velocity,
-                opmStates[i].keyCode,
-                opmStates[i].pan);
-        }
-        fprintf(stderr, "\n");
-
-        // PCM チャンネルのワークエリア詳細ダンプ
-        if (pcmCh) {
-            fprintf(stderr, "[PCM_DETAIL] ");
+        // FM チャンネルの keyOn フラグと PAN 情報をログ出力
+        MXDRVG_WORK_CH* fmCh = (MXDRVG_WORK_CH*)MXDRVG_GetWork(MXDRVG_WORKADR_FM);
+        if (fmCh) {
+            fprintf(stderr, "[FM_DEBUG] ");
             for (int i = 0; i < 8; i++) {
-                uint8_t flags = pcmCh[i].S0016;
-                uint8_t keyOn = (flags >> 3) & 1;
-                UBYTE volatile* S0000 = pcmCh[i].S0000;
-                uint8_t len = pcmCh[i].S001a;
-                uint8_t chNum = pcmCh[i].S0018 & 0x7F;
-                uint16_t noteD = pcmCh[i].S0012;
-                uint8_t gate = pcmCh[i].S001b;
-                uint8_t keyonDelay = pcmCh[i].S001f;
-                uint8_t keyonDelayCounter = pcmCh[i].S0020;
-                uint8_t vol = pcmCh[i].S0022;
-                int chIdx = 8 + i;  // 配列インデックス i が PDX1-8ch に直接対応
-                int pdxChNum = i + 1;  // PDX1ch = i0, PDX2ch = i1, ..., PDX8ch = i7
-                uint8_t isAllocated = g_hasPDX || keyOn || (S0000 != NULL);
-                // 実際の表示ロジックと同じ判定
-                uint8_t isPlaying = (g_hasPDX && vol > 0) ? 1 : keyOn;
+                uint8_t flags16 = fmCh[i].S0016;
+                uint8_t keyOn = (flags16 >> 3) & 1;
+                uint8_t p = fmCh[i].S001c;
+                uint8_t pan_bits = p & 0x03;
+                const char* pan_label = "?";
+                if (pan_bits == 0x01) pan_label = "L";
+                else if (pan_bits == 0x02) pan_label = "R";
+                else pan_label = "C";
+                fprintf(stderr, "FM%d(keyOn=%d,pan=%s) ", i+1, keyOn, pan_label);
+            }
+            fprintf(stderr, "\n");
+        }
 
-                // 配列インデックス、PDX チャンネル番号、表示位置、状態をダンプ
-                fprintf(stderr, "PDX%dch(i%d→ch%d):alloc=%d,play=%d,key=%d,vol=%d,gate=%d,kdly=%d,kdcnt=%d,note=%d ",
-                    pdxChNum, i, chIdx+1, isAllocated, isPlaying, keyOn, vol, gate, keyonDelay, keyonDelayCounter, noteD & 0x7F);
+        // PCM チャンネルの keyOn フラグと PAN 情報をログ出力
+        if (pcmCh) {
+            fprintf(stderr, "[PCM_DEBUG] ");
+            for (int i = 0; i < 8; i++) {
+                UBYTE volatile* S0000 = pcmCh[i].S0000;
+                int keyOn = (S0000 != NULL && S0000 != 0) ? 1 : 0;
+                int mode = MXDRVG_GetPCM8ChannelMode(i);
+                uint8_t pan_bits = mode & 0x03;
+                const char* pan_label = "?";
+                if (pan_bits == 0x01) {
+                    pan_label = "L";
+                } else if (pan_bits == 0x02) {
+                    pan_label = "R";
+                } else if (pan_bits == 0x03) {
+                    pan_label = "S";
+                } else {
+                    pan_label = "C";
+                }
+                fprintf(stderr, "PDX%d(keyOn=%d,pan=%s) ", i+1, keyOn, pan_label);
             }
             fprintf(stderr, "\n");
         }
