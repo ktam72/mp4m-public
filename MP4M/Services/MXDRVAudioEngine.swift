@@ -92,6 +92,10 @@ final class MXDRVAudioEngine: AudioEngineService {
         }
     }
 
+    func setVolume(_ volume: Float) {
+        engine.mainMixerNode.outputVolume = max(0.0, min(volume, 1.0))
+    }
+
     private func setupAudioEngine() {
         let format = AVAudioFormat(
             commonFormat: .pcmFormatFloat32,

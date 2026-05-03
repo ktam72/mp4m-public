@@ -272,6 +272,7 @@ final class PlayerViewModel: @unchecked Sendable {
         fadeOutTimer = Timer.scheduledTimer(withTimeInterval: fadeOutInterval, repeats: true) { [weak self] timer in
             guard let self = self else { return }
             self.fadeOutVolume -= 1.0 / Float(fadeOutSteps)
+            self.audioService.setVolume(max(0.0, self.fadeOutVolume))
             if self.fadeOutVolume.truncatingRemainder(dividingBy: 0.2) < 0.01 {
                 print("[FadeOut] fadeOutVolume=\(String(format: "%.2f", self.fadeOutVolume))")
             }
@@ -280,6 +281,7 @@ final class PlayerViewModel: @unchecked Sendable {
                 timer.invalidate()
                 self.fadeOutTimer = nil
                 self.fadeOutVolume = 1.0
+                self.audioService.setVolume(1.0)
                 self.playNextTrack()
             }
         }
