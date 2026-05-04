@@ -28,12 +28,7 @@ struct AboutView: View {
                         license: "cisc Copyright (Commercial use requires prior agreement)"
                     )
                     LicenseRow(
-                        name: "MXDRVG",
-                        author: "GORRY",
-                        license: "Apache 2.0"
-                    )
-                    LicenseRow(
-                        name: "pcm8 / x68pcm8",
+                        name: "GAMDX",
                         author: "GORRY",
                         license: "Apache 2.0"
                     )
