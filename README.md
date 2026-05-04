@@ -3,7 +3,7 @@
 SHARP X68000 用音楽プレーヤー「MP4M」の macOS SwiftUI 移植版。MDX/PDX 形式の音楽ファイルをリアルタイム再生し、スペクトラムアナライザー・レベルメーター・キーボード表示を持つマニアックなミュージックプレーヤーです。
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![License](https://img.shields.io/badge/license-MIT%20%2B%20fmgen-blue)
+![License](https://img.shields.io/badge/license-MIT-blue)
 ![Platform](https://img.shields.io/badge/platform-macOS%2014.0%2B-lightgrey)
 
 ## 特徴
@@ -66,7 +66,7 @@ xcodebuild -project MP4M.xcodeproj -scheme MP4M -configuration Release build
 | **音声処理** | AVAudioEngine + AVAudioSourceNode（リアルタイムレンダリング） |
 | **マルチスレッド** | `Task.detached(priority: .userInitiated)` + `os_unfair_lock` |
 | **MDX デコード** | MXDRVG (C++) + ObjC++ ブリッジ |
-| **FM エミュレーション** | fmgen (cisc) — YM2151 オペレーター合成 |
+| **FM エミュレーション** | オリジナル実装 (0BSD) — YM2151 完全互換 |
 | **PCM/ADPCM** | pcm8 (X68000 互換デコーダ) |
 | **LZX 解凍** | オリジナル実装 (0BSD) |
 | **フォント** | KH-Dot-Kodenmachou-16 (ドットフォント) |
@@ -89,25 +89,11 @@ xcodebuild -project MP4M.xcodeproj -scheme MP4M -configuration Release build
 
 | ライブラリ | ライセンス | 著作権 |
 |---|---|---|
-| **fmgen** | cisc著作権 (フリーソフト配布) | [kichikuou/fmgen](https://github.com/kichikuou/fmgen) |
+| **OPM (YM2151)** | 0BSD (商用利用可能) | MP4M プロジェクト |
 | **MXDRVG** | Apache 2.0 | GORRY（MDXPlayer-main より） |
 | **pcm8/x68pcm8** | Apache 2.0 | GORRY（MDXPlayer-main より） |
 | **LZX解凍** | 0BSD (商用利用可能) | MP4M プロジェクト |
 | **KH-Dot-Kodenmachou-16** | 柿木フォント | 柿木定吉 |
-
-### fmgen ライセンス詳細
-
-fmgen は cisc により著作権が保持されています。以下の条件で自由に利用可能です：
-
-1. **改変・組み込み・配布・利用**: 自由
-2. **ただし以下が必須**:
-   - 作者（cisc）と著作権を明記すること
-   - 配布する際はフリーソフトと表示すること
-   - ソースコード改変は改変内容を明示すること
-   - ソースコード配布時はこのライセンステキストをそのまま添付すること
-3. **商用利用**: 商用ソフト・シェアウェアへの組み込みには事前に cisc に合意を得る必要があります
-
-ライセンス原文: [fmgen/README.md](https://github.com/kichikuou/fmgen/blob/master/README.md)
 
 ### LZX解凍 (オリジナル実装)
 
@@ -188,10 +174,10 @@ open MP4M.xcodeproj  # Xcode で開く
 ```
 MP4M — macOS MDX Player
 Copyright (c) 2026 ktam
-Licensed under the MIT License, with fmgen library (cisc)
+Licensed under the MIT License
 
 Includes:
-- fmgen (cisc) — freely modifiable/distributable (商用は事前合意必須)
+- OPM YM2151 Emulator (0BSD, original implementation)
 - MXDRVG (GORRY, Apache 2.0)
 - LZX Decompression (0BSD, original implementation)
 ```
