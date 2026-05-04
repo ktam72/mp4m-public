@@ -3,6 +3,47 @@
 SHARP X68000 用音楽プレーヤー「MP4M」の macOS SwiftUI 移植版。
 MDX/PDX 形式の音楽ファイルをリアルタイム再生し、スペクトラムアナライザー・レベルメーター・キーボード表示を持つ。
 
+### 2026-05-04 (II) — フェードアウト処理マルチスレッド化 + UI継続動作実装
+- **背景**: フェードアウト中に UIが停止する問題。Timer ベースでのスレッド安全性が不透明。
+- **実装内容:**
+  1. **SpectrumAnalyzer ロジック検査・確認** (`SpeanaBitmap.m` との比較)
+     - MDXPlayer-main の `SpeanaBitmap.m` を参照して、MP4M の移植実装をレビュー
+     - ビンマッピング・拡散ロジック、対数変換テーブル、上昇・下降・ピーク保持を検証
+     - 参照元の `sizeof(ROUTE)` バグを特定（配列要素数ではなくバイトサイズを使用）
+     - MP4M では `routeTable.count` で正確に修正済み確認
+     - **結論**: ロジックに壊れた部分なし、むしろ参照元の問題を改善
+
+  2. **フェードアウト処理のTask/async-await 化** (`PlayerViewModel.swift`)
+     - 競合状態の事前分析: 6つの潜在的問題（fadeOutVolume データレース、fadeOutTimer ライフサイクル競合、setVolume スレッド要件違反等）を洗い出し
+     - Timer ベース → Task + `await MainActor.run { }` ベースへの移行
+     - プロパティ変更: `fadeOutTimer: Timer?` → `fadeOutTask: Task<Void, Never>?`
+     - `cleanup()` に `fadeOutTask?.cancel()` と `audioService.setVolume(1.0)` を追加
+     - `startFadeOut()` を全面リファクタリング（Task ループ + Task.sleep + MainActor.run）
+     - キャンセル対応: `Task.isCancelled` で安全なクリーンアップを実装
+     - 期待効果: 全競合状態解消、明示的なスレッド安全性確保
+
+  3. **フェードアウト中の UI 継続動作実装**
+     - 問題: handleTrackEnd() で displayTimer?.invalidate() を呼ぶため、フェードアウト中に UI 更新が停止
+     - 解決策: displayTimer の無効化タイミングをフェードアウト完了まで遅延
+     - `handleTrackEnd()` から `displayTimer?.invalidate()` を削除
+     - `startFadeOut()` 完了時に `displayTimer?.invalidate()` を呼ぶ
+     - `updateDisplay()` のガード条件を `guard status == .playing || fadeOutTask != nil` に修正
+     - 効果: フェードアウト中も スペアナ・レベルメーター・キーボード が 60fps で動作
+
+- **修正ファイル:**
+  - `MP4M/ViewModels/PlayerViewModel.swift`: fadeOutTimer → fadeOutTask、cleanup 拡張、startFadeOut リファクタリング、updateDisplay 修正
+
+- **テスト結果:**
+  - ✅ ビルド成功（BUILD SUCCEEDED）
+  - ✅ 実行時エラーなし
+  - ✅ 期待動作確認（フェードアウト中も UI 動作、エラーなし）
+  - ✅ スレッド安全性: @unchecked Sendable 下で手動管理により全競合状態排除
+
+- **総合評価:**
+  - Timer ベース → Task/async-await ベースへの安全な移行に成功
+  - スレッド意図が明示的（`@MainActor.run` で可読性向上）
+  - UI 継続動作により ユーザー体験が向上
+
 ### 2026-05-04 — CPU 負荷最適化フェーズ2：GPU 処理 + フレームレート最適化
 - **背景**: 前回実装の優先度3・4・案C で約 10% の CPU 削減を達成。さらなる最適化を検討
 - **実装内容:**

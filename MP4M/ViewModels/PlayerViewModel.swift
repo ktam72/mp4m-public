@@ -40,7 +40,7 @@ final class PlayerViewModel: @unchecked Sendable {
 
     private let audioService: any AudioEngineService
     private var displayTimer: Timer?
-    private var fadeOutTimer: Timer?
+    private var fadeOutTask: Task<Void, Never>?
     private var fadeOutVolume: Float = 1.0
     weak var browserVM: FileBrowserViewModel?
     private let metalCompute: MetalSpectrumCompute?
@@ -101,6 +101,9 @@ final class PlayerViewModel: @unchecked Sendable {
     func cleanup() {
         displayTimer?.invalidate()
         displayTimer = nil
+        fadeOutTask?.cancel()
+        fadeOutTask = nil
+        audioService.setVolume(1.0)
         audioService.end()
     }
 
@@ -239,7 +242,7 @@ final class PlayerViewModel: @unchecked Sendable {
     }
 
     private func updateDisplay() {
-        guard status == .playing else { return }
+        guard status == .playing || fadeOutTask != nil else { return }
 
         let isFullUpdate = (updateFrameCounter % 2 == 0)
         updateFrameCounter = (updateFrameCounter + 1) % 2
@@ -343,7 +346,6 @@ final class PlayerViewModel: @unchecked Sendable {
 
         // 重複呼び出し防止：一度停止状態に変更
         status = .stopped
-        displayTimer?.invalidate()
 
         print("[TrackEnd] repeatEnabled=\(repeatEnabled)")
         if repeatEnabled {
@@ -358,25 +360,38 @@ final class PlayerViewModel: @unchecked Sendable {
     private func startFadeOut() {
         print("[FadeOut] Starting fadeout")
         fadeOutVolume = 1.0
-        let fadeOutDuration = 3.0 // 3秒で完全に無音になるまでフェードアウト
-        let fadeOutInterval = 0.05 // 50ms ごとに音量を更新
-        let fadeOutSteps = Int(fadeOutDuration / fadeOutInterval)
-        print("[FadeOut] fadeOutSteps=\(fadeOutSteps), decrement=\(1.0 / Float(fadeOutSteps))")
+        let fadeOutSteps = 60  // 3秒 ÷ 50ms = 60ステップ
+        let decrement = 1.0 / Float(fadeOutSteps)
+        print("[FadeOut] fadeOutSteps=\(fadeOutSteps), decrement=\(String(format: "%.4f", decrement))")
 
-        fadeOutTimer = Timer.scheduledTimer(withTimeInterval: fadeOutInterval, repeats: true) { [weak self] timer in
-            guard let self = self else { return }
-            self.fadeOutVolume -= 1.0 / Float(fadeOutSteps)
-            self.audioService.setVolume(max(0.0, self.fadeOutVolume))
-            if self.fadeOutVolume.truncatingRemainder(dividingBy: 0.2) < 0.01 {
-                print("[FadeOut] fadeOutVolume=\(String(format: "%.2f", self.fadeOutVolume))")
+        fadeOutTask = Task {
+            for step in 0..<fadeOutSteps {
+                guard !Task.isCancelled else {
+                    print("[FadeOut] Cancelled at step \(step)")
+                    break
+                }
+
+                try? await Task.sleep(nanoseconds: 50_000_000)
+
+                await MainActor.run {
+                    self.fadeOutVolume = max(0.0, self.fadeOutVolume - decrement)
+                    self.audioService.setVolume(self.fadeOutVolume)
+                    if Int(self.fadeOutVolume * 100) % 20 == 0 {
+                        print("[FadeOut] fadeOutVolume=\(String(format: "%.2f", self.fadeOutVolume))")
+                    }
+                }
             }
-            if self.fadeOutVolume <= 0.0 {
+
+            await MainActor.run {
                 print("[FadeOut] Complete (fadeOutVolume=\(String(format: "%.2f", self.fadeOutVolume))), playing next track")
-                timer.invalidate()
-                self.fadeOutTimer = nil
                 self.fadeOutVolume = 1.0
                 self.audioService.setVolume(1.0)
-                self.playNextTrack()
+                self.displayTimer?.invalidate()
+                self.displayTimer = nil
+                self.fadeOutTask = nil
+                if !Task.isCancelled {
+                    self.playNextTrack()
+                }
             }
         }
     }
