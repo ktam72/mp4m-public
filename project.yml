@@ -90,4 +90,3 @@ targets:
           - "*.dat"
           - "*.xcassets"
           - "*.icns"
-          - "*.PDX"
