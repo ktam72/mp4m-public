@@ -134,18 +134,18 @@ static BOOL isValidPDXFileName(NSString* fileName) {
 // 大文字小文字を区別せずにPDXファイルを検索
 static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
     if (!pdxFileName || !directory) return nil;
-    
+
     // 拡張子がない場合は .pdx を補完
     NSString* baseName = pdxFileName;
     if (![pdxFileName.lowercaseString hasSuffix:@".pdx"]) {
         baseName = [pdxFileName stringByAppendingString:@".pdx"];
     }
-    
+
     // ディレクトリ内のファイルを列挙して大文字小文字を区別せずに比較
     NSString* targetLower = baseName.lowercaseString;
     NSError* error = nil;
     NSArray<NSString*>* contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:directory error:&error];
-    
+
     if (!error && contents) {
         for (NSString* file in contents) {
             if ([file.lowercaseString isEqualToString:targetLower]) {
@@ -153,8 +153,30 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
             }
         }
     }
-    
+
     return nil; // 見つからない
+}
+
+// BOS.PDX をバンドルから取得（予備PDX）
+static NSData* loadBOSFromBundle() {
+    NSBundle* bundle = [NSBundle mainBundle];
+    NSString* bosPath = [bundle pathForResource:@"BOS" ofType:@"PDX"];
+    if (!bosPath) {
+#ifdef DEBUG
+        fprintf(stderr, "[PDX] BOS.PDX not found in bundle\n");
+#endif
+        return nil;
+    }
+#ifdef DEBUG
+    fprintf(stderr, "[PDX] Loading BOS.PDX from bundle: %s\n", bosPath.UTF8String);
+#endif
+    NSData* data = [NSData dataWithContentsOfFile:bosPath];
+    if (data) {
+#ifdef DEBUG
+        fprintf(stderr, "[PDX] Loaded BOS.PDX from bundle, size: %lu\n", (unsigned long)data.length);
+#endif
+    }
+    return data;
 }
 
 @implementation MXDRVGBridge
@@ -316,11 +338,19 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
                             }
                         } else {
                             #ifdef DEBUG
-                            fprintf(stderr, "[PDX] PDX file not found (case-insensitive search)\n");
+                            fprintf(stderr, "[PDX] PDX file not found (case-insensitive search), trying bundle BOS.PDX\n");
                             #endif
-                            // 失敗："No PDX" を設定
-                            strncpy(g_lastPDXFileName, "No PDX", sizeof(g_lastPDXFileName) - 1);
-                            g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
+                            // バンドルの予備 PDX を試す
+                            NSData* bosData = loadBOSFromBundle();
+                            if (bosData) {
+                                pdxData = bosData;
+                                strncpy(g_lastPDXFileName, "BOS.PDX (bundle)", sizeof(g_lastPDXFileName) - 1);
+                                g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
+                            } else {
+                                // 失败："No PDX" を設定
+                                strncpy(g_lastPDXFileName, "No PDX", sizeof(g_lastPDXFileName) - 1);
+                                g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
+                            }
                         }
                     }
                 } else {
