@@ -54,6 +54,26 @@ struct AboutView: View {
 
             Divider().background(Color.mp4mBorder)
 
+            // 著作権・配布方針
+            VStack(alignment: .leading, spacing: 6) {
+                Text("X68000 Freeware Copyright Policy")
+                    .font(.mp4mSmall)
+                    .foregroundColor(.mp4mBright)
+
+                Text("This project respects the copyrights of X68000 freeware authors (GORRY, milk, etc.) and does not distribute through App Store to preserve their intent.")
+                    .font(.mp4mTiny)
+                    .foregroundColor(.mp4mText.opacity(0.9))
+                    .lineLimit(nil)
+
+                Text("Distribution: GitHub Releases only")
+                    .font(.mp4mTiny)
+                    .foregroundColor(.mp4mDim)
+                    .italic()
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            Divider().background(Color.mp4mBorder)
+
             // 閉じるボタン
             Button("[ CLOSE ]") {
                 isPresented = false
