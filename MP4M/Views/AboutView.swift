@@ -60,7 +60,7 @@ struct AboutView: View {
                     .font(.mp4mSmall)
                     .foregroundColor(.mp4mBright)
 
-                Text("This project respects the copyrights of X68000 freeware authors: GORRY (MXDRVG, pcm8), milk, K.MAEKAWA, m_puusan, Yosshin, Missy.M, Yatsube (MXDRV driver), and others. We do not distribute through App Store to preserve their original intent.")
+                Text("This project respects the copyrights of X68000 freeware authors: GORRY (GAMDX), milk, K.MAEKAWA, m_puusan, Yosshin, Missy.M, Yatsube (MXDRV), and others. We do not distribute through App Store to preserve their original intent.")
                     .font(.mp4mTiny)
                     .foregroundColor(.mp4mText.opacity(0.9))
                     .lineLimit(nil)

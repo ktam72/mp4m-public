@@ -824,9 +824,8 @@ open MP4M.xcodeproj
 
 | ライブラリ | ライセンス | 用途 |
 |---|---|---|
-| [MXDRVG (gamdx)](https://gorry.haun.org/android/gamdx/) | Apache 2.0 (GORRY) | MDX デコード・シーケンス処理 |
+| [GAMDX (MXDRVG, pcm8, x68pcm8)](https://gorry.haun.org/android/gamdx/) | Apache 2.0 (GORRY) | MDX デコード・シーケンス処理・ADPCM デコード |
 | fmgen | cisc著作権 (フリーソフト配布、商用は事前合意必須) | YM2151 FM 音源エミュレーション |
-| pcm8 / x68pcm8 | Apache 2.0 ([GORRY](https://gorry.haun.org/android/gamdx/)) | ADPCM デコード |
 | オリジナルLZX解凍 | 0BSD (商用利用可能) | LZ77方式圧縮解凍 (Vendor/lzx/) |
 | MXDRV | X68的default (milk., K.MAEKAWA, m_puusan, Yosshin, Missy.M, Yatsube) | オリジナルMXDRVドライバ |
 | KH-Dot-Kodenmachou-16 | 柿木フォント | ドットフォント |
