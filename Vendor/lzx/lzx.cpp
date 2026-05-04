@@ -45,10 +45,23 @@ private:
 };
 
 unsigned int check(const uint8_t* data, size_t len) {
-    if (len < 22) return 0;
+    if (len < 0x26) return 0;  // 最小ヘッダーサイズ（0x26）を確保
 
     // LZX シグネチャを確認: bytes[4..7] = "LZX "
     if (data[4] != 0x4c || data[5] != 0x5a || data[6] != 0x58 || data[7] != 0x20) {
+        return 0;
+    }
+
+    // LZX バージョンチェック（bytes[8..9]）
+    // X68000 MDX 対応バージョンは通常 0x0200 (big-endian)
+    uint16_t version = ((uint16_t)data[8] << 8) | data[9];
+    if (version != 0x0200 && version != 0x0100) {
+        // 未対応のバージョンは警告するが処理は続ける（互換性のため）
+    }
+
+    // 圧縮フラグの基本的な検証（bytes[10]）
+    uint8_t flags = data[10];
+    if (flags & 0xF0) {  // 上位4ビットが設定されている場合は不正
         return 0;
     }
 
@@ -58,6 +71,11 @@ unsigned int check(const uint8_t* data, size_t len) {
         ((unsigned int)data[0x13] << 16) |
         ((unsigned int)data[0x14] << 8) |
         data[0x15];
+
+    // 展開後のサイズが0でないことを確認
+    if (decompressed_size == 0) {
+        return 0;  // 無効なサイズ
+    }
 
     // LZX 展開サイズ上限チェック（DoS 防止）
     #define MAX_LZX_DECOMPRESSED_SIZE (64 * 1024 * 1024)  // 64MB上限
@@ -82,14 +100,22 @@ unsigned int decompress(uint8_t* output, size_t output_len,
 
     // ヘッダーをスキップして、マーカー 0x7F 0xFF 0xFF 0x4C を探す
     in_pos += 0x26;
-    while (in_pos + 3 < in_end) {
+
+    // マーカー検索ループの上限（DoS 防止：最大 1MB のヘッダー検索）
+    const uint8_t* marker_search_limit = (in_end - in_pos > 1024 * 1024) ?
+                                          in_pos + 1024 * 1024 : in_end;
+
+    bool marker_found = false;
+    while (in_pos + 3 < marker_search_limit) {
         if (in_pos[0] == 0x7f && in_pos[1] == 0xff && in_pos[2] == 0xff && in_pos[3] == 0x4c) {
+            marker_found = true;
             break;
         }
         in_pos += 2;
     }
-    if (in_pos + 3 >= in_end) {
-        return 0;  // マーカーが見つからない
+
+    if (!marker_found || in_pos + 3 >= in_end) {
+        return 0;  // マーカーが見つからない、または不正な位置
     }
     in_pos += 4;  // マーカーをスキップ
 
@@ -145,7 +171,9 @@ unsigned int decompress(uint8_t* output, size_t output_len,
 
             while (count-- > 0) {
                 if (out_pos >= out_end) return 0;
-                *out_pos++ = out_pos[offset];
+                // 未定義の動作を避けるため、値を一時変数に保存
+                uint8_t byte = out_pos[offset];
+                *out_pos++ = byte;
             }
         }
     }

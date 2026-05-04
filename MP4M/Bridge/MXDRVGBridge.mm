@@ -223,25 +223,42 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
 
     // MDX 内部からPDXファイル名を抽出
     const unsigned char* ptr = (const unsigned char*)fileData.bytes;
-    int titleEndPos;
-    for (titleEndPos = 0; titleEndPos < (int)fileData.length - 1; titleEndPos++) {
+
+    // 整数オーバーフロー対策：size_t で計算
+    size_t titleEndPos;
+    for (titleEndPos = 0; titleEndPos < fileData.length - 1; titleEndPos++) {
         if (ptr[titleEndPos] == 0x0d && ptr[titleEndPos + 1] == 0x0a) break;
     }
 
-    if (titleEndPos < (int)fileData.length) {
-        int mdxBodyStartPos;
-        for (mdxBodyStartPos = titleEndPos + 2; mdxBodyStartPos < (int)fileData.length; mdxBodyStartPos++) {
+    if (titleEndPos < fileData.length) {
+        // mdxBodyStartPos = titleEndPos + 2 のオーバーフロー検証
+        if (titleEndPos > fileData.length - 2) {
+            #ifdef DEBUG
+            fprintf(stderr, "[loadMDXFile] ERROR: Integer overflow detected in MDX header parsing\n");
+            #endif
+            return nil;
+        }
+
+        size_t mdxBodyStartPos;
+        for (mdxBodyStartPos = titleEndPos + 2; mdxBodyStartPos < fileData.length; mdxBodyStartPos++) {
             if (ptr[mdxBodyStartPos] == 0x1a) break;
         }
 
-        if (mdxBodyStartPos < (int)fileData.length) {
+        if (mdxBodyStartPos < fileData.length) {
+            // mdxBodyStartPos++ のオーバーフロー検証
+            if (mdxBodyStartPos >= INT_MAX) {
+                #ifdef DEBUG
+                fprintf(stderr, "[loadMDXFile] ERROR: Integer overflow in mdxBodyStartPos increment\n");
+                #endif
+                return nil;
+            }
             mdxBodyStartPos++;  // 0x1A をスキップ
 
             // PDX ファイル名を抽出（最大 255 バイト）
             #define MAX_PDX_NAME_LEN 255
-            int pdxNameEnd = mdxBodyStartPos;
-            int pdxNameMaxLen = (int)fileData.length - mdxBodyStartPos;
-            while (pdxNameEnd < (int)fileData.length && ptr[pdxNameEnd] != 0 &&
+            size_t pdxNameEnd = mdxBodyStartPos;
+            size_t pdxNameMaxLen = fileData.length - mdxBodyStartPos;
+            while (pdxNameEnd < fileData.length && ptr[pdxNameEnd] != 0 &&
                    (pdxNameEnd - mdxBodyStartPos) < MAX_PDX_NAME_LEN) {
                 pdxNameEnd++;
             }
