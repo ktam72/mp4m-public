@@ -828,7 +828,7 @@ open MP4M.xcodeproj
 | fmgen | cisc著作権 (フリーソフト配布、商用は事前合意必須) | YM2151 FM 音源エミュレーション |
 | pcm8 / x68pcm8 | Apache 2.0 ([GORRY](https://gorry.haun.org/android/gamdx/)) | ADPCM デコード |
 | オリジナルLZX解凍 | 0BSD (商用利用可能) | LZ77方式圧縮解凍 (Vendor/lzx/) |
-| MXDRV | X68的default (milk., K.MAEKAWA, Missy.M, Yatsube) | オリジナルMXDRVドライバ |
+| MXDRV | X68的default (milk., K.MAEKAWA, m_puusan, Yosshin, Missy.M, Yatsube) | オリジナルMXDRVドライバ |
 | KH-Dot-Kodenmachou-16 | 柿木フォント | ドットフォント |
 
 > **fmgenライセンス詳細**: 改変・組み込み・配布・利用は自由だが、(1) 作者・著作権を明記、(2) 配布時フリーソフト表示、(3) 改変内容を明示、(4) ソース配布時にライセンステキスト添付が必須。商用ソフト組み込みには事前に cisc 著作権者の合意が必要。
