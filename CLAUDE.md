@@ -824,11 +824,12 @@ open MP4M.xcodeproj
 
 | ライブラリ | ライセンス | 用途 |
 |---|---|---|
-| MXDRVG (gamdx) | Apache 2.0 (GORRY) | MDX デコード・シーケンス処理 |
+| [MXDRVG (gamdx)](https://gorry.haun.org/android/gamdx/) | Apache 2.0 (GORRY) | MDX デコード・シーケンス処理 |
 | fmgen | cisc著作権 (フリーソフト配布、商用は事前合意必須) | YM2151 FM 音源エミュレーション |
+| pcm8 / x68pcm8 | Apache 2.0 ([GORRY](https://gorry.haun.org/android/gamdx/)) | ADPCM デコード |
 | オリジナルLZX解凍 | 0BSD (商用利用可能) | LZ77方式圧縮解凍 (Vendor/lzx/) |
 | MXDRV | X68的default (milk., K.MAEKAWA, Missy.M, Yatsube) | オリジナルMXDRVドライバ |
 | KH-Dot-Kodenmachou-16 | 柿木フォント | ドットフォント |
 
 > **fmgenライセンス詳細**: 改変・組み込み・配布・利用は自由だが、(1) 作者・著作権を明記、(2) 配布時フリーソフト表示、(3) 改変内容を明示、(4) ソース配布時にライセンステキスト添付が必須。商用ソフト組み込みには事前に cisc 著作権者の合意が必要。
-> ソース配置: `Vendor/gamdx/jni/fmgen/` (cisc), `Vendor/lzx/` (0BSD, オリジナル実装)
+> **GORRYプロジェクト**: [https://gorry.haun.org/android/gamdx/](https://gorry.haun.org/android/gamdx/) — MXDRVG、pcm8/x68pcm8 の公式リポジトリ、ソース配置: `Vendor/gamdx/jni/fmgen/` (cisc), `Vendor/lzx/` (0BSD, オリジナル実装)

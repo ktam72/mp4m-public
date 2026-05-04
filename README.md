@@ -90,8 +90,8 @@ xcodebuild -project MP4M.xcodeproj -scheme MP4M -configuration Release build
 | ライブラリ | ライセンス | 著作権 |
 |---|---|---|
 | **fmgen** | cisc著作権 (フリーソフト配布) | [kichikuou/fmgen](https://github.com/kichikuou/fmgen) |
-| **MXDRVG** | Apache 2.0 | GORRY（MDXPlayer-main より） |
-| **pcm8/x68pcm8** | Apache 2.0 | GORRY（MDXPlayer-main より） |
+| **MXDRVG** | Apache 2.0 | [GORRY](https://gorry.haun.org/android/gamdx/)（MDXPlayer-main より） |
+| **pcm8/x68pcm8** | Apache 2.0 | [GORRY](https://gorry.haun.org/android/gamdx/)（MDXPlayer-main より） |
 | **LZX解凍** | 0BSD (商用利用可能) | MP4M プロジェクト |
 | **KH-Dot-Kodenmachou-16** | 柿木フォント | 柿木定吉 |
 
@@ -181,6 +181,7 @@ open MP4M.xcodeproj  # Xcode で開く
 
 - [MDXPlayer for iOS](https://github.com/kichikuou/mdxplayer-ios) — iOS 版 MDX プレーヤー（参考実装）
 - [fmgen](https://github.com/kichikuou/fmgen) — YM2151 FM エミュレーター
+- [GAMDX](https://gorry.haun.org/android/gamdx/) — GORRY の Android MDX プレーヤー（MXDRVG、pcm8/x68pcm8 公式リポジトリ）
 - [MXDRVG](http://www.mxdrv.v.nrant.net/) — X68000 MXDRV ドライバ
 
 ## ライセンス表記
