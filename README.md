@@ -41,7 +41,7 @@ xcodebuild -project MP4M.xcodeproj -scheme MP4M -configuration Release build
 
 1. **X68000 フリーウェアの著作権尊重**
    - 本プロジェクトは MXDRV、pcm8 など X68000 時代のフリーウェア資産を活用しています
-   - これらの著作権者（GORRY、milk、K.MAEKAWA、m_puusan、Yosshin 等）のライセンス条項を厳密に遵守することを優先
+   - これらの著作権者（GORRY、milk、K.MAEKAWA、m_puusan、Yosshin、Missy.M、Yatsube 等）のライセンス条項を厳密に遵守することを優先
    - App Store 配布による商用化は、著作権者の意図に反する可能性があり、採用していません
 
 2. **App Store 審査対応の余力がない**
