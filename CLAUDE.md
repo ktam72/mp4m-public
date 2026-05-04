@@ -285,7 +285,6 @@ MDX/PDX 形式の音楽ファイルをリアルタイム再生し、スペクト
 | OPM 合成エミュレーター | オリジナル実装 (C++) | YM2151 エミュレーション (商用利用可能 0BSD) |
 | PCM/ADPCM | pcm8 / x68pcm8 (C++) | X68000 ADPCM 互換 |
 | LZX 解凍 | オリジナル実装 (C++) | LZ77方式、商用利用可能 0BSD |
-| フォント | KH-Dot-Kodenmachou-16 | X68000 風ドットフォント |
 | プロジェクト管理 | xcodegen + project.yml | `xcodegen generate` で再生成 |
 
 ---
@@ -387,7 +386,6 @@ MP4M/
 │   │   └── ControlPanelView.swift
 │   └── Resources/
 │       ├── Assets.xcassets
-│       ├── KH-Dot-Kodenmachou-16-Ki.ttf
 │       ├── s2utbl.dat              Shift-JIS → UTF-8 変換テーブル
 │       └── MP4M.entitlements
 └── Vendor/
@@ -473,9 +471,7 @@ MP4M/
 ## UI デザイン方針
 
 - **カラー**: 黒背景 + 緑/シアン系 (X68000 CRT モニター風)
-- **フォント**: KH-Dot-Kodenmachou-16 (ドットフォント、Shift-JIS 対応)
 - **レイアウト**: 元の MP4M レイアウトを参考に SwiftUI で再構成
-- **フォントフォールバック**: KH-Dot 未登録時も UI は機能する (SF Mono 代替)
 - 色定数・フォント定数は `Theme.swift` に集約
 
 ---
@@ -828,7 +824,6 @@ open MP4M.xcodeproj
 | fmgen | cisc著作権 (フリーソフト配布、商用は事前合意必須) | YM2151 FM 音源エミュレーション |
 | オリジナルLZX解凍 | 0BSD (商用利用可能) | LZ77方式圧縮解凍 (Vendor/lzx/) |
 | MXDRV | X68的default (milk., K.MAEKAWA, m_puusan, Yosshin, Missy.M, Yatsube) | オリジナルMXDRVドライバ |
-| KH-Dot-Kodenmachou-16 | 柿木フォント | ドットフォント |
 
 > **fmgenライセンス詳細**: 改変・組み込み・配布・利用は自由だが、(1) 作者・著作権を明記、(2) 配布時フリーソフト表示、(3) 改変内容を明示、(4) ソース配布時にライセンステキスト添付が必須。商用ソフト組み込みには事前に cisc 著作権者の合意が必要。
 > **GORRYプロジェクト**: [https://gorry.haun.org/android/gamdx/](https://gorry.haun.org/android/gamdx/) — MXDRVG、pcm8/x68pcm8 の公式リポジトリ、ソース配置: `Vendor/gamdx/jni/fmgen/` (cisc), `Vendor/lzx/` (0BSD, オリジナル実装)

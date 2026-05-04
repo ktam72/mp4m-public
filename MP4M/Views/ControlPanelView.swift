@@ -52,7 +52,7 @@ struct ControlPanelView: View {
             .buttonStyle(.plain)
             Spacer()
             Text(adjustedPdxFileName)
-                .font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 15))
+                .font(.mp4mSmall)
                 .foregroundColor(Color.mp4mCyan)
                 .lineLimit(1)
                 .truncationMode(.tail)

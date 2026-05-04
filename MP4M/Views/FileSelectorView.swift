@@ -10,21 +10,21 @@ struct FileSelectorView: View {
         VStack(spacing: 0) {
             HStack(spacing: 0) {
                 Text("FILE SELECTOR")
-                    .font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 15))
+                    .font(.mp4mSmall)
                     .foregroundColor(Color.mp4mCyan)
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
                 Spacer()
                 if let dir = browserVM.currentDirectory {
                     Text(dir.path)
-                        .font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 14))
+                        .font(.mp4mTiny)
                         .foregroundColor(Color.mp4mText.opacity(0.5))
                         .lineLimit(1)
                         .truncationMode(.head)
                         .padding(.horizontal, 8)
                 }
                 Button { openFolder() } label: {
-                    Text("[OPEN]").font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 15)).foregroundColor(Color.mp4mAmber)
+                    Text("[OPEN]").font(.mp4mSmall).foregroundColor(Color.mp4mAmber)
                 }
                 .buttonStyle(.plain)
                 .padding(.horizontal, 8)
@@ -84,17 +84,17 @@ private struct FileRowView: View {
     var body: some View {
         HStack(spacing: 6) {
             Text(item.isDirectory ? "►" : "♪")
-                .font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 14))
+                .font(.mp4mTiny)
                 .foregroundColor(item.isDirectory ? Color.mp4mAmber : Color.mp4mText.opacity(0.5))
                 .frame(width: 14)
             Text(item.displayName)
-                .font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 18))
+                .font(.mp4mText)
                 .foregroundColor(isPlaying ? Color.mp4mBright : Color.mp4mText)
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .frame(maxWidth: .infinity, alignment: .leading)
             if isPlaying {
-                Text("▶").font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 14)).foregroundColor(Color.mp4mBright)
+                Text("▶").font(.mp4mTiny).foregroundColor(Color.mp4mBright)
             }
         }
         .padding(.horizontal, 8)

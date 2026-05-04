@@ -81,7 +81,7 @@ struct KeyboardView: View {
     var body: some View {
         VStack(spacing: 1) {
             Text("KEYBOARD")
-                .font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 15))
+                .font(.mp4mSmall)
                 .foregroundColor(Color.mp4mCyan)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.leading, 8)
@@ -142,7 +142,7 @@ struct KeyboardView: View {
                         // CHラベル：再生中は Note名 + オクターブ、それ以外は空白
                         let labelText = chLabel(for: chState, keyboard: keyboard)
                         ctx.draw(
-                            Text(labelText).font(.custom("KH-Dot-Kodenmachou-16-Ki", size: 21))
+                            Text(labelText).font(.mp4mTitle)
                                 .foregroundColor(Color.mp4mCyan.opacity(0.6)),
                             at: CGPoint(x: 20, y: y + keyH / 2)
                         )

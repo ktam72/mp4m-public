@@ -27,7 +27,7 @@ macOS MDX Player for X68000 music files with full multithreading support.
 - **File Management**: Folder browser, automatic PDX discovery, Shift-JIS/UTF-8 title extraction
 - **Audio Engine**: AVAudioEngine real-time rendering, 44.1kHz stereo, fmgen YM2151 emulation
 - **Multi-threading**: os_unfair_lock + Task.detached for safe concurrent access, Apple Silicon optimization
-- **UI Design**: SwiftUI + MVVM, X68000-inspired aesthetic, KH-Dot font support
+- **UI Design**: SwiftUI + MVVM, X68000-inspired aesthetic
 - **Security**: macOS App Sandbox, buffer validation, overflow protection
 
 #### Performance
@@ -103,7 +103,6 @@ macOS MDX Player for X68000 music files with full multithreading support.
 | MXDRVG | Apache 2.0 | Permitted |
 | pcm8/x68pcm8 | Apache 2.0 | Permitted |
 | LZX Decompression | 0BSD | Permitted |
-| KH-Dot Font | Kakigi Copyright | Free use |
 
 See LICENSE file for complete texts.
 
