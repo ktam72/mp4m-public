@@ -23,6 +23,11 @@ struct AboutView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 8) {
                     LicenseRow(
+                        name: "fmgen",
+                        author: "cisc",
+                        license: "cisc Copyright (Commercial use requires prior agreement)"
+                    )
+                    LicenseRow(
                         name: "MXDRVG",
                         author: "GORRY",
                         license: "Apache 2.0"
