@@ -50,6 +50,9 @@ final class PlayerViewModel: @unchecked Sendable {
     private var cachedChannels: [ChannelDisplayState] = Array(repeating: ChannelDisplayState(), count: 16)
     private let channelStateUpdateIntervalMs: Int = 100  // 100ms ごとにのみ取得
 
+    // フレームレート制御（キーボード 60fps、他は 30fps）
+    private var updateFrameCounter: Int = 0
+
     // 再生時間計測（案C: C++ 呼び出し削減）
     private var playStartTimeMs: Int = 0          // 再生開始時の絶対時間
     private var playStartDate: Date = Date()      // 再生開始時刻
@@ -230,13 +233,16 @@ final class PlayerViewModel: @unchecked Sendable {
 
     private func startDisplayTimer() {
         displayTimer?.invalidate()
-        displayTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 30.0, repeats: true) { [weak self] _ in
+        displayTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 60.0, repeats: true) { [weak self] _ in
             self?.updateDisplay()
         }
     }
 
     private func updateDisplay() {
         guard status == .playing else { return }
+
+        let isFullUpdate = (updateFrameCounter % 2 == 0)
+        updateFrameCounter = (updateFrameCounter + 1) % 2
 
         // DispatchQueue を使用してバックグラウンドで実行（優先度4: Task.detached より軽量）
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
@@ -255,7 +261,7 @@ final class PlayerViewModel: @unchecked Sendable {
                 self.lastSyncDate = Date()
             }
 
-            // 優先度3: チャンネル状態を 50ms ごとにのみ更新
+            // 優先度3: チャンネル状態を 100ms ごとにのみ更新
             var fmChannels = self.cachedChannels
             if (ms - self.lastChannelStateUpdateMs) >= self.channelStateUpdateIntervalMs {
                 fmChannels = self.audioService.getChannelStates()
@@ -263,17 +269,24 @@ final class PlayerViewModel: @unchecked Sendable {
                 self.lastChannelStateUpdateMs = ms
             }
 
-            let newBars = self.computeSpectrum(for: fmChannels)
+            // スペアナ計算は 30fps（isFullUpdate 時のみ）
+            var newBars = self.spectrumBars
+            if isFullUpdate {
+                newBars = self.computeSpectrum(for: fmChannels)
+            }
 
-            // メインスレッドで UI 更新
+            // メインスレッドで UI 更新（キーボードは 60fps、スペアナ・時間は 30fps）
             DispatchQueue.main.async {
-                self.currentTimeMs = ms
-                self.channels = fmChannels
-                self.spectrumBars = newBars
+                self.channels = fmChannels  // キーボード用：毎フレーム 60fps 更新
 
-                // 再生時間が総時間に到達したら曲終了
-                if self.totalTimeMs > 0 && self.currentTimeMs >= self.totalTimeMs {
-                    self.handleTrackEnd()
+                if isFullUpdate {
+                    self.currentTimeMs = ms  // レベルメーター・テキスト用：30fps 更新
+                    self.spectrumBars = newBars  // スペアナ用：30fps 更新
+
+                    // 再生時間が総時間に到達したら曲終了
+                    if self.totalTimeMs > 0 && self.currentTimeMs >= self.totalTimeMs {
+                        self.handleTrackEnd()
+                    }
                 }
             }
         }
