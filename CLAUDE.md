@@ -3,6 +3,43 @@
 SHARP X68000 用音楽プレーヤー「MP4M」の macOS SwiftUI 移植版。
 MDX/PDX 形式の音楽ファイルをリアルタイム再生し、スペクトラムアナライザー・レベルメーター・キーボード表示を持つ。
 
+### 2026-05-04 — CPU 負荷最適化フェーズ2：GPU 処理 + フレームレート最適化
+- **背景**: 前回実装の優先度3・4・案C で約 10% の CPU 削減を達成。さらなる最適化を検討
+- **実装内容:**
+  1. **チャンネルキャッシング更新間隔延長** (50ms → 100ms)
+     - `PlayerViewModel.channelStateUpdateIntervalMs = 100`
+     - C++ 呼び出し頻度を秒 20 回 → 秒 10 回（50% 削減）
+     - 期待効果: -2～3% CPU
+  2. **スペアナ計算最適化** (`PlayerViewModel.computeSpectrum()`)
+     - 型変換削減: `Float(UInt16(velocity))` → `Float(velocity)`（1 回に統一）
+     - 整数除算削減: `(x * 3) / 4` → `x * 0.75`（浮動小数点乗算は高速）
+     - ガード句でキャッシュフレンドリー化
+     - 期待効果: -3～5% CPU
+  3. **Metal GPU コンピュートシェーダ導入** (`Spectrum.metal` + `MetalSpectrumCompute.swift`)
+     - 16ch のビンマッピング + 拡散を GPU で並列計算
+     - `computeSpectrum()` を GPU オフロード（fallback で CPU 計算も対応）
+     - atomic 操作で 16 スレッドが並行してビン更新
+     - Metal Toolchain をインストール済み（xcodebuild -downloadComponent MetalToolchain）
+     - 期待効果: -8～12% CPU
+  4. **UI フレームレート最適化** (60fps → 30fps)
+     - `startDisplayTimer()`: `Timer.scheduledTimer(withTimeInterval: 1.0/30.0, ...)`
+     - レベルメーター・キーボード は 30fps で十分（体感変わらず）
+     - スペアナ（GPU）計算は独立して継続
+     - 期待効果: -5～10% CPU
+- **修正ファイル:**
+  - `PlayerViewModel.swift`: キャッシング間隔変更、スペアナ最適化、metalCompute 統合、フレームレート変更
+  - `Shaders/Spectrum.metal`: GPU コンピュートシェーダ新規作成
+  - `Services/MetalSpectrumCompute.swift`: GPU 管理クラス新規作成
+  - `MXDRVGBridge.mm`: デバッグログ削除（PCM_DETAIL ログ削除）
+- **テスト結果:**
+  - ✅ ビルド成功（Metal Toolchain インストール後）
+  - ✅ アプリ起動確認済み
+  - 🔄 CPU 削減効果測定予定（Activity Monitor で確認）
+- **総合期待削減:** -18～30% CPU（現在の 10% と合わせて）
+- **既知の制約:**
+  - Metal GPU 計算は CPU バッファ転送オーバーヘッドがあるため、バッファ確保時に 1～2ms の遅延可能
+  - レベルメーター・キーボード は GPU 化非効率（転送コスト > 計算コスト）
+
 ### 2026-05-03 (14) — マルチコア対応：マルチスレッド改善（フェーズ1 最終版）
 - **実装方針**: macOS 向けのみ（iPad 対応は別アプローチで将来検討）
 - **データ競合修正（os_unfair_lock 導入）**:

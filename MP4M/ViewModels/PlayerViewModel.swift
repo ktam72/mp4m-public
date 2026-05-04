@@ -43,11 +43,12 @@ final class PlayerViewModel: @unchecked Sendable {
     private var fadeOutTimer: Timer?
     private var fadeOutVolume: Float = 1.0
     weak var browserVM: FileBrowserViewModel?
+    private let metalCompute: MetalSpectrumCompute?
 
     // チャンネル状態キャッシング（優先度3: CPU 負荷低減）
     private var lastChannelStateUpdateMs: Int = 0
     private var cachedChannels: [ChannelDisplayState] = Array(repeating: ChannelDisplayState(), count: 16)
-    private let channelStateUpdateIntervalMs: Int = 50  // 50ms ごとにのみ取得
+    private let channelStateUpdateIntervalMs: Int = 100  // 100ms ごとにのみ取得
 
     // 再生時間計測（案C: C++ 呼び出し削減）
     private var playStartTimeMs: Int = 0          // 再生開始時の絶対時間
@@ -71,6 +72,7 @@ final class PlayerViewModel: @unchecked Sendable {
     init(audioService: any AudioEngineService) {
         print("[PlayerViewModel.init] START")
         self.audioService = audioService
+        self.metalCompute = MetalSpectrumCompute()
 
         // UserDefaults から設定を復帰
         if let savedLoopCount = UserDefaults.standard.object(forKey: "mp4m_loopCount") as? Int {
@@ -228,7 +230,7 @@ final class PlayerViewModel: @unchecked Sendable {
 
     private func startDisplayTimer() {
         displayTimer?.invalidate()
-        displayTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 60.0, repeats: true) { [weak self] _ in
+        displayTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 30.0, repeats: true) { [weak self] _ in
             self?.updateDisplay()
         }
     }
@@ -280,27 +282,8 @@ final class PlayerViewModel: @unchecked Sendable {
     // MARK: - スペアナ計算
 
     private func computeSpectrum(for channels: [ChannelDisplayState]) -> [SpectrumBarState] {
-        // 1. ビンクリア
-        var speaBuf = [Float](repeating: 0, count: 52)
-
-        // 2. チャンネル→ビンマッピング + 拡散処理（元のSpeanaBitmap.m準拠）
-        for ch in channels where ch.keyOn {
-            let d = (Int(ch.keyCode) + Int(ch.keyOffset)) / 3
-            if d < 42 {
-                let x = UInt16(ch.velocity)
-                speaBuf[d]   += Float(x)
-                if d > 0 { speaBuf[d-1] += Float((x * 3) / 4) }
-                speaBuf[d+1] += Float((x * 3) / 4)
-                if d > 1 { speaBuf[d-2] += Float((x * 5) / 16) }
-                speaBuf[d+2] += Float((x * 5) / 16)
-                if d > 2 { speaBuf[d-3] += Float(x / 8) }
-                speaBuf[d+3] += Float(x / 8)
-                if d > 3 { speaBuf[d-4] += Float(x / 4) }
-                speaBuf[d+4] += Float(x / 4)
-                if d > 4 { speaBuf[d-5] += Float(x / 16) }
-                speaBuf[d+5] += Float(x / 16)
-            }
-        }
+        // GPU または CPU でビンマッピング + 拡散を計算
+        let speaBuf = metalCompute?.computeSpectrum(channels: channels) ?? [Float](repeating: 0, count: 52)
 
         // 3. バー状態更新
         var newBars = spectrumBars

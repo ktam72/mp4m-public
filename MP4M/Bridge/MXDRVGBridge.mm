@@ -428,15 +428,6 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
             // チャンネルマスクでこの PCM チャンネルが有効か確認
             int isChannelEnabled = (channelMask & (1 << pcmBit)) ? 1 : 0;
 
-            if (!isChannelEnabled || !g_hasPDX) {
-                // このチャンネルはマスクで無効化されている、または PDX がない
-                states[chIdx].keyOn = 0;
-                states[chIdx].active = 0;
-                states[chIdx].volume = 0;
-                states[chIdx].velocity = 0;
-                continue;
-            }
-
             uint8_t flags = pcmCh[i].S0016;
             uint8_t keyOn = (flags >> 3) & 1;  // bit3 = keyon
 
@@ -448,6 +439,15 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
             // 実際に割り当て済みか判定：S0000 ポインタが有効（非ゼロ）
             // S0000 はサンプルデータへのポインタ。ゼロなら割り当てなし
             uint8_t isPlaying = (S0000 != NULL && S0000 != 0) ? 1 : 0;
+
+            if (!isChannelEnabled || !g_hasPDX) {
+                // このチャンネルはマスクで無効化されている、または PDX がない
+                states[chIdx].keyOn = 0;
+                states[chIdx].active = 0;
+                states[chIdx].volume = 0;
+                states[chIdx].velocity = 0;
+                continue;
+            }
 
             states[chIdx].keyOn = isPlaying;
             states[chIdx].active = isPlaying;
