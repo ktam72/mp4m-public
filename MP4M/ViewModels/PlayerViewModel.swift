@@ -48,7 +48,7 @@ final class PlayerViewModel: @unchecked Sendable {
     // チャンネル状態キャッシング（優先度3: CPU 負荷低減）
     private var lastChannelStateUpdateMs: Int = 0
     private var cachedChannels: [ChannelDisplayState] = Array(repeating: ChannelDisplayState(), count: 16)
-    private let channelStateUpdateIntervalMs: Int = 100  // 100ms ごとにのみ取得
+    private let channelStateUpdateIntervalMs: Int = 200  // 200ms ごとにのみ取得
 
     // フレームレート制御（キーボード 60fps、他は 30fps）
     private var updateFrameCounter: Int = 0
@@ -73,7 +73,9 @@ final class PlayerViewModel: @unchecked Sendable {
     // MARK: - 初期化
 
     init(audioService: any AudioEngineService) {
+        #if DEBUG
         print("[PlayerViewModel.init] START")
+        #endif
         self.audioService = audioService
         self.metalCompute = MetalSpectrumCompute()
 
@@ -92,9 +94,13 @@ final class PlayerViewModel: @unchecked Sendable {
             mutedChannels = Set(savedMutedChannels)
         }
 
+        #if DEBUG
         print("[PlayerViewModel.init] calling audioService.start()")
+        #endif
         audioService.start(sampleRate: 44100)
+        #if DEBUG
         print("[PlayerViewModel.init] audioService.start() done")
+        #endif
     }
 
     /// 明示的クリーンアップ (deinit ではなく View の onDisappear で呼ぶ)
@@ -347,7 +353,9 @@ final class PlayerViewModel: @unchecked Sendable {
         // 重複呼び出し防止：一度停止状態に変更
         status = .stopped
 
+        #if DEBUG
         print("[TrackEnd] repeatEnabled=\(repeatEnabled)")
+        #endif
         if repeatEnabled {
             audioService.stop()
             play()
@@ -358,16 +366,22 @@ final class PlayerViewModel: @unchecked Sendable {
     }
 
     private func startFadeOut() {
+        #if DEBUG
         print("[FadeOut] Starting fadeout")
+        #endif
         fadeOutVolume = 1.0
         let fadeOutSteps = 60  // 3秒 ÷ 50ms = 60ステップ
         let decrement = 1.0 / Float(fadeOutSteps)
+        #if DEBUG
         print("[FadeOut] fadeOutSteps=\(fadeOutSteps), decrement=\(String(format: "%.4f", decrement))")
+        #endif
 
         fadeOutTask = Task {
             for step in 0..<fadeOutSteps {
                 guard !Task.isCancelled else {
+                    #if DEBUG
                     print("[FadeOut] Cancelled at step \(step)")
+                    #endif
                     break
                 }
 
@@ -377,13 +391,17 @@ final class PlayerViewModel: @unchecked Sendable {
                     self.fadeOutVolume = max(0.0, self.fadeOutVolume - decrement)
                     self.audioService.setVolume(self.fadeOutVolume)
                     if Int(self.fadeOutVolume * 100) % 20 == 0 {
+                        #if DEBUG
                         print("[FadeOut] fadeOutVolume=\(String(format: "%.2f", self.fadeOutVolume))")
+                        #endif
                     }
                 }
             }
 
             await MainActor.run {
+                #if DEBUG
                 print("[FadeOut] Complete (fadeOutVolume=\(String(format: "%.2f", self.fadeOutVolume))), playing next track")
+                #endif
                 self.fadeOutVolume = 1.0
                 self.audioService.setVolume(1.0)
                 self.displayTimer?.invalidate()
@@ -397,30 +415,40 @@ final class PlayerViewModel: @unchecked Sendable {
     }
 
     private func playNextTrack() {
+        #if DEBUG
         print("[NextTrack] Starting next track")
+        #endif
         DispatchQueue.main.async { [weak self] in
             guard let self = self, let browserVM = self.browserVM else {
+                #if DEBUG
                 print("[NextTrack] browserVM is nil, stopping")
+                #endif
                 self?.stop()
                 return
             }
 
             let files = browserVM.fileItems.filter { !$0.isDirectory }
             guard !files.isEmpty else {
+                #if DEBUG
                 print("[NextTrack] No files, stopping")
+                #endif
                 self.stop()
                 return
             }
 
             if let nextIdx = self.nextFileIndex(fileItems: browserVM.fileItems, playingIndex: browserVM.playingIndex) {
+                #if DEBUG
                 print("[NextTrack] Playing next file at index \(nextIdx)")
+                #endif
                 browserVM.playingIndex = nextIdx
                 Task {
                     await self.load(url: files[nextIdx].url)
                     self.play()
                 }
             } else {
+                #if DEBUG
                 print("[NextTrack] No next file, stopping")
+                #endif
                 self.stop()
             }
         }

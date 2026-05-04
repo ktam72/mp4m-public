@@ -18,7 +18,9 @@ final class MXDRVAudioEngine: AudioEngineService {
     nonisolated(unsafe) private var mutedChannels: Set<Int> = []
 
     init() {
+        #if DEBUG
         fputs("[MXDRVAudioEngine.init]\n", stderr)
+        #endif
     }
 
     var sourceNode: AVAudioSourceNode? { node }
@@ -148,8 +150,8 @@ final class MXDRVAudioEngine: AudioEngineService {
         guard ret > 0 else { return }
 
         for i in 0..<frameCount {
-            leftPtr[i]  = Float(pcmBuffer[i * 2])     / 32768.0
-            rightPtr[i] = Float(pcmBuffer[i * 2 + 1]) / 32768.0
+            leftPtr[i]  = Float(pcmBuffer[i * 2])     * (1.0 / 32768.0)
+            rightPtr[i] = Float(pcmBuffer[i * 2 + 1]) * (1.0 / 32768.0)
         }
     }
 }

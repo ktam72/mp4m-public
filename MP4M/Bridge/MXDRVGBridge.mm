@@ -143,11 +143,17 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
 @implementation MXDRVGBridge
 
 + (void)startWithSampleRate:(int)sampleRate {
+    #ifdef DEBUG
     fprintf(stderr, "[MXDRVGBridge] startWithSampleRate: %d\n", sampleRate);
+    #endif
     MXDRVG_End();
+    #ifdef DEBUG
     fprintf(stderr, "[MXDRVGBridge] calling MXDRVG_Start...\n");
+    #endif
     MXDRVG_Start(sampleRate, 0, 64 * 1024, 1024 * 1024);
+    #ifdef DEBUG
     fprintf(stderr, "[MXDRVGBridge] MXDRVG_Start done\n");
+    #endif
     MXDRVG_TotalVolume(128);  // 音量を50%に設定（大きすぎる問題の対策）
 }
 
@@ -172,18 +178,26 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
     // 最初に "No PDX" を設定（PDX未指定や読み込み失敗時に使用）
     strncpy(g_lastPDXFileName, "No PDX", sizeof(g_lastPDXFileName) - 1);
     g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
+    #ifdef DEBUG
     fprintf(stderr, "[loadMDXFile] Loading: %s\n", [mdxPath UTF8String]);
+    #endif
     NSData* fileData = [NSData dataWithContentsOfFile:mdxPath];
     if (!fileData) {
+        #ifdef DEBUG
         fprintf(stderr, "[loadMDXFile] FAILED to load file\n");
+        #endif
         return nil;
     }
+    #ifdef DEBUG
     fprintf(stderr, "[loadMDXFile] Loaded file, size: %lu\n", (unsigned long)fileData.length);
+    #endif
 
     // ファイルサイズチェック（INT_MAX および実用上限）
     #define MAX_MDX_FILE_SIZE (100 * 1024 * 1024)  // 100MB上限
     if (fileData.length == 0 || fileData.length > MAX_MDX_FILE_SIZE) {
+        #ifdef DEBUG
         fprintf(stderr, "[loadMDXFile] ERROR: File size invalid (0 or >100MB)\n");
+        #endif
         return nil;
     }
 
@@ -232,26 +246,36 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
                 }
 
                 if (pdxFileName) {
+                    #ifdef DEBUG
                     fprintf(stderr, "[PDX] Found PDX filename in MDX header: %s\n", [pdxFileName UTF8String]);
-                    
+                    #endif
+
                     // 大文字小文字を区別せずにPDXファイルを検索
                     NSString* pdxPath = findPDXFile(pdxFileName, mdxDir);
                     if (pdxPath) {
+                        #ifdef DEBUG
                         fprintf(stderr, "[PDX] Trying to load PDX from: %s\n", [pdxPath UTF8String]);
+                        #endif
                         pdxData = [NSData dataWithContentsOfFile:pdxPath];
                         if (pdxData) {
+                            #ifdef DEBUG
                             fprintf(stderr, "[PDX] Successfully loaded PDX file, size: %lu\n", (unsigned long)pdxData.length);
+                            #endif
                             // 成功：グローバル変数に PDX ファイル名を保存
                             strncpy(g_lastPDXFileName, [pdxFileName UTF8String], sizeof(g_lastPDXFileName) - 1);
                             g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
                         } else {
+                            #ifdef DEBUG
                             fprintf(stderr, "[PDX] Failed to load PDX file\n");
+                            #endif
                             // 失敗："No PDX" を設定
                             strncpy(g_lastPDXFileName, "No PDX", sizeof(g_lastPDXFileName) - 1);
                             g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
                         }
                     } else {
+                        #ifdef DEBUG
                         fprintf(stderr, "[PDX] PDX file not found (case-insensitive search)\n");
+                        #endif
                         // 失敗："No PDX" を設定
                         strncpy(g_lastPDXFileName, "No PDX", sizeof(g_lastPDXFileName) - 1);
                         g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
@@ -305,16 +329,24 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
     // PDX 処理（ログ追加）
     NSData* pdxDecompressed = nil;
     if (pdxData) {
+#ifdef DEBUG
         fprintf(stderr, "[PDX] Loading PDX data, original size: %lu bytes\n", (unsigned long)pdxData.length);
+#endif
         pdxDecompressed = decompressIfLZX(pdxData);
         if (pdxDecompressed) {
+#ifdef DEBUG
             fprintf(stderr, "[PDX] PDX decompressed successfully, size: %lu bytes\n", (unsigned long)pdxDecompressed.length);
+#endif
         } else {
+#ifdef DEBUG
             fprintf(stderr, "[PDX] PDX decompression failed, ignoring PDX\n");
+#endif
             pdxData = nil;
         }
     } else {
+#ifdef DEBUG
         fprintf(stderr, "[PDX] No PDX data provided\n");
+#endif
     }
     
     // ヘッダー付与
