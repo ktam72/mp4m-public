@@ -114,6 +114,23 @@ static NSString* getTitleFromData(NSData* data) {
     return title ? title : @"(no title)";
 }
 
+// PDXファイル名のセキュリティチェック（パストラバーサル対策）
+static BOOL isValidPDXFileName(NSString* fileName) {
+    if (!fileName || fileName.length == 0) return NO;
+
+    // パスセパレータを含まないか確認
+    if ([fileName rangeOfString:@"/"].location != NSNotFound) return NO;
+    if ([fileName rangeOfString:@"\\"].location != NSNotFound) return NO;
+
+    // .. （ディレクトリトラバーサル）を含まないか確認
+    if ([fileName rangeOfString:@".."].location != NSNotFound) return NO;
+
+    // null 文字を含まないか確認
+    if ([fileName rangeOfString:@"\0"].location != NSNotFound) return NO;
+
+    return YES;
+}
+
 // 大文字小文字を区別せずにPDXファイルを検索
 static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
     if (!pdxFileName || !directory) return nil;
@@ -250,35 +267,44 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
                     fprintf(stderr, "[PDX] Found PDX filename in MDX header: %s\n", [pdxFileName UTF8String]);
                     #endif
 
-                    // 大文字小文字を区別せずにPDXファイルを検索
-                    NSString* pdxPath = findPDXFile(pdxFileName, mdxDir);
-                    if (pdxPath) {
+                    // セキュリティチェック：パストラバーサル対策
+                    if (!isValidPDXFileName(pdxFileName)) {
                         #ifdef DEBUG
-                        fprintf(stderr, "[PDX] Trying to load PDX from: %s\n", [pdxPath UTF8String]);
+                        fprintf(stderr, "[PDX] SECURITY ERROR: PDX filename contains invalid characters (path separators or directory traversal): %s\n", [pdxFileName UTF8String]);
                         #endif
-                        pdxData = [NSData dataWithContentsOfFile:pdxPath];
-                        if (pdxData) {
+                        strncpy(g_lastPDXFileName, "No PDX", sizeof(g_lastPDXFileName) - 1);
+                        g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
+                    } else {
+                        // 大文字小文字を区別せずにPDXファイルを検索
+                        NSString* pdxPath = findPDXFile(pdxFileName, mdxDir);
+                        if (pdxPath) {
                             #ifdef DEBUG
-                            fprintf(stderr, "[PDX] Successfully loaded PDX file, size: %lu\n", (unsigned long)pdxData.length);
+                            fprintf(stderr, "[PDX] Trying to load PDX from: %s\n", [pdxPath UTF8String]);
                             #endif
-                            // 成功：グローバル変数に PDX ファイル名を保存
-                            strncpy(g_lastPDXFileName, [pdxFileName UTF8String], sizeof(g_lastPDXFileName) - 1);
-                            g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
+                            pdxData = [NSData dataWithContentsOfFile:pdxPath];
+                            if (pdxData) {
+                                #ifdef DEBUG
+                                fprintf(stderr, "[PDX] Successfully loaded PDX file, size: %lu\n", (unsigned long)pdxData.length);
+                                #endif
+                                // 成功：グローバル変数に PDX ファイル名を保存
+                                strncpy(g_lastPDXFileName, [pdxFileName UTF8String], sizeof(g_lastPDXFileName) - 1);
+                                g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
+                            } else {
+                                #ifdef DEBUG
+                                fprintf(stderr, "[PDX] Failed to load PDX file\n");
+                                #endif
+                                // 失敗："No PDX" を設定
+                                strncpy(g_lastPDXFileName, "No PDX", sizeof(g_lastPDXFileName) - 1);
+                                g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
+                            }
                         } else {
                             #ifdef DEBUG
-                            fprintf(stderr, "[PDX] Failed to load PDX file\n");
+                            fprintf(stderr, "[PDX] PDX file not found (case-insensitive search)\n");
                             #endif
                             // 失敗："No PDX" を設定
                             strncpy(g_lastPDXFileName, "No PDX", sizeof(g_lastPDXFileName) - 1);
                             g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
                         }
-                    } else {
-                        #ifdef DEBUG
-                        fprintf(stderr, "[PDX] PDX file not found (case-insensitive search)\n");
-                        #endif
-                        // 失敗："No PDX" を設定
-                        strncpy(g_lastPDXFileName, "No PDX", sizeof(g_lastPDXFileName) - 1);
-                        g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
                     }
                 } else {
                     // PDX 指定がない場合は "No PDX" を設定
