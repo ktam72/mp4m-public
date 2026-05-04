@@ -51,3 +51,4 @@ build_test/
 node_modules/
 release-app/
 CLAUDE.md
+CHANGELOG.md
