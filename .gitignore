@@ -47,6 +47,9 @@ Vendor/opm/backup/
 # Test directory
 build_test/
 
+# Development notes
+my_fixes.md
+
 # Dependencies (if any)
 node_modules/
 release-app/
