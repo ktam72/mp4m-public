@@ -43,6 +43,18 @@ struct ContentView: View {
             .onDrop(of: [.fileURL], isTargeted: nil) { providers in
                 handleDrop(providers: providers)
             }
+            .alert(item: Binding(
+                get: { playerVM?.currentError },
+                set: { playerVM?.currentError = $0 }
+            )) { error in
+                Alert(
+                    title: Text("エラー"),
+                    message: Text(error.errorDescription ?? "不明なエラーが発生しました。"),
+                    dismissButton: .default(Text("OK")) {
+                        playerVM?.currentError = nil
+                    }
+                )
+            }
 
             // About ダイアログオーバーレイ
             if showAbout {

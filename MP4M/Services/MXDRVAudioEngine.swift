@@ -35,16 +35,25 @@ final class MXDRVAudioEngine: AudioEngineService {
         MXDRVGBridge.end()
     }
 
-    func loadMDXFile(path: String) -> String? {
-        MXDRVGBridge.loadMDXFile(path)
+    func loadMDXFile(path: String) throws -> String? {
+        let title = MXDRVGBridge.loadMDXFile(path)
+        if title == nil {
+            if !FileManager.default.fileExists(atPath: path) {
+                throw MP4MError.fileAccessDenied("File not found at path: \(path)")
+            } else {
+                throw MP4MError.mdxLoadFailed("Failed to load MDX file. The file may be corrupt or in an unsupported format.")
+            }
+        }
+        return title
     }
 
     func pdxFileName() -> String? {
         MXDRVGBridge.pdxFileName()
     }
 
-    func pdxLoadError() -> String? {
-        MXDRVGBridge.pdxLoadError()
+    func pdxLoadError() -> MP4MError? {
+        guard let errorStr = MXDRVGBridge.pdxLoadError() else { return nil }
+        return .pdxLoadFailed(errorStr)
     }
 
     func playWithLoopCount(_ loopCount: Int32) -> Int {
@@ -97,12 +106,12 @@ final class MXDRVAudioEngine: AudioEngineService {
         return MXDRVGBridge.getPCM(buffer, frameCount: frameCount)
     }
 
-    func startEngine() {
+    func startEngine() throws {
         guard !engine.isRunning else { return }
         do {
             try engine.start()
         } catch {
-            print("[MXDRVAudioEngine] start failed: \(error)")
+            throw MP4MError.audioEngineFailed(error.localizedDescription)
         }
     }
 

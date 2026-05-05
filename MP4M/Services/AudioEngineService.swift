@@ -13,13 +13,14 @@ protocol AudioEngineService: AnyObject {
     /// MDX ファイル読み込み
     /// - Parameter path: ファイルパス
     /// - Returns: タイトル文字列 (nil で失敗)
-    func loadMDXFile(path: String) -> String?
+    /// - Throws: MP4MError で失敗理由を通知
+    func loadMDXFile(path: String) throws -> String?
 
     /// ロード済み PDX ファイル名
     func pdxFileName() -> String?
 
-    /// PDX ロード失敗時のエラーメッセージ (nil またはがエラーなし)
-    func pdxLoadError() -> String?
+    /// PDX ロード失敗時のエラー (nil でエラーなし)
+    func pdxLoadError() -> MP4MError?
 
     /// 再生開始 (ループ回数指定)
     /// - Parameter loopCount: ループ回数
@@ -55,7 +56,7 @@ protocol AudioEngineService: AnyObject {
     var sourceNode: AVAudioSourceNode? { get }
 
     /// AVAudioEngine 開始
-    func startEngine()
+    func startEngine() throws
 
     /// 音量設定 (0.0〜1.0)
     func setVolume(_ volume: Float)

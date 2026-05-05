@@ -36,6 +36,8 @@ final class PlayerViewModel: @unchecked Sendable {
         }
     }
 
+    var currentError: MP4MError? = nil
+
     // MARK: - 内部
 
     private let audioService: any AudioEngineService
@@ -105,25 +107,42 @@ final class PlayerViewModel: @unchecked Sendable {
         stop()
         mutedChannels = []
         channelService.resetCache()
+        currentError = nil
 
-        let loadedTitle = await Task.detached(priority: .userInitiated) { [weak self] in
-            self?.audioService.loadMDXFile(path: url.path)
-        }.value
+        do {
+            let loadedTitle = try await Task.detached(priority: .userInitiated) { [weak self] in
+                try self?.audioService.loadMDXFile(path: url.path)
+            }.value
 
-        title = loadedTitle ?? url.deletingPathExtension().lastPathComponent
+            title = loadedTitle ?? url.deletingPathExtension().lastPathComponent
 
-        if let pdxName = audioService.pdxFileName() {
-            if pdxName.lowercased().contains("no pdx") {
-                pdxFileName = "No PDX"
+            // PDX ファイル名をオーディオサービスから取得（"no pdx" を含む場合は統一）
+            if let pdxName = audioService.pdxFileName() {
+                pdxFileName = pdxName.lowercased().contains("no pdx") ? "No PDX" : pdxName
             } else {
-                pdxFileName = pdxName
+                pdxFileName = "No PDX"
             }
-        } else {
-            pdxFileName = "No PDX"
-        }
 
-        currentTimeMs = 0
-        totalTimeMs = 0
+            // PDX 読み込みエラーがあれば設定
+            if let pdxError = audioService.pdxLoadError() {
+                currentError = pdxError
+            }
+
+            currentTimeMs = 0
+            totalTimeMs = 0
+        } catch let error as MP4MError {
+            currentError = error
+            title = url.deletingPathExtension().lastPathComponent
+            pdxFileName = "No PDX"
+            currentTimeMs = 0
+            totalTimeMs = 0
+        } catch {
+            currentError = MP4MError.mdxLoadFailed(error.localizedDescription)
+            title = url.deletingPathExtension().lastPathComponent
+            pdxFileName = "No PDX"
+            currentTimeMs = 0
+            totalTimeMs = 0
+        }
     }
 
     func play() {
@@ -136,7 +155,15 @@ final class PlayerViewModel: @unchecked Sendable {
             totalTimeMs = audioService.playWithLoopCount(Int32(loopCount))
         }
 
-        audioService.startEngine()
+        do {
+            try audioService.startEngine()
+        } catch let error as MP4MError {
+            currentError = error
+            return
+        } catch {
+            currentError = MP4MError.audioEngineFailed(error.localizedDescription)
+            return
+        }
 
         // 案C: 再生時間計測の初期化
         playStartTimeMs = audioService.currentPlayTimeMs()
