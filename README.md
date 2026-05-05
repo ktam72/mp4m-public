@@ -123,12 +123,12 @@ xcodebuild -project MP4M.xcodeproj -scheme MP4M -configuration Release build
 
 開発にあたっては、過去に触れたiOS向けMDXプレイヤーと、X68000時代のmmdspのUI/挙動をイメージし、懐かしさと現代的な技術を融合させることを目指しました。
 
-それにしても、生成AIの力はすごいですね。私自身はXCODEもSWIFTもわからないのでコーディングをAIに任せられたのは非常に大きかったです。私自身は設計観点と動作確認から来るフィードバックに注力してAI（主にClaude codeとBig Pickle）との対話中心に品質を上げていきました。
+それにしても、生成AIの力はすごいですね。私自身はXCODEもSWIFTもわからないのでコーディングをAIに任せられたのは非常に大きかったです。私自身はAI（主にClaude codeとBig Pickle）との対話に注力し、設計と動作確認結果のフィードバックを繰り返して品質を上げていきました。
 お気づきの点がありましたらフィードバックいただけるとありがたいです。
 
 ---
 
-**Last Updated**: 2026-05-03  
+**Last Updated**: 2026-05-05  
 **Version**: 1.0 beta  
 **macOS Requirement**: 14.0 Sonoma+  
 **Build Tool**: Xcode 15.0+, xcodegen
