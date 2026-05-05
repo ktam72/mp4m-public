@@ -38,15 +38,7 @@ xcodebuild -project MP4M.xcodeproj -scheme MP4M -configuration Release build
    - これらの著作権者（GORRY、milk、K.MAEKAWA、m_puusan、Yosshin、Missy.M、Yatsube 等）のライセンス条項を厳密に遵守することを優先
    - App Store 配布による商用化は、著作権者の意図に反する可能性があり、採用していません
 
-2. **App Store 審査対応の余力がない**
-   - 以下の審査項目への対応に相応のリソースが必要になります：
-     - **プライバシー**: ユーザーデータ収集・追跡の詳細申告
-     - **セキュリティ**: 暗号化、データ保護の体制構築
-     - **コンテンツ**: 年齢制限、不適切コンテンツの事前確認
-     - **パフォーマンス**: バッテリー消費、メモリリークの厳密チェック
-     - **互換性**: macOS 全バージョン・デバイスでのテスト
-     - **ユーザーサポート**: App Store 審査結果への対応、ユーザーレビュー対応
-   - 現在のプロジェクトは個人開発のため、これらに対応する開発余力がありません
+
 
 
 
@@ -110,6 +102,14 @@ xcodebuild -project MP4M.xcodeproj -scheme MP4M -configuration Release build
 
 - [fmgen](https://github.com/kichikuou/fmgen) — YM2151 FM エミュレーター
 - [GAMDX](https://gorry.haun.org/android/gamdx/) — GORRY の Android MDX プレーヤー（MXDRVG、pcm8/x68pcm8 公式リポジトリ）
+
+## 編集後記
+
+作者は1990年代、パソコン通信（草の根ネット）を通じてX68000のフリーウェアに触れ、充実した日々を過ごしました。その際に出会ったのがMDXフォーマットと、X68000用の可視化ツール「mmdsp」です。
+
+近年、macOS向けのMDXプレイヤーを探しましたが、iOS向けのものしか見つからず、macOS版が欲しいと感じていました。そこで最近AI駆動開発に興味を持ち、学習を兼ねて本プロジェクトを立ち上げました。
+
+開発にあたっては、過去に触れたiOS向けMDXプレイヤーと、X68000時代のmmdspのUI/挙動をイメージし、懐かしさと現代的な技術を融合させることを目指しました。
 
 ---
 
