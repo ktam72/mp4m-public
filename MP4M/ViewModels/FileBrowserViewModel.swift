@@ -5,6 +5,8 @@ import Observation
 @MainActor
 @Observable
 final class FileBrowserViewModel {
+    // MARK: - 策略属性
+    var selectionStrategy: FileSelectionStrategy = BrowserFileSelectionStrategy()
     // MARK: - 表示状態
 
     var currentDirectory: URL? {
@@ -21,6 +23,9 @@ final class FileBrowserViewModel {
     // MARK: - 初期化
 
     init() {
+        // 選択ストラテジーを初期化
+        self.selectionStrategy = BrowserFileSelectionStrategy()
+        
         // UserDefaults から設定を復帰
         if let savedURL = UserDefaults.standard.url(forKey: "mp4m_currentDirectory") {
             currentDirectory = savedURL

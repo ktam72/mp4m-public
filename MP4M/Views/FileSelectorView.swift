@@ -65,13 +65,10 @@ struct FileSelectorView: View {
     }
 
     private func openFolder() {
-        let panel = NSOpenPanel()
-        panel.canChooseFiles = false
-        panel.canChooseDirectories = true
-        panel.allowsMultipleSelection = false
-        panel.prompt = "フォルダを選択"
-        if panel.runModal() == .OK, let url = panel.url {
-            browserVM.openDirectory(url)
+        Task {
+            if let url = await browserVM.selectionStrategy.selectDirectory() {
+                browserVM.openDirectory(url)
+            }
         }
     }
 }
