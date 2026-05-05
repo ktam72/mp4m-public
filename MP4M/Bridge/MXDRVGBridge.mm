@@ -23,11 +23,11 @@ static char g_lastPDXFileName[256] = {0};
 static int g_totalPlayTimeMs = 0;
 static int g_hasPDX = 0;  // PDX が存在するかどうか
 static char g_pdxLoadError[256] = {0};  // PDX ロード失敗時のエラーメッセージ（空=エラーなし）
-// チャンネルマュート用：元の出力レベルを保存
-static uint8_t g_fmMutedTL[8] = {0};  // FM 各チャンネルのマュート時の元 TL 値
-static uint8_t g_pcmMutedVol[8] = {0};  // PCM 各チャンネルのマュート時の元 volume 値
-static int g_fmMuteState[8] = {0};  // FM マュート状態（0=非マュート、1=マュート中）
-static int g_pcmMuteState[8] = {0};  // PCM マュート状態
+// チャンネルミュート用：元の出力レベルを保存
+static uint8_t g_fmMutedTL[8] = {0};  // FM 各チャンネルのミュート時の元 TL 値
+static uint8_t g_pcmMutedVol[8] = {0};  // PCM 各チャンネルのミュート時の元 volume 値
+static int g_fmMuteState[8] = {0};  // FM ミュート状態（0=非ミュート、1=ミュート中）
+static int g_pcmMuteState[8] = {0};  // PCM ミュート状態
 
 // LZX 展開
 static NSData* decompressIfLZX(NSData* data) {
@@ -615,7 +615,7 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
 
         if (isMuted) {
             if (!g_fmMuteState[ch]) {
-                // マュート開始：元の TL 値を保存して TL=127 に設定
+                // ミュート開始：元の TL 値を保存して TL=127 に設定
                 // FM ワークエリアの S001f (TL) フィールド
                 uint8_t currentTL = fmCh[ch].S001f;
                 g_fmMutedTL[ch] = currentTL;
@@ -624,7 +624,7 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
             }
         } else {
             if (g_fmMuteState[ch]) {
-                // マュート解除：保存した TL 値に復元
+                // ミュート解除：保存した TL 値に復元
                 fmCh[ch].S001f = g_fmMutedTL[ch];
                 g_fmMuteState[ch] = 0;
             }
@@ -639,7 +639,7 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
 
         if (isMuted) {
             if (!g_pcmMuteState[pcmIdx]) {
-                // マュート開始：元の volume を保存して 0 に設定
+                // ミュート開始：元の volume を保存して 0 に設定
                 uint8_t currentVol = pcmCh[pcmIdx].S0022;
                 g_pcmMutedVol[pcmIdx] = currentVol;
                 g_pcmMuteState[pcmIdx] = 1;
@@ -647,7 +647,7 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
             }
         } else {
             if (g_pcmMuteState[pcmIdx]) {
-                // マュート解除：保存した volume に復元
+                // ミュート解除：保存した volume に復元
                 pcmCh[pcmIdx].S0022 = g_pcmMutedVol[pcmIdx];
                 g_pcmMuteState[pcmIdx] = 0;
             }
