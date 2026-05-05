@@ -134,26 +134,35 @@ static BOOL isValidPDXFileName(NSString* fileName) {
 // 大文字小文字を区別せずにPDXファイルを検索
 static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
     if (!pdxFileName || !directory) return nil;
-    
+
     // 拡張子がない場合は .pdx を補完
     NSString* baseName = pdxFileName;
     if (![pdxFileName.lowercaseString hasSuffix:@".pdx"]) {
         baseName = [pdxFileName stringByAppendingString:@".pdx"];
+        #ifdef DEBUG
+        fprintf(stderr, "[PDX] Extension completed: %s -> %s\n", [pdxFileName UTF8String], [baseName UTF8String]);
+        #endif
     }
-    
+
     // ディレクトリ内のファイルを列挙して大文字小文字を区別せずに比較
     NSString* targetLower = baseName.lowercaseString;
     NSError* error = nil;
     NSArray<NSString*>* contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:directory error:&error];
-    
+
     if (!error && contents) {
         for (NSString* file in contents) {
             if ([file.lowercaseString isEqualToString:targetLower]) {
+                #ifdef DEBUG
+                fprintf(stderr, "[PDX] Found file: %s\n", [file UTF8String]);
+                #endif
                 return [directory stringByAppendingPathComponent:file];
             }
         }
     }
-    
+
+    #ifdef DEBUG
+    fprintf(stderr, "[PDX] File not found: %s (searched in %s)\n", [baseName UTF8String], [directory UTF8String]);
+    #endif
     return nil; // 見つからない
 }
 
