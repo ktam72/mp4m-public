@@ -42,6 +42,10 @@ targets:
           - "**/MP4M.entitlements"
           - "**/Info.plist"
           - Bridge
+          - Services
+      - path: MP4M/Services
+        includes:
+          - "*.swift"
       - path: MP4M/Bridge
         includes:
           - "MXDRVGBridge.mm"

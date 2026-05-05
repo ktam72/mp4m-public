@@ -2,7 +2,7 @@ import Foundation
 import Observation
 
 /// 再生状態を管理する ViewModel
-/// UI からの操作を受け付け、AudioEngineService を制御する
+/// UI からの操作を受け付け、各サービスに処理を委譲する
 @Observable
 final class PlayerViewModel: @unchecked Sendable {
     // MARK: - 表示状態
@@ -39,19 +39,13 @@ final class PlayerViewModel: @unchecked Sendable {
     // MARK: - 内部
 
     private let audioService: any AudioEngineService
+    private let spectrumService: SpectrumComputeService
+    private let channelService: ChannelStateService
+    private let displayService: DisplayUpdateService
     private var displayTimer: Timer?
     private var fadeOutTask: Task<Void, Never>?
     private var fadeOutVolume: Float = 1.0
     weak var browserVM: FileBrowserViewModel?
-    private let metalCompute: MetalSpectrumCompute?
-
-    // チャンネル状態キャッシング（優先度3: CPU 負荷低減）
-    private var lastChannelStateUpdateMs: Int = 0
-    private var cachedChannels: [ChannelDisplayState] = Array(repeating: ChannelDisplayState(), count: 16)
-    private let channelStateUpdateIntervalMs: Int = 200  // 200ms ごとにのみ取得
-
-    // フレームレート制御（キーボード 60fps、他は 30fps）
-    private var updateFrameCounter: Int = 0
 
     // 再生時間計測（案C: C++ 呼び出し削減）
     private var playStartTimeMs: Int = 0          // 再生開始時の絶対時間
@@ -60,16 +54,6 @@ final class PlayerViewModel: @unchecked Sendable {
     private var lastSyncDate: Date = Date()       // 最後に同期した時刻（Date）
     private let syncIntervalMs: Int = 1000        // 1秒ごとに同期して誤差補正
 
-    // スペアナ計算用バッファ
-    private var speaBF1 = [Float](repeating: 0, count: 52)
-    private let routeTable: [Float] = [
-        0, 1, 4, 9, 16, 24, 35, 47, 61, 77, 94,
-        113, 133, 155, 179, 204, 230, 258, 287, 317, 348,
-        381, 415, 450, 486, 523, 561, 600, Float.greatestFiniteMagnitude
-    ]
-    private let riseTable: [Int] = [1, 1, 2, 2, 4, 4, 4, 4, 8, 8, 8, 8, 8, 8, 8,
-                                     8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8]
-
     // MARK: - 初期化
 
     init(audioService: any AudioEngineService) {
@@ -77,7 +61,9 @@ final class PlayerViewModel: @unchecked Sendable {
         print("[PlayerViewModel.init] START")
         #endif
         self.audioService = audioService
-        self.metalCompute = MetalSpectrumCompute()
+        self.spectrumService = SpectrumComputeService()
+        self.channelService = ChannelStateService(audioService: audioService)
+        self.displayService = DisplayUpdateService()
 
         // UserDefaults から設定を復帰
         if let savedLoopCount = UserDefaults.standard.object(forKey: "mp4m_loopCount") as? Int {
@@ -118,21 +104,14 @@ final class PlayerViewModel: @unchecked Sendable {
     func load(url: URL) async {
         stop()
         mutedChannels = []
+        channelService.resetCache()
 
-        // キャッシュをリセット
-        lastChannelStateUpdateMs = 0
-        cachedChannels = Array(repeating: ChannelDisplayState(), count: 16)
-
-        // 最初に "No PDX" を設定（PDX未指定や読み込み失敗時に使用）
-        pdxFileName = "No PDX"
-
-    let loadedTitle = await Task.detached(priority: .userInitiated) { [weak self] in
-        self?.audioService.loadMDXFile(path: url.path)
-    }.value
+        let loadedTitle = await Task.detached(priority: .userInitiated) { [weak self] in
+            self?.audioService.loadMDXFile(path: url.path)
+        }.value
 
         title = loadedTitle ?? url.deletingPathExtension().lastPathComponent
 
-        // PDX ファイル名を audioService から取得（"no pdx" を含む場合は統一）
         if let pdxName = audioService.pdxFileName() {
             if pdxName.lowercased().contains("no pdx") {
                 pdxFileName = "No PDX"
@@ -159,8 +138,8 @@ final class PlayerViewModel: @unchecked Sendable {
 
         audioService.startEngine()
 
-        // 案C: 再生時間計測の初期化（毎フレーム C++ 呼び出しを削減）
-        playStartTimeMs = audioService.currentPlayTimeMs()  // 初回のみ C++ 呼び出し
+        // 案C: 再生時間計測の初期化
+        playStartTimeMs = audioService.currentPlayTimeMs()
         playStartDate = Date()
         lastSyncTimeMs = playStartTimeMs
         lastSyncDate = Date()
@@ -215,7 +194,7 @@ final class PlayerViewModel: @unchecked Sendable {
         }
     }
 
-    // MARK: - 次の曲・前の曲 (ファイルリストは外部から注入)
+    // MARK: - 次の曲・前の曲
 
     func nextFileIndex(fileItems: [FileItem], playingIndex: Int) -> Int? {
         let files = fileItems.filter { !$0.isDirectory }
@@ -238,7 +217,7 @@ final class PlayerViewModel: @unchecked Sendable {
         return prevIndex
     }
 
-    // MARK: - 表示更新タイマー (60fps)
+    // MARK: - 表示更新タイマー
 
     private func startDisplayTimer() {
         displayTimer?.invalidate()
@@ -250,49 +229,41 @@ final class PlayerViewModel: @unchecked Sendable {
     private func updateDisplay() {
         guard status == .playing || fadeOutTask != nil else { return }
 
-        let isFullUpdate = (updateFrameCounter % 2 == 0)
-        updateFrameCounter = (updateFrameCounter + 1) % 2
+        let isFullUpdate = displayService.advanceFrame()
 
-        // DispatchQueue を使用してバックグラウンドで実行（優先度4: Task.detached より軽量）
+        // バックグラウンドで実行
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self else { return }
 
-            // 案C: ローカル時間計測（毎フレーム C++ 呼び出しを削減）
-            let elapsedMs = Int((Date().timeIntervalSince(self.playStartDate)) * 1000)
-            var ms = self.playStartTimeMs + elapsedMs
+            // 再生時間の計算
+            var ms = playStartTimeMs + Int(Date().timeIntervalSince(playStartDate) * 1000)
 
-            // 1秒ごとに C++ 呼び出しで同期（ずれ補正）
-            if abs(ms - self.lastSyncTimeMs) >= self.syncIntervalMs {
-                ms = self.audioService.currentPlayTimeMs()
-                self.playStartDate = Date()
-                self.playStartTimeMs = ms
-                self.lastSyncTimeMs = ms
-                self.lastSyncDate = Date()
+            // 1秒ごとに同期
+            if abs(ms - lastSyncTimeMs) >= syncIntervalMs {
+                ms = audioService.currentPlayTimeMs()
+                playStartDate = Date()
+                playStartTimeMs = ms
+                lastSyncTimeMs = ms
+                lastSyncDate = Date()
             }
 
-            // 優先度3: チャンネル状態を 100ms ごとにのみ更新
-            var fmChannels = self.cachedChannels
-            if (ms - self.lastChannelStateUpdateMs) >= self.channelStateUpdateIntervalMs {
-                fmChannels = self.audioService.getChannelStates()
-                self.cachedChannels = fmChannels
-                self.lastChannelStateUpdateMs = ms
-            }
+            // チャンネル状態の取得（キャッシング付き）
+            let fmChannels = channelService.getChannels(currentTimeMs: ms)
 
             // スペアナ計算は 30fps（isFullUpdate 時のみ）
-            var newBars = self.spectrumBars
+            var newBars = spectrumBars
             if isFullUpdate {
-                newBars = self.computeSpectrum(for: fmChannels)
+                newBars = spectrumService.computeSpectrum(for: fmChannels, currentBars: spectrumBars)
             }
 
-            // メインスレッドで UI 更新（キーボードは 60fps、スペアナ・時間は 30fps）
+            // メインスレッドで UI 更新
             DispatchQueue.main.async {
-                self.channels = fmChannels  // キーボード用：毎フレーム 60fps 更新
+                self.channels = fmChannels
 
                 if isFullUpdate {
-                    self.currentTimeMs = ms  // レベルメーター・テキスト用：30fps 更新
-                    self.spectrumBars = newBars  // スペアナ用：30fps 更新
+                    self.currentTimeMs = ms
+                    self.spectrumBars = newBars
 
-                    // 再生時間が総時間に到達したら曲終了
                     if self.totalTimeMs > 0 && self.currentTimeMs >= self.totalTimeMs {
                         self.handleTrackEnd()
                     }
@@ -301,56 +272,11 @@ final class PlayerViewModel: @unchecked Sendable {
         }
     }
 
-    // MARK: - スペアナ計算
-
-    private func computeSpectrum(for channels: [ChannelDisplayState]) -> [SpectrumBarState] {
-        // GPU または CPU でビンマッピング + 拡散を計算
-        let speaBuf = metalCompute?.computeSpectrum(channels: channels) ?? [Float](repeating: 0, count: 52)
-
-        // 3. バー状態更新
-        var newBars = spectrumBars
-        let maxBars = Float(routeTable.count - 1)
-        for i in 0..<32 {
-            var bar = newBars[i]
-            let raw = speaBuf[i + 5]
-            var targetBar: Float = 0
-
-            if raw > 0 {
-                for j in 0..<routeTable.count {
-                    if raw < routeTable[j] {
-                        if bar.current < Float(j) { targetBar = Float(j) }
-                        break
-                    }
-                }
-            }
-
-            if targetBar > bar.current {
-                let diff = Int(targetBar - bar.current)
-                let rise = Float(diff < riseTable.count ? riseTable[diff] : 8)
-                bar.current = min(bar.current + rise, maxBars)
-            } else if targetBar < bar.current {
-                let diff = bar.current - targetBar
-                bar.current -= (diff > 2) ? 2 : diff
-            }
-
-            if bar.peakTimer > 0 { bar.peakTimer -= 1 }
-            if bar.peakTimer == 0, bar.peak > 0 { bar.peak -= 1 }
-            if bar.peak < targetBar {
-                bar.peak = targetBar
-                bar.peakTimer = 10
-            }
-            newBars[i] = bar
-        }
-
-        return newBars
-    }
-
     // MARK: - 曲終了ハンドリング
 
     private func handleTrackEnd() {
         guard status == .playing else { return }
 
-        // 重複呼び出し防止：一度停止状態に変更
         status = .stopped
 
         #if DEBUG
@@ -360,7 +286,6 @@ final class PlayerViewModel: @unchecked Sendable {
             audioService.stop()
             play()
         } else {
-            // フェードアウト処理を開始
             startFadeOut()
         }
     }
@@ -370,11 +295,8 @@ final class PlayerViewModel: @unchecked Sendable {
         print("[FadeOut] Starting fadeout")
         #endif
         fadeOutVolume = 1.0
-        let fadeOutSteps = 60  // 3秒 ÷ 50ms = 60ステップ
+        let fadeOutSteps = 60
         let decrement = 1.0 / Float(fadeOutSteps)
-        #if DEBUG
-        print("[FadeOut] fadeOutSteps=\(fadeOutSteps), decrement=\(String(format: "%.4f", decrement))")
-        #endif
 
         fadeOutTask = Task {
             for step in 0..<fadeOutSteps {
@@ -390,17 +312,12 @@ final class PlayerViewModel: @unchecked Sendable {
                 await MainActor.run {
                     self.fadeOutVolume = max(0.0, self.fadeOutVolume - decrement)
                     self.audioService.setVolume(self.fadeOutVolume)
-                    if Int(self.fadeOutVolume * 100) % 20 == 0 {
-                        #if DEBUG
-                        print("[FadeOut] fadeOutVolume=\(String(format: "%.2f", self.fadeOutVolume))")
-                        #endif
-                    }
                 }
             }
 
             await MainActor.run {
                 #if DEBUG
-                print("[FadeOut] Complete (fadeOutVolume=\(String(format: "%.2f", self.fadeOutVolume))), playing next track")
+                print("[FadeOut] Complete, playing next track")
                 #endif
                 self.fadeOutVolume = 1.0
                 self.audioService.setVolume(1.0)
@@ -420,35 +337,23 @@ final class PlayerViewModel: @unchecked Sendable {
         #endif
         DispatchQueue.main.async { [weak self] in
             guard let self = self, let browserVM = self.browserVM else {
-                #if DEBUG
-                print("[NextTrack] browserVM is nil, stopping")
-                #endif
                 self?.stop()
                 return
             }
 
             let files = browserVM.fileItems.filter { !$0.isDirectory }
             guard !files.isEmpty else {
-                #if DEBUG
-                print("[NextTrack] No files, stopping")
-                #endif
                 self.stop()
                 return
             }
 
             if let nextIdx = self.nextFileIndex(fileItems: browserVM.fileItems, playingIndex: browserVM.playingIndex) {
-                #if DEBUG
-                print("[NextTrack] Playing next file at index \(nextIdx)")
-                #endif
                 browserVM.playingIndex = nextIdx
                 Task {
                     await self.load(url: files[nextIdx].url)
                     self.play()
                 }
             } else {
-                #if DEBUG
-                print("[NextTrack] No next file, stopping")
-                #endif
                 self.stop()
             }
         }

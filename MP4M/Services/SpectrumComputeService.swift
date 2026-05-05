@@ -1,0 +1,66 @@
+import Foundation
+import Metal
+
+/// スペクトラムアナライザーの計算を担当するサービス
+/// GPU (Metal) または CPU でビンマッピング + 拡散を計算
+final class SpectrumComputeService {
+    private let metalCompute: MetalSpectrumCompute?
+    private let routeTable: [Float] = [
+        0, 1, 4, 9, 16, 24, 35, 47, 61, 77, 94,
+        113, 133, 155, 179, 204, 230, 258, 287, 317, 348,
+        381, 415, 450, 486, 523, 561, 600, Float.greatestFiniteMagnitude
+    ]
+    private let riseTable: [Int] = [1, 1, 2, 2, 4, 4, 4, 4, 8, 8, 8, 8, 8, 8, 8,
+                                     8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8]
+
+    init() {
+        self.metalCompute = MetalSpectrumCompute()
+    }
+
+    /// チャンネル状態からスペクトラムバー状態を計算
+    /// - Parameters:
+    ///   - channels: チャンネル表示状態
+    ///   - currentBars: 現在のバー状態
+    /// - Returns: 更新されたスペクトラムバー状態
+    func computeSpectrum(for channels: [ChannelDisplayState], currentBars: [SpectrumBarState]) -> [SpectrumBarState] {
+        // GPU または CPU でビンマッピング + 拡散を計算
+        let speaBuf = metalCompute?.computeSpectrum(channels: channels) ?? [Float](repeating: 0, count: 52)
+
+        // バー状態更新
+        var newBars = currentBars
+        let maxBars = Float(routeTable.count - 1)
+        for i in 0..<32 {
+            var bar = newBars[i]
+            let raw = speaBuf[i + 5]
+            var targetBar: Float = 0
+
+            if raw > 0 {
+                for j in 0..<routeTable.count {
+                    if raw < routeTable[j] {
+                        if bar.current < Float(j) { targetBar = Float(j) }
+                        break
+                    }
+                }
+            }
+
+            if targetBar > bar.current {
+                let diff = Int(targetBar - bar.current)
+                let rise = Float(diff < riseTable.count ? riseTable[diff] : 8)
+                bar.current = min(bar.current + rise, maxBars)
+            } else if targetBar < bar.current {
+                let diff = bar.current - targetBar
+                bar.current -= (diff > 2) ? 2 : diff
+            }
+
+            if bar.peakTimer > 0 { bar.peakTimer -= 1 }
+            if bar.peakTimer == 0, bar.peak > 0 { bar.peak -= 1 }
+            if bar.peak < targetBar {
+                bar.peak = targetBar
+                bar.peakTimer = 10
+            }
+            newBars[i] = bar
+        }
+
+        return newBars
+    }
+}
