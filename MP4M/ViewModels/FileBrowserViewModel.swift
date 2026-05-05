@@ -35,6 +35,7 @@ final class FileBrowserViewModel {
         currentDirectory = url
         fileItems = FileItem.items(in: url)
         selectedIndex = 0
+        playingIndex = -1
     }
 
     /// ディレクトリ移動
@@ -43,6 +44,7 @@ final class FileBrowserViewModel {
         currentDirectory = item.url
         fileItems = FileItem.items(in: item.url)
         selectedIndex = 0
+        playingIndex = -1
     }
 
     /// ファイル選択
