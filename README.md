@@ -33,7 +33,10 @@ xcodebuild -project MP4M.xcodeproj -scheme MP4M -configuration Release build
 
 ### 理由
 
-1. **X68000 フリーウェアの著作権尊重**
+**X68000 フリーウェアの著作権尊重**
+   - 本プロジェクトは GAMDX（MXDRVG、pcm8、x68pcm8）など X68000 時代のフリーウェア資産を活用しています
+   - これらの著作権者（GORRY、milk、K.MAEKAWA、m_puusan、Yosshin、Missy.M、Yatsube 等）のライセンス条項を厳密に遵守することを優先
+   - App Store 配布による商用化は、著作権者の意図に反する可能性があり、採用していません
 
 
 
