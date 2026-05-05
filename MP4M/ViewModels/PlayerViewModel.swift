@@ -3,6 +3,8 @@ import Observation
 
 /// 再生状態を管理する ViewModel
 /// UI からの操作を受け付け、各サービスに処理を委譲する
+///
+/// エラーハンドリング・スペアナ計算・チャンネル状態取得を各サービスに分離し、保守性を向上
 @Observable
 final class PlayerViewModel: @unchecked Sendable {
     // MARK: - 表示状態
@@ -36,6 +38,8 @@ final class PlayerViewModel: @unchecked Sendable {
         }
     }
 
+    /// 現在のエラー状態（nil でエラーなし）
+    /// - Note: エラー発生時に Alert で表示される
     var currentError: MP4MError? = nil
 
     // MARK: - 内部
@@ -103,6 +107,9 @@ final class PlayerViewModel: @unchecked Sendable {
 
     // MARK: - 公開 API
 
+    /// MDX ファイルをロードし、タイトルと PDX 情報を設定
+    /// - Parameter url: ロードする MDX ファイルの URL
+    /// - Note: エラー発生時は currentError に MP4MError を設定
     func load(url: URL) async {
         stop()
         mutedChannels = []
@@ -145,6 +152,8 @@ final class PlayerViewModel: @unchecked Sendable {
         }
     }
 
+    /// 再生開始・再開
+    /// - Note: 既に再生中の場合は何もしない、一時停止中の場合は再開
     func play() {
         guard status != .playing else { return }
 
@@ -175,6 +184,8 @@ final class PlayerViewModel: @unchecked Sendable {
         startDisplayTimer()
     }
 
+    /// 一時停止
+    /// - Note: 再生中の場合のみ動作、タイマーを無効化
     func pause() {
         guard status == .playing else { return }
         audioService.pause()
@@ -182,6 +193,8 @@ final class PlayerViewModel: @unchecked Sendable {
         displayTimer?.invalidate()
     }
 
+    /// 停止
+    /// - Note: 再生中・一時停止中の場合に動作、表示状態をリセット
     func stop() {
         audioService.stop()
         displayTimer?.invalidate()
@@ -190,6 +203,7 @@ final class PlayerViewModel: @unchecked Sendable {
         clearVisualState()
     }
 
+    /// 再生・一時停止をトグル切り替え
     func togglePlay() {
         switch status {
         case .stopped: play()
@@ -198,18 +212,25 @@ final class PlayerViewModel: @unchecked Sendable {
         }
     }
 
+    /// ループ回数を設定（0-9）
+    /// - Parameter count: 設定するループ回数
     func setLoopCount(_ count: Int) {
         loopCount = max(0, min(9, count))
     }
 
+    /// 自動再生モードを設定
+    /// - Parameter mode: 設定する AutoMode
     func setAutoMode(_ mode: AutoMode) {
         autoMode = mode
     }
 
+    /// リピート再生の有効/無効をトグル切り替え
     func toggleRepeat() {
         repeatEnabled.toggle()
     }
 
+    /// チャンネルのミュートをトグル切り替え
+    /// - Parameter channelIndex: 対象チャンネル番号 (0-15)
     func toggleChannel(_ channelIndex: Int) {
         let isMuted = mutedChannels.contains(channelIndex)
         if isMuted {
@@ -223,6 +244,11 @@ final class PlayerViewModel: @unchecked Sendable {
 
     // MARK: - 次の曲・前の曲
 
+    /// 次の曲のファイルインデックスを取得
+    /// - Parameters:
+    ///   - fileItems: ファイルアイテム配列
+    ///   - playingIndex: 現在再生中のインデックス
+    /// - Returns: 次のインデックス（該当なしの場合は nil）
     func nextFileIndex(fileItems: [FileItem], playingIndex: Int) -> Int? {
         let files = fileItems.filter { !$0.isDirectory }
         guard !files.isEmpty else { return nil }
@@ -235,6 +261,11 @@ final class PlayerViewModel: @unchecked Sendable {
         return nextIndex
     }
 
+    /// 前の曲のファイルインデックスを取得
+    /// - Parameters:
+    ///   - fileItems: ファイルアイテム配列
+    ///   - playingIndex: 現在再生中のインデックス
+    /// - Returns: 前のインデックス（該当なしの場合は nil）
     func prevFileIndex(fileItems: [FileItem], playingIndex: Int) -> Int? {
         let files = fileItems.filter { !$0.isDirectory }
         guard !files.isEmpty else { return nil }

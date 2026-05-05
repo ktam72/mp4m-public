@@ -3,6 +3,8 @@ import Metal
 
 /// スペクトラムアナライザーの計算を担当するサービス
 /// GPU (Metal) または CPU でビンマッピング + 拡散を計算
+///
+/// スペアナの計算ロジックをViewから分離し、テスト可能性を高める
 final class SpectrumComputeService {
     private let metalCompute: MetalSpectrumCompute?
     private let routeTable: [Float] = [
@@ -18,10 +20,12 @@ final class SpectrumComputeService {
     }
 
     /// チャンネル状態からスペクトラムバー状態を計算
+    ///
     /// - Parameters:
-    ///   - channels: チャンネル表示状態
-    ///   - currentBars: 現在のバー状態
-    /// - Returns: 更新されたスペクトラムバー状態
+    ///   - channels: チャンネル表示状態（最大16ch）
+    ///   - currentBars: 現在のバー状態（UIに表示中の状態）
+    /// - Returns: 更新されたスペクトラムバー状態（32バー分）
+    /// - Note: GPU (Metal) が利用可能な場合はGPUで計算、不可時はCPUで計算
     func computeSpectrum(for channels: [ChannelDisplayState], currentBars: [SpectrumBarState]) -> [SpectrumBarState] {
         // GPU または CPU でビンマッピング + 拡散を計算
         let speaBuf = metalCompute?.computeSpectrum(channels: channels) ?? [Float](repeating: 0, count: 52)
