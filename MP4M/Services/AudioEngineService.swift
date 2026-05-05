@@ -18,6 +18,9 @@ protocol AudioEngineService: AnyObject {
     /// ロード済み PDX ファイル名
     func pdxFileName() -> String?
 
+    /// PDX ロード失敗時のエラーメッセージ (nil またはがエラーなし)
+    func pdxLoadError() -> String?
+
     /// 再生開始 (ループ回数指定)
     /// - Parameter loopCount: ループ回数
     /// - Returns: 総再生時間 (ミリ秒)

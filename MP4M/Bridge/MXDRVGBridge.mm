@@ -22,6 +22,7 @@ static char g_lastTitle[512] = {0};
 static char g_lastPDXFileName[256] = {0};
 static int g_totalPlayTimeMs = 0;
 static int g_hasPDX = 0;  // PDX が存在するかどうか
+static char g_pdxLoadError[256] = {0};  // PDX ロード失敗時のエラーメッセージ（空=エラーなし）
 // チャンネルマュート用：元の出力レベルを保存
 static uint8_t g_fmMutedTL[8] = {0};  // FM 各チャンネルのマュート時の元 TL 値
 static uint8_t g_pcmMutedVol[8] = {0};  // PCM 各チャンネルのマュート時の元 volume 値
@@ -200,6 +201,11 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
     return name;
 }
 
++ (nullable NSString *)pdxLoadError {
+    if (g_pdxLoadError[0] == '\0') return nil;
+    return [NSString stringWithUTF8String:g_pdxLoadError];
+}
+
 + (nullable NSString *)loadMDXFile:(NSString *)mdxPath {
     // 最初に "No PDX" を設定（PDX未指定や読み込み失敗時に使用）
     strncpy(g_lastPDXFileName, "No PDX", sizeof(g_lastPDXFileName) - 1);
@@ -348,6 +354,9 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
 + (nullable NSString *)loadMDXData:(NSData *)mdxData pdxData:(nullable NSData *)pdxData {
     if (!mdxData) return nil;
 
+    // エラーフラグをリセット
+    memset(g_pdxLoadError, 0, sizeof(g_pdxLoadError));
+
     const unsigned char* ptr = (const unsigned char*)mdxData.bytes;
 
     // タイトル終端を探す
@@ -378,8 +387,9 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
     NSData* decompressed = decompressIfLZX(mdxBody);
     if (!decompressed) return nil;
     
-    // PDX 処理（ログ追加）
+    // PDX 処理（PDX ロード失敗時のエラー検出）
     NSData* pdxDecompressed = nil;
+    BOOL pdxLoadFailed = NO;
     if (pdxData) {
 #ifdef DEBUG
         fprintf(stderr, "[PDX] Loading PDX data, original size: %lu bytes\n", (unsigned long)pdxData.length);
@@ -389,18 +399,26 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
 #ifdef DEBUG
             fprintf(stderr, "[PDX] PDX decompressed successfully, size: %lu bytes\n", (unsigned long)pdxDecompressed.length);
 #endif
+            // PDX デコンプレス成功
+            g_hasPDX = 1;
         } else {
 #ifdef DEBUG
-            fprintf(stderr, "[PDX] PDX decompression failed, ignoring PDX\n");
+            fprintf(stderr, "[PDX] PDX decompression failed, marking as error\n");
 #endif
+            // PDX デコンプレス失敗 → エラーメッセージを設定
+            strncpy(g_pdxLoadError, "PDX decompression failed: file is corrupt", sizeof(g_pdxLoadError) - 1);
+            g_pdxLoadError[sizeof(g_pdxLoadError) - 1] = '\0';
             pdxData = nil;
+            g_hasPDX = 0;
+            pdxLoadFailed = YES;
         }
     } else {
 #ifdef DEBUG
         fprintf(stderr, "[PDX] No PDX data provided\n");
 #endif
+        g_hasPDX = 0;
     }
-    
+
     // ヘッダー付与
     NSData* mdxWrapped = wrapMDX(decompressed, pdxDecompressed);
     NSData* pdxWrapped = pdxDecompressed ? wrapPDX(pdxDecompressed) : nil;
@@ -408,9 +426,18 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
     // グローバル変数に保存（ARC が自動管理）
     g_mdxData = mdxWrapped;
     g_pdxData = pdxWrapped;
-    g_hasPDX = (pdxWrapped != nil) ? 1 : 0;
 
-    // MDX/PDX データをエンジンに登録（必須: これをしないとシーケンスポインタがNULLのままクラッシュ）
+    // PDX ロード失敗時は、MXDRVG エンジンをリセットして MDX のみ登録
+    if (pdxLoadFailed) {
+#ifdef DEBUG
+        fprintf(stderr, "[PDX] PDX load failed: resetting MXDRVG engine and reloading MDX only\n");
+#endif
+        MXDRVG_End();
+        MXDRVG_Start(44100, 0, 64 * 1024, 1024 * 1024);
+        MXDRVG_TotalVolume(128);
+    }
+
+    // MDX/PDX データをエンジンに登録
     MXDRVG_SetData(
         (void*)g_mdxData.bytes, (unsigned long)g_mdxData.length,
         g_pdxData ? (void*)g_pdxData.bytes : NULL,
@@ -424,6 +451,14 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
 
 + (void)playWithLoopCount:(int)loopCount {
     if (!g_mdxData) return;
+
+    // PDX ロード失敗時は再生を実行しない
+    if (g_pdxLoadError[0] != '\0') {
+#ifdef DEBUG
+        fprintf(stderr, "[playWithLoopCount] PDX load error detected, aborting playback\n");
+#endif
+        return;
+    }
 
     // 総再生時間計測（内部状態を曲終端まで進めるため、直後に SetData で再初期化が必要）
     g_totalPlayTimeMs = MXDRVG_MeasurePlayTime(loopCount, 0);
@@ -464,6 +499,12 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
 }
 
 + (int)getPCM:(int16_t *)buf frameCount:(int)frameCount {
+    // PDX ロード失敗時はサイレンスを返す
+    if (g_pdxLoadError[0] != '\0') {
+        memset(buf, 0, frameCount * sizeof(int16_t));
+        return frameCount;
+    }
+
     if (frameCount > 1024) frameCount = 1024;
     return MXDRVG_GetPCM(buf, frameCount);
 }
