@@ -86,6 +86,35 @@ targets:
 
     dependencies: []
 
+  MP4MTests:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: "14.0"
+    testTarget: MP4M
+    sources:
+      - path: Tests
+        includes:
+          - "*.swift"
+    settings:
+      ENABLE_TESTABILITY: YES
+      SWIFT_OBJC_BRIDGING_HEADER: MP4M/Bridge/MP4M-Bridging-Header.h
+      HEADER_SEARCH_PATHS: $(SRCROOT) $(SRCROOT)/Vendor $(SRCROOT)/Vendor/gamdx/jni $(SRCROOT)/Vendor/gamdx/jni/fmgen $(SRCROOT)/MP4M/Bridge
+      USER_HEADER_SEARCH_PATHS: $(SRCROOT)/MP4M/Bridge
+      CLANG_CXX_LANGUAGE_DIALECT: gnu++17
+      CLANG_CXX_LIBRARY: libc++
+      GCC_C_LANGUAGE_DIALECT: gnu17
+      WARNING_CFLAGS: -Wall -Wextra
+      CLANG_ENABLE_OBJC_ARC: YES
+      FRAMEWORK_SEARCH_PATHS: $(inherited)
+      LINK_FLAGS: -framework AVFoundation -framework CoreGraphics
+      SUPPORTED_PLATFORMS: macosx
+      MACOSX_DEPLOYMENT_TARGET: "14.0"
+      CODE_SIGN_IDENTITY: ""
+      CODE_SIGNING_REQUIRED: NO
+      CODE_SIGNING_ALLOWED: NO
+    dependencies:
+      - target: MP4M
+
     resources:
       - path: MP4M/Resources
         includes:
