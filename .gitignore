@@ -52,3 +52,15 @@ node_modules/
 release-app/
 CLAUDE.md
 CHANGELOG.md
+
+# Claude local config
+.claude/
+
+# Temporary analysis/reports
+FADEOUT_*.md
+SECURITY_ASSESSMENT_*.md
+SPECTRUM_REVIEW.md
+VULNERABILITY_FIX_LOG_*.md
+
+# Icon source files (generated icns already in Resources)
+mp4m.iconset/
