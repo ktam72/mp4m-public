@@ -37,36 +37,6 @@ private struct ChannelMeterView: View {
     let isMuted: Bool
     let onDoubleTap: () -> Void
 
-    private var panLabel: String {
-        guard let ch = channel, ch.keyOn else { return "" }
-        // PCMチャンネル (9-16ch, index 8-15) はステレオでも C 表示
-        if channelIndex >= 8 && ch.pan == 3 {
-            return "C"
-        }
-        switch ch.pan {
-        case 0: return "L"
-        case 2: return "R"
-        case 3: return "LR"
-        default: return "C"
-        }
-    }
-
-    private var panColor: Color {
-        guard let ch = channel, ch.keyOn else { return .clear }
-        switch ch.pan {
-        case 0: return Color.mp4mCyan.opacity(0.8)
-        case 2: return Color.mp4mAmber.opacity(0.8)
-        default: return Color.mp4mBright.opacity(0.8)
-        }
-    }
-
-    private var level: CGFloat {
-        guard let ch = channel, ch.keyOn else { return 0 }
-        // volume を 0-15 スケール（最大値 15 = 100%）で線形表示
-        let normalized = min(CGFloat(ch.volume) / 15.0, 1.0)
-        return normalized
-    }
-
     var body: some View {
         VStack(spacing: 1) {
             Text("\(channelIndex + 1)")
@@ -75,9 +45,9 @@ private struct ChannelMeterView: View {
                 .onTapGesture(count: 2) {
                     onDoubleTap()
                 }
-            Text(panLabel)
+            Text(channel?.displayPan(isPCMChannel: channelIndex >= 8) ?? "")
                 .font(.mp4mTiny)
-                .foregroundColor(channel?.keyOn == true ? panColor : Color.mp4mDim.opacity(0.3))
+                .foregroundColor(channel?.displayPanColor ?? Color.mp4mDim.opacity(0.3))
                 .frame(width: 10)
             ZStack(alignment: .bottom) {
                 if channel?.keyOn == true {
@@ -85,7 +55,7 @@ private struct ChannelMeterView: View {
                         .fill(Color.mp4mDim.opacity(0.15))
                     Rectangle()
                         .fill(Color.mp4mBright)
-                        .frame(height: maxBarHeight * level)
+                        .frame(height: maxBarHeight * (channel?.displayLevel ?? 0))
                 }
             }
             .frame(height: maxBarHeight)
