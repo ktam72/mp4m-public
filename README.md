@@ -34,9 +34,6 @@ xcodebuild -project MP4M.xcodeproj -scheme MP4M -configuration Release build
 ### 理由
 
 1. **X68000 フリーウェアの著作権尊重**
-   - 本プロジェクトは GAMDX（MXDRVG、pcm8、x68pcm8）など X68000 時代のフリーウェア資産を活用しています
-   - これらの著作権者（GORRY、milk、K.MAEKAWA、m_puusan、Yosshin、Missy.M、Yatsube 等）のライセンス条項を厳密に遵守することを優先
-   - App Store 配布による商用化は、著作権者の意図に反する可能性があり、採用していません
 
 
 
@@ -125,6 +122,9 @@ xcodebuild -project MP4M.xcodeproj -scheme MP4M -configuration Release build
 近年、macOS向けのMDXプレイヤーを探しましたが、iOS向けのものしか見つからず、macOS版が欲しいと感じていました。そこで最近AI駆動開発に興味を持ち、学習を兼ねて本プロジェクトを立ち上げました。
 
 開発にあたっては、過去に触れたiOS向けMDXプレイヤーと、X68000時代のmmdspのUI/挙動をイメージし、懐かしさと現代的な技術を融合させることを目指しました。
+
+それにしても、生成AIの力はすごいですね。私自身はXCODEもSWIFTもわからないのでコーディングをAIに任せられたのは非常に大きかったです。私自身は設計観点と動作確認から来るフィードバックに注力してAI（主にClaude codeとBig Pickle）との対話中心に品質を上げていきました。
+お気づきの点がありましたらフィードバックいただけるとありがたいです。
 
 ---
 
