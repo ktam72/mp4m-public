@@ -1,222 +1,399 @@
-# GAMDX へのホットフィックス・修正内容
+# GAMDX への修正履歴
 
-本ドキュメントは、MP4M プロジェクト内で GAMDX（MXDRVG、pcm8、x68pcm8）に対して実施した修正・機能拡張を記録しています。
-
-## 概要
-
-| カテゴリ | 修正数 | 状況 |
-|---------|--------|------|
-| **タイマー・速度制御** | 2件 | 完了 |
-| **チャンネル状態取得** | 3件 | 完了 |
-| **PDX ロード・処理** | 2件 | 完了 |
-| **PAN・ステレオ処理** | 2件 | 完了 |
-| **デバッグログ削除** | 複数 | 完了 |
+このドキュメントは、MP4M プロジェクトが GAMDX フォルダ配下のソースコードに加えた修正をすべて記録しています。
 
 ---
 
-## 修正履歴
+## 1. タイマーオーバーフロー修正（致命的バグ）
 
-### 1. タイマーオーバーフロー修正（2026-05-01）
+**commit**: 841c811  
+**file**: `Vendor/gamdx/jni/mxdrvg/timer.h`, `timer.cpp`, `mxdrvg_core.h`
 
-**ファイル**: `mxdrvg_core.h`
+### 問題
+- `timer_a_count_` が `uint16_t` の場合、Timer A 周期（典型値 16384 µs）をストアするとオーバーフロー → 常に 0
+- `timer_b_count_` が `uint8_t` の場合、Timer B 周期（65536 µs）をストアすると 0 に → `GetNextEventTime()` が常に 0 を返す
+- 結果：GetPCM ループで毎反復 `OPMINTFUNC` を呼び出す → **再生速度が 3〜4 倍に加速**
 
-**問題**: Timer A/B のカウンタが誤った型（uint16_t/uint8_t）でオーバーフローし、再生速度が 3～4倍になる
-
-**修正内容**:
+### 修正内容
 ```cpp
-// 修正前
-uint16_t timer_a_count_;  // ← uint8_t に 65536µs をストア → 0 にオーバーフロー
-uint8_t  timer_b_count_;
-
-// 修正後
-uint32_t timer_a_count_;  // ← 正しいサイズで 65536µs を保持
-uint32_t timer_b_count_;
+// timer.h
+- static uint16_t timer_a_count_;     // ❌ オーバーフロー
+- static uint8_t timer_b_count_;      // ❌ オーバーフロー
++ static uint32_t timer_a_count_;     // ✅ 十分な幅
++ static uint32_t timer_b_count_;     // ✅ 十分な幅
 ```
 
-**効果**: 再生速度が正常化（3～4倍速 → 通常速度）
-
----
-
-### 2. PDX 自動ロード実装（2026-05-01）
-
-**ファイル**: `MXDRVGBridge.mm`
-
-**問題**: PDX が常に nil で渡されるため、PCM パートが無音だった
-
-**修正内容**:
-- `loadMDXFile:` で MDX と同ディレクトリの `.pdx`/`.PDX` ファイルを自動探索
-- ファイルが見つかった場合、自動ロード
-
-**効果**: PDX ファイルが自動認識され、PCM パートが再生される
-
----
-
-### 3. チャンネル状態取得拡張（2026-05-02）
-
-**ファイル**: `mxdrvg_core.h`, `x68pcm8.h`
-
-**追加機能**:
-- `OPM_GetChannelStates()`: FM 8ch の詳細状態（keyCode, keyOn, volume, bend, pan）取得
-- `X68PCM8::GetChannelMode()`: PCM8 の PAN モード取得
-
-**実装内容**:
 ```cpp
-// FM チャンネル状態構造体
-struct ChannelState {
-    uint8_t keyCode;   // YM2151 KC（Key Code）レジスタ
-    uint8_t keyOn;     // キーオン フラグ
-    uint8_t volume;    // 出力レベル（0-127）
-    int16_t bend;      // ピッチベンド値
-    uint8_t pan;       // パン（L/C/R/S）
-};
-
-// 取得メソッド（OPM_GetChannelStates）
-OPM_GetChannelStates(struct ChannelState* ch_out, int ch_count);
+// timer.cpp - Advance() 比較ロジック
+- if (timer_count_ <= 0) {            // ❌ 符号なしでは never true
++ if (timer_count_ <= microseconds) { // ✅ 正しいアンダーフロー検出
 ```
 
-**効果**: UI（LevelMeterView, KeyboardView）がリアルタイムで各チャンネルの状態を表示可能に
+### 影響
+- OPM タイマーの周期が正確に計測される
+- OPMINTFUNC コール頻度が正規化（毎フレームではなく必要時のみ）
+- 再生速度が正常化
 
 ---
 
-### 4. PCM チャンネル配列拡張（2026-05-03）
+## 2. OPMINTFUNC 二重呼び出し修正
 
-**ファイル**: `mxdrvg_core.h`
+**commit**: 841c811  
+**file**: `Vendor/gamdx/jni/mxdrvg/mxdrvg_core.h`
 
-**問題**: PCM チャンネルが 7ch のみで、8ch 目が未処理だった
+### 問題
+`MXDRVG_GetPCM()` 内で `OPMINTFUNC` が 2 回呼ばれていた
 
-**修正内容**:
+### 修正内容
 ```cpp
-// 修正前
-MXDRVG_WORK_CHBUF_PCM pcmCh[7];  // ← 7ch のみ
-
-// 修正後
-MXDRVG_WORK_CHBUF_PCM pcmCh[8];  // ← 8ch に拡張
+// mxdrvg_core.h - GetPCM ループ
+  for (...)
+  {
+-   OPMINTFUNC();  // ❌ 不要な第 1 回呼び出し
+    if (fmgen.getNextEventTime() > ...) {
+        OPMINTFUNC(); // ✅ 必要な呼び出しのみ
+    }
+  }
 ```
 
-**ループ処理も 7 反復から 8 反復に変更**
-
-**効果**: PDX8 チャンネル全て（ch9-16）が正確に処理される
+### 影響
+- GetPCM のループ効率改善
+- FM 音声処理の重複排除
 
 ---
 
-### 5. チャンネル識別修正（2026-05-03）
+## 3. MXDRVG_GetPCM 内のデバッグログ全削除
 
-**ファイル**: `MXDRVGBridge.mm`, `getChannelStates:` メソッド
+**commit**: 841c811  
+**file**: `Vendor/gamdx/jni/mxdrvg/mxdrvg_core.h`
 
-**問題**: PCM チャンネル配列インデックスがそのまま使用されるため、すべてのチャンネルが同じ ID で表示されていた
+### 問題
+GetPCM ループのホットパスに大量の `printf` が残存（毎フレーム呼び出し）
 
-**修正内容**:
+### 修正内容
 ```cpp
-// 修正前
-int chIdx = 8 + i;  // ← i は配列インデックス（0-7）
-
-// 修正後
-int chNum = pcmCh[i].S0018 & 0x7F;  // ← MXDRVG 内部のチャンネル番号を抽出
-int chIdx = 8 + chNum;              // ← 実際のチャンネル 9-16 に正しくマッピング
+// 削除対象
+- fprintf(..., "[PCM_DETAIL] ...");  // GetPCM ループ内で毎フレーム
+- fprintf(..., "[FM_RAW] ...");      // OPM_SUB 内で大量出力
+- fprintf(..., "[PCM_RAW] ...");
 ```
 
-**効果**: PCM チャンネルが正確に識別され、UI に正しく表示される
+### 影響
+- オーディオスレッド（IOThread）の負荷軽減
+- ログ出力による音声スレッド遅延排除
 
 ---
 
-### 6. PDX ロード失敗時のフォールバック（2026-05-03）
+## 4. TotalVolume 初期値修正
 
-**ファイル**: `MXDRVGBridge.mm`
+**commit**: 841c811  
+**file**: `Vendor/gamdx/jni/mxdrvg/mxdrvg_core.h`
 
-**修正内容**:
-- Shift-JIS デコード失敗時に UTF-8 → ASCII へのフォールバック実装
-- PDX ファイル名抽出・ロード失敗のデバッグログ追加
-- PDX ロード状況の詳細ログ出力（ファイルサイズ、展開成功/失敗）
+### 問題
+TotalVolume が 0 で初期化されていた → 無音問題
 
-**効果**: PDX ロード失敗時でも安全にフォールバック、デバッグが容易に
-
----
-
-### 7. PAN（パン）情報の動的取得（2026-05-03）
-
-**ファイル**: `mxdrvg_core.h`, `x68pcm8.h`, `MXDRVGBridge.mm`
-
-**FM チャンネルの PAN 取得**:
+### 修正内容
 ```cpp
-// ファイル: mxdrvg_core.h の OPM_GetChannelStates()
-// YM2151 S001c レジスタのビット 6-7 から PAN を抽出
-int pan = (S001c >> 6) & 0x03;
-// マッピング: 0b01=Left, 0b10=Right, 0b11=LR(Stereo), 0b00=Center
+// mxdrvg.h - Start()
+- int TotalVolume = 0;       // ❌ 無音
++ int TotalVolume = 256;     // ✅ 50% 音量で初期化
 ```
 
-**PCM チャンネルの PAN 取得**:
+### 影響
+- オーディオエンジン開始時に正常な音量で再生開始
+
+---
+
+## 5. PDX ファイル自動ロード（大文字小文字対応）
+
+**commit**: 841c811  
+**file**: `Vendor/gamdx/jni/mxdrvg/mxdrvg_core.h` (準備), `MP4M/Bridge/MXDRVGBridge.mm` (実装)
+
+### 問題
+MDX ヘッダーで指定された PDX ファイル名が見つからない → PCM パート無音
+
+### 修正内容
 ```cpp
-// ファイル: x68pcm8.h の GetChannelMode()
-// Mode フィールドのビット値から PAN を抽出
-uint8_t mode = X68PCM8_GetChannelMode(ch);
-// マッピング: 0x01=Left, 0x02=Right, 0x03=Stereo, else=Center
+// MXDRVGBridge.mm - loadMDXFile:
+- pdxData = nil;  // ❌ PDX ファイルを探さない
++ pdxData = findPDXFile(pdxFileName, mdxDir);  // ✅ 同ディレクトリで大文字小文字を区別せず検索
 ```
 
-**効果**: LevelMeterView が各チャンネルのパン情報（L/C/R/S）をリアルタイム表示
+`findPDXFile()` の実装：
+- ディレクトリ内の全ファイルを列挙
+- 指定されたファイル名と lowercaseString で比較
+- `.pdx` 拡張子がない場合は自動補完
+- パストラバーサル対策（`/`, `..`, `\` チェック）
+
+### 影響
+- PDX ファイルが自動認識される
+- Windows/macOS のファイルシステム差異（大文字小文字）を吸収
+- PCM パートが正常に再生
 
 ---
 
-### 8. チャンネルフィルタリング修正（2026-05-03）
+## 6. L_0F() シーケンスリセット追加
 
-**ファイル**: `MXDRVGBridge.mm`
+**commit**: 841c811  
+**file**: `Vendor/gamdx/jni/mxdrvg/mxdrvg_core.h`
 
-**問題**: 未使用チャンネルも UI に表示されていた
+### 問題
+`MXDRVG_SetData()` の直後に `MXDRVG_PlayAt()` を呼ぶと、シーケンスが冒頭で正しく再生されない場合がある
 
-**修正内容**:
-- FM チャンネル: S0016 ビット 3 で keyOn 判定
-- PCM チャンネル: S0000 ポインタが有効かつ keyOn フラグで判定
-- keyOn=false のチャンネルはレベル 0（非表示）で処理
+### 修正内容
+```cpp
+// mxdrvg_core.h - SetData() 終了直前
++ L_0F();  // ✅ シーケンスポインタをリセット
+```
 
-**効果**: 実際に使用中のチャンネルのみが UI に表示される
-
----
-
-### 9. デバッグログの全削除（2026-05-01 以降）
-
-**削除対象**:
-
-| ファイル | 削除内容 |
-|---------|---------|
-| `mxdrvg_core.h` | GetPCM ループ・OPM_SUB・OPMINTFUNC 内の printf 全削除 |
-| `Vendor/mxdrvg/so.cpp` | PCM・FM チャンネルのデバッグログ削除 |
-| `MXDRVAudioEngine.swift` | [AUDIO] callback ログ削除 |
-
-**効果**: オーディオレンダリングのホットパスから不要な I/O 処理を排除、CPU 負荷軽減
+### 影響
+- MDX ファイルロード後の再生開始が確実になる
 
 ---
 
-## 影響範囲
+## 7. FM チャンネル PAN ビット抽出修正
 
-### UI への反映
+**commit**: 1016bba  
+**file**: `Vendor/gamdx/jni/mxdrvg/mxdrvg_core.h`
 
-これらの修正により、以下の UI 要素がリアルタイムで動作するようになりました：
+### 問題
+FM チャンネルの PAN 取得が YM2151 仕様（bit 6-7）ではなく下位ビット（bit 0-1）を参照
 
-1. **LevelMeterView**: 16ch（FM 8ch + PCM 8ch）の音量・パン情報を動的表示
-2. **KeyboardView**: FM 8ch の発音ノートをピアノキーボード上に表示
-3. **TrackInfoView**: PDX ファイル名が正確に表示（未対応時は「No PDX」）
+### 修正内容
+```cpp
+// mxdrvg_core.h - OPM_GetChannelStates()
+- int pan = (S001c & 0x03);        // ❌ bit 0-1（誤り）
++ int pan = (S001c >> 6) & 0x03;   // ✅ bit 6-7（YM2151 仕様）
+```
 
-### パフォーマンス改善
+マッピング：
+```
+(bit6,bit7) = 0b01 → pan=0 (Left)
+(bit6,bit7) = 0b10 → pan=2 (Right)
+(bit6,bit7) = 0b11 → pan=3 (LR/Stereo)
+(bit6,bit7) = 0b00 → pan=1 (Center)
+```
 
-- デバッグログ削除による CPU 負荷削減（約 5-10%）
-- PDX 自動ロードによる音声品質向上（PCM パートが正常再生）
-
----
-
-## テスト環境
-
-- **macOS**: 14.0 Sonoma 以上
-- **テスト曲**: KNA03A.MDX（PDX 付き）、その他複数
-- **検証**: Thread Sanitizer で データ競合なし確認済み
-
----
-
-## 今後の改善案
-
-1. **PCM チャンネル詳細状態取得**: 現在 keyOn のみだが、ベロシティ・デチューン等も取得可能
-2. **ユーザー定義フォールバック**: PDX ロード失敗時に別フォルダから探索
-3. **ログレベル制御**: デバッグ・情報・警告・エラーの段階的ログ出力
+### 影響
+- FM チャンネルのパン表示が正確に
 
 ---
 
-**Last Updated**: 2026-05-07  
-**Status**: すべての修正が本番環境で検証済み
+## 8. PCM チャンネル PAN 動的取得
+
+**commit**: 244a58b  
+**file**: `Vendor/gamdx/jni/mxdrvg/mxdrvg_core.h`, `x68pcm8.h`
+
+### 問題
+PCM チャンネルの PAN が静的な固定値
+
+### 修正内容
+```cpp
+// x68pcm8.h - GetChannelMode() 関数追加
+int GetChannelMode(int ch) {
+    return pcmCh[ch].Mode & 0x03;  // Mode フィールドから PAN 抽出
+}
+```
+
+PCM8 パン値マッピング：
+```
+Mode & 0x03:
+0x01 → pan=0 (Left)
+0x02 → pan=2 (Right)
+0x03 → pan=3 (Stereo)
+その他 → pan=1 (Center)
+```
+
+### 影響
+- PCM チャンネルのパンが演奏時に動的に変化
+- ステレオ PCM サンプルのパン情報を反映
+
+---
+
+## 9. PCM チャンネル有効性判定修正
+
+**commit**: 03c0b07, 2821383  
+**file**: `Vendor/gamdx/jni/mxdrvg/mxdrvg_core.h`, `x68pcm8.h`
+
+### 問題
+PCM チャンネルが使用中かどうかの判定が不正確
+
+### 修正内容
+```cpp
+// mxdrvg_core.h - MXDRVG_WORK_PCM アクセス
+- bool isActive = (flags & 0x04) != 0;  // ❌ 不正な判定
++ bool isActive = (S0000 != NULL) && (S0000 != 0);  // ✅ サンプルポインタで判定
+  // + keyOn フラグも確認（S0016 bit 3）
+```
+
+### 影響
+- 未使用 PCM チャンネルが誤検出されない
+- スペアナ・レベルメーター表示が正確化
+
+---
+
+## 10. チャンネル状態の velocity フィールド修正
+
+**commit**: b1a84ed  
+**file**: `Vendor/gamdx/jni/mxdrvg/mxdrvg_core.h`
+
+### 問題
+`velocity` フィールドが微小値（4-7/127）で、レベルメーター表示がほぼ0になる
+
+### 修正内容
+```cpp
+// OPM_GetChannelStates()
+- state.velocity = (velocity_register & 0x7F);  // ❌ 微小値
++ state.velocity = keyOn ? 100 : 0;             // ✅ keyOn フラグに基づく固定値
+```
+
+### 影響
+- レベルメーターが視認可能な高さで表示される
+- キー発音状態が明確に可視化
+
+---
+
+## 11. デバッグログの段階的削除
+
+**commits**: 0277e4d, 049ead4, 841c811  
+**files**: `Vendor/gamdx/jni/mxdrvg/mxdrvg_core.h`, `timer.cpp`, その他
+
+### 削除対象
+- `[OPM]` ログ（オペレータパラメータ設定）
+- `[OPMINT]` ログ（タイマー割り込み）
+- `[L_OPMINT]` ログ（割り込み関数）
+- `[MixWrapper]` ログ
+- `[PCM_DETAIL]` ログ
+- その他オーディオスレッドのホットパス printf
+
+### 影響
+- オーディオスレッド負荷軽減
+- ログ出力による音声スレッド遅延排除
+
+---
+
+## 12. 未使用ファイル削除
+
+**commit**: 444ac12  
+**file**: `Vendor/gamdx/jni/`
+
+### 削除対象
+- `jniwrap/` — JNI ラッパー（Android 不要）
+- `mxdrvg.cpp` — MXDRVG 古い実装
+- `lzx042/` — LZX 旧デコンプレッサ（オリジナル実装に置き換え）
+
+### 理由
+- macOS SwiftUI のみ対応のため JNI 不要
+- LZX は Microsoft 仕様準拠オリジナル実装に統一
+- ソースコード規模削減・メンテナンス簡素化
+
+---
+
+## 修正の歴史的背景
+
+### Phase 1: GAMDX 統合（初期～bc59dcc）
+- GAMDX をフォルダ丸ごと導入
+- fmgen OPM エミュレータで構成
+
+### Phase 2: クリティカルバグ修正（841c811）
+- **タイマーオーバーフロー** → 再生速度 3-4 倍
+- OPMINTFUNC 二重呼び出し
+- デバッグ printf のホットパス問題
+- PDX 自動ロード
+
+### Phase 3: チャンネル表示改善（244a58b～1016bba）
+- PAN ビット抽出の誤りを修正
+- PCM チャンネル PAN を動的取得
+- FM チャンネルの bit6/bit7 抽出修正
+- チャンネル有効性判定の精密化
+
+### Phase 4: クリーンアップ（444ac12）
+- 未使用ファイルと JNI 削除
+- ソースコード規模削減
+
+---
+
+## セキュリティ対策
+
+以下のセキュリティチェックも GAMDX コード内に追加：
+
+1. **ファイルサイズ検証** — MDX/PDX の最小/最大サイズチェック
+2. **LZX 展開サイズ制限** — 爆発的展開（zip bomb 相当）防止（1MB 上限）
+3. **ヘッダー境界チェック** — Shift-JIS タイトル抽出時のバッファオーバーラン防止
+4. **パストラバーサル防止** — PDX ファイル名の `..`, `/`, `\` チェック
+5. **シーケンスポインタ範囲チェック** — 不正なシーケンスアドレスへのアクセス防止
+6. **再生ループ上限** — 無限ループ防止（1000 万反復上限）
+
+---
+
+## 参考リンク
+
+- **GAMDX 公式リポジトリ**: https://gorry.haun.org/android/gamdx/
+- **Microsoft LZX**: LZ77 ベース圧縮フォーマット
+
+---
+
+## 13. ブリッジ側の変数シャドウ削除
+
+**commit**: f6daab1（2026-05-06）  
+**file**: `MP4M/Bridge/MXDRVGBridge.mm`
+
+### 問題
+`getChannelStates:` メソッド内で `globalWork` 変数が Line 524 と Line 544 で二度宣言されていた
+
+### 修正内容
+```objc
+// MXDRVGBridge.mm - getChannelStates: メソッド
+  MXDRVG_WORK_GLOBAL* globalWork = (MXDRVG_WORK_GLOBAL*)MXDRVG_GetWork(MXDRVG_WORKADR_GLOBAL);  // Line 524
+  
+  if (pcmCh) {
+      // チャンネルマスク取得
+-     MXDRVG_WORK_GLOBAL* globalWork = ...;  // ❌ Line 544 の重複宣言
++     // Line 524 の globalWork を参照するよう統一  // ✅ 削除
+      uint16_t channelMask = globalWork ? globalWork->L001e1a : 0;
+```
+
+### 影響
+- コンパイラ警告の排除
+- 変数スコープの明確化
+- GAMDX グローバル状態へのアクセスが一元化
+
+---
+
+## 14. オーディオコールバック内のロック最適化
+
+**commit**: f6daab1（2026-05-06）  
+**file**: `MP4M/Services/MXDRVAudioEngine.swift`
+
+### 問題
+`renderAudioCallback` で `os_unfair_lock_lock()` をブロッキングで取得していたため、ロック競合時にリアルタイムスレッド（オーディオスレッド）が待機してオーディオグリッチが発生する可能性がある
+
+### 修正内容
+```swift
+// MXDRVAudioEngine.swift - renderAudioCallback
+- os_unfair_lock_lock(&engineLock)        // ❌ ブロッキング（待機あり）
+- let ret = renderPCM(...)
+- os_unfair_lock_unlock(&engineLock)
+
++ if os_unfair_lock_trylock(&engineLock) {  // ✅ 非ブロッキング（待機なし）
++     let ret = renderPCM(...)
++     os_unfair_lock_unlock(&engineLock)
++     // ロック取得成功時のみバッファ出力
++     for i in 0..<frameCount {
++         leftPtr[i] = ...
++         rightPtr[i] = ...
++     }
++ }
++ // ロック取得失敗時はサイレンス出力（次フレームで再試行）
+```
+
+### 影響
+- オーディオレイテンシー低減
+- リアルタイムスレッドのグリッチ回避
+- GAMDX C++ エンジンへのアクセス競合を最小化
+- 再生品質向上
+
+---
+
+**最終更新**: 2026-05-06  
+**ドキュメント作成**: Claude Haiku 4.5
