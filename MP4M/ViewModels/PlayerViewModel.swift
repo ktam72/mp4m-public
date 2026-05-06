@@ -279,7 +279,7 @@ final class PlayerViewModel: @unchecked Sendable {
 
     private func startDisplayTimer() {
         displayTimer?.invalidate()
-        displayTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 60.0, repeats: true) { [weak self] _ in
+        displayTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 90.0, repeats: true) { [weak self] _ in
             self?.updateDisplay()
         }
     }

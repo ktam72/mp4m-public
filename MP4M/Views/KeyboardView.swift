@@ -89,7 +89,7 @@ struct KeyboardView: View {
 
             GeometryReader { geo in
                 let channels = viewModel?.channels ?? []
-                let keyH = (geo.size.height - 16) / 16
+                let keyH = (geo.size.height - 16) / 8
                 let leftMargin: CGFloat = 50
                 let drawWidth = geo.size.width - leftMargin
                 let whiteKeyW = drawWidth / CGFloat(keyboard.whiteKeys.count)
@@ -103,13 +103,13 @@ struct KeyboardView: View {
                     let whiteKeys = keyboard.keys.filter { !$0.isBlackKey }
                     let blackKeys = keyboard.keys.filter { $0.isBlackKey }
 
-                    // 16チャンネル分のキーボード行を描画（FM 8ch + PCM 8ch）
-                    for ch in 0..<16 {
+                    // FM 8チャンネル分のキーボード行を描画
+                    for ch in 0..<8 {
                         let y = CGFloat(ch) * keyH + 2
 
                         // 現在のチャンネルが再生中のノートを取得（このチャンネルのみ）
                         let chState = ch < channels.count ? channels[ch] : ChannelDisplayState()
-                        let litMidiNote: Int? = chState.keyOn ? Int(chState.keyCode) + Int(chState.keyOffset) : nil
+                        let litMidiNote: Int? = chState.keyOn ? Int(chState.keyCode) : nil
 
                         // 白鍵を描画
                         for (whiteIndex, whiteKey) in whiteKeys.enumerated() {
@@ -156,7 +156,7 @@ struct KeyboardView: View {
 
     private func chLabel(for ch: ChannelDisplayState, keyboard: PianoKeyboard) -> String {
         guard ch.keyOn else { return " " }
-        let midiNote = Int(ch.keyCode) + Int(ch.keyOffset)
+        let midiNote = Int(ch.keyCode)
         guard let pianoKey = keyboard.key(for: midiNote) else { return " " }
         return pianoKey.label
     }

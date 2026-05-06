@@ -118,9 +118,13 @@ void OPM_GetChannelStates(void* states, int max_channels) {
         ch_states[i].keyOn = keyOn;
         ch_states[i].active = keyOn;
 
-        // note+D の下位7ビットがノートナンバー
-        uint16_t noteD = MXDRVG_WORK_CHBUF_FM[i].S0012;
-        ch_states[i].keyCode = noteD & 0x7F;
+        // OPMレジスタから直接KCを読み取る
+        // YM2151 KCレジスタ構造: 上位3ビット=オクターブ(0-7), 下位4ビット=ノート(0-11)
+        // MIDI note = (オクターブ) * 12 + ノート
+        uint8_t kc = OPM.GetChannelNote(i);
+        uint8_t octave = (kc >> 4) & 0x07;  // 上位3ビット
+        uint8_t note = kc & 0x0F;           // 下位4ビット
+        ch_states[i].keyCode = octave * 12 + note;
 
         // FM PAN：YM2151 チャンネルレジスタ（0x20-0x27）の bit6(L)/bit7(R) を抽出
         // (bit6,bit7) = 0b01→L, 0b10→R, 0b11→LR, 0b00→C

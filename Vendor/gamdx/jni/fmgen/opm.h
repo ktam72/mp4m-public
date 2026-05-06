@@ -92,7 +92,8 @@ namespace FM
 		
 		void	SetVolume(int db);
 		void	SetChannelMask(uint mask);
-		
+		uint	GetChannelNote(int ch) { return (ch >= 0 && ch < 8) ? kc[ch] : 0; }
+
 	private:
 		virtual void Intr(bool) {}
 	

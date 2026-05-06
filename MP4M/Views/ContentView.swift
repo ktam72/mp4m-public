@@ -9,26 +9,25 @@ struct ContentView: View {
         ZStack {
             VStack(spacing: 0) {
                 TrackInfoView(viewModel: playerVM, showAbout: $showAbout)
-                .frame(minHeight: 48)
-            Divider().background(Color.mp4mBorder)
-            HStack(spacing: 0) {
-                SpectrumAnalyzerView(viewModel: playerVM)
-                    .frame(width: 480)
+                    .frame(height: 56)
                 Divider().background(Color.mp4mBorder)
-                LevelMeterView(viewModel: playerVM)
-            }
-            .frame(height: 180)
-            Divider().background(Color.mp4mBorder)
-            KeyboardView(viewModel: playerVM)
-                .frame(height: 600)
-            Divider().background(Color.mp4mBorder)
-            if let playerVM {
-                FileSelectorView(browserVM: browserVM, playerVM: playerVM)
-                    .frame(minHeight: 288)
-            }
-            Divider().background(Color.mp4mBorder)
-            ControlPanelView(viewModel: playerVM, browserVM: browserVM)
-                .frame(height: 44)
+                HStack(spacing: 0) {
+                    SpectrumAnalyzerView(viewModel: playerVM)
+                        .frame(width: 480)
+                    Divider().background(Color.mp4mBorder)
+                    LevelMeterView(viewModel: playerVM)
+                }
+                .frame(height: 180)
+                Divider().background(Color.mp4mBorder)
+                KeyboardView(viewModel: playerVM)
+                    .frame(height: 300)
+                Divider().background(Color.mp4mBorder)
+                if let playerVM {
+                    FileSelectorView(browserVM: browserVM, playerVM: playerVM)
+                }
+                Divider().background(Color.mp4mBorder)
+                ControlPanelView(viewModel: playerVM, browserVM: browserVM)
+                    .frame(height: 44)
             }
             .disabled(showAbout)
             .background(Color.mp4mBackground)
