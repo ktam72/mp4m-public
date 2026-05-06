@@ -86,7 +86,7 @@ xcodebuild -project MP4M.xcodeproj -scheme MP4M -configuration Release build
 | **マルチスレッド** | `Task.detached(priority: .userInitiated)` + `os_unfair_lock` |
 | **MDX/PCM デコード** | GAMDX (MXDRVG, pcm8, x68pcm8) + ObjC++ ブリッジ |
 | **FM エミュレーション** | fmgen (cisc) — YM2151 オペレーター合成 |
-| **LZX 解凍** | オリジナル実装 (0BSD) |
+| **LZX 解凍** | オリジナル実装（0BSD、商用利用可能） |
 | **プロジェクト管理** | xcodegen + project.yml |
 
 ## パフォーマンス
