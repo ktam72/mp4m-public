@@ -3,7 +3,7 @@
 macOS向けのMDXプレイヤー。MDX/PDX 形式の音楽ファイルをリアルタイム再生し、スペクトラムアナライザー・レベルメーター・キーボード表示を持つマニアックなミュージックプレーヤーです。
 
 ![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![License](https://img.shields.io/badge/license-MIT%20%2B%20fmgen-blue)
+![License](https://img.shields.io/badge/license-Apache%202.0%20%2B%20fmgen-blue)
 ![Platform](https://img.shields.io/badge/platform-macOS%2014.0%2B-lightgrey)
 
 ## 特徴
