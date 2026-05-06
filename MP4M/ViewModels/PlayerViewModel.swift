@@ -367,7 +367,7 @@ final class PlayerViewModel: @unchecked Sendable {
         status = .stopped
 
         #if DEBUG
-        print("[TrackEnd] repeatEnabled=\(repeatEnabled)")
+        print("[TrackEnd] repeatEnabled=\(repeatEnabled), autoMode=\(autoMode)")
         #endif
         if repeatEnabled {
             audioService.stop()
@@ -379,7 +379,7 @@ final class PlayerViewModel: @unchecked Sendable {
 
     private func startFadeOut() {
         #if DEBUG
-        print("[FadeOut] Starting fadeout")
+        print("[FadeOut] Starting fadeout (autoMode=\(autoMode))")
         #endif
         fadeOutVolume = 1.0
         let fadeOutSteps = 60
@@ -404,7 +404,7 @@ final class PlayerViewModel: @unchecked Sendable {
 
             await MainActor.run {
                 #if DEBUG
-                print("[FadeOut] Complete, playing next track")
+                print("[FadeOut] Complete (autoMode=\(self.autoMode))")
                 #endif
                 self.fadeOutVolume = 1.0
                 self.audioService.setVolume(1.0)
@@ -412,7 +412,14 @@ final class PlayerViewModel: @unchecked Sendable {
                 self.displayTimer = nil
                 self.fadeOutTask = nil
                 if !Task.isCancelled {
-                    self.playNextTrack()
+                    switch self.autoMode {
+                    case .normal:
+                        self.stop()
+                    case .auto:
+                        self.playNextTrack()
+                    case .shuffle:
+                        self.playRandomTrack()
+                    }
                 }
             }
         }
@@ -420,7 +427,7 @@ final class PlayerViewModel: @unchecked Sendable {
 
     private func playNextTrack() {
         #if DEBUG
-        print("[NextTrack] Starting next track")
+        print("[NextTrack] AUTO mode - playing next track")
         #endif
         DispatchQueue.main.async { [weak self] in
             guard let self = self, let browserVM = self.browserVM else {
@@ -442,6 +449,31 @@ final class PlayerViewModel: @unchecked Sendable {
                 }
             } else {
                 self.stop()
+            }
+        }
+    }
+
+    private func playRandomTrack() {
+        #if DEBUG
+        print("[RandomTrack] SHUFFLE mode - playing random track")
+        #endif
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self, let browserVM = self.browserVM else {
+                self?.stop()
+                return
+            }
+
+            let files = browserVM.playableFiles
+            guard !files.isEmpty else {
+                self.stop()
+                return
+            }
+
+            let randomIdx = Int.random(in: 0..<files.count)
+            browserVM.playingIndex = randomIdx
+            Task {
+                await self.load(url: files[randomIdx].url)
+                self.play()
             }
         }
     }
