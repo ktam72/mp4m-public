@@ -333,5 +333,67 @@ PCM チャンネルが使用中かどうかの判定が不正確
 
 ---
 
+## 13. ブリッジ側の変数シャドウ削除
+
+**commit**: f6daab1（2026-05-06）  
+**file**: `MP4M/Bridge/MXDRVGBridge.mm`
+
+### 問題
+`getChannelStates:` メソッド内で `globalWork` 変数が Line 524 と Line 544 で二度宣言されていた
+
+### 修正内容
+```objc
+// MXDRVGBridge.mm - getChannelStates: メソッド
+  MXDRVG_WORK_GLOBAL* globalWork = (MXDRVG_WORK_GLOBAL*)MXDRVG_GetWork(MXDRVG_WORKADR_GLOBAL);  // Line 524
+  
+  if (pcmCh) {
+      // チャンネルマスク取得
+-     MXDRVG_WORK_GLOBAL* globalWork = ...;  // ❌ Line 544 の重複宣言
++     // Line 524 の globalWork を参照するよう統一  // ✅ 削除
+      uint16_t channelMask = globalWork ? globalWork->L001e1a : 0;
+```
+
+### 影響
+- コンパイラ警告の排除
+- 変数スコープの明確化
+- GAMDX グローバル状態へのアクセスが一元化
+
+---
+
+## 14. オーディオコールバック内のロック最適化
+
+**commit**: f6daab1（2026-05-06）  
+**file**: `MP4M/Services/MXDRVAudioEngine.swift`
+
+### 問題
+`renderAudioCallback` で `os_unfair_lock_lock()` をブロッキングで取得していたため、ロック競合時にリアルタイムスレッド（オーディオスレッド）が待機してオーディオグリッチが発生する可能性がある
+
+### 修正内容
+```swift
+// MXDRVAudioEngine.swift - renderAudioCallback
+- os_unfair_lock_lock(&engineLock)        // ❌ ブロッキング（待機あり）
+- let ret = renderPCM(...)
+- os_unfair_lock_unlock(&engineLock)
+
++ if os_unfair_lock_trylock(&engineLock) {  // ✅ 非ブロッキング（待機なし）
++     let ret = renderPCM(...)
++     os_unfair_lock_unlock(&engineLock)
++     // ロック取得成功時のみバッファ出力
++     for i in 0..<frameCount {
++         leftPtr[i] = ...
++         rightPtr[i] = ...
++     }
++ }
++ // ロック取得失敗時はサイレンス出力（次フレームで再試行）
+```
+
+### 影響
+- オーディオレイテンシー低減
+- リアルタイムスレッドのグリッチ回避
+- GAMDX C++ エンジンへのアクセス競合を最小化
+- 再生品質向上
+
+---
+
 **最終更新**: 2026-05-06  
 **ドキュメント作成**: Claude Haiku 4.5

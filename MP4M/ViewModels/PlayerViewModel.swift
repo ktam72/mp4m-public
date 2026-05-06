@@ -60,6 +60,9 @@ final class PlayerViewModel: @unchecked Sendable {
     private var lastSyncDate: Date = Date()       // 最後に同期した時刻（Date）
     private let syncIntervalMs: Int = 1000        // 1秒ごとに同期して誤差補正
 
+    // 表示更新頻度制御
+    private var displayFrameCount: Int = 0        // フレームカウンタ（120fps基準）
+
     // MARK: - 初期化
 
     init(audioService: any AudioEngineService) {
@@ -301,7 +304,8 @@ final class PlayerViewModel: @unchecked Sendable {
 
     private func startDisplayTimer() {
         displayTimer?.invalidate()
-        displayTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 90.0, repeats: true) { [weak self] _ in
+        displayFrameCount = 0
+        displayTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 120.0, repeats: true) { [weak self] _ in
             self?.updateDisplay()
         }
     }
@@ -309,7 +313,8 @@ final class PlayerViewModel: @unchecked Sendable {
     private func updateDisplay() {
         guard status == .playing || fadeOutTask != nil else { return }
 
-        let isFullUpdate = displayService.advanceFrame()
+        // フレームカウンタをインクリメント
+        displayFrameCount += 1
 
         // 再生時間計算（Timer から呼ばれているため メインスレッド上）
         var ms = playStartTimeMs + Int(Date().timeIntervalSince(playStartDate) * 1000)
@@ -326,20 +331,23 @@ final class PlayerViewModel: @unchecked Sendable {
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self else { return }
 
-            // チャンネル状態の取得（キャッシング付き）
+            // チャンネル状態の取得（キーボード・レベルメーター: 毎フレーム 120fps）
             let fmChannels = channelService.getChannels(currentTimeMs: ms)
 
-            // スペアナ計算は 30fps（isFullUpdate 時のみ）
-            var newBars = spectrumBars
-            if isFullUpdate {
+            // スペアナ計算は 60fps（2フレームごと）
+            var newBars = self.spectrumBars
+            let shouldUpdateSpectrum = (self.displayFrameCount % 2) == 0
+            if shouldUpdateSpectrum {
                 newBars = spectrumService.computeSpectrum(for: fmChannels, currentBars: spectrumBars)
             }
 
             // メインスレッドで UI 更新
             DispatchQueue.main.async {
+                // チャンネル状態・レベルメーター（毎フレーム 120fps）
                 self.channels = fmChannels
 
-                if isFullUpdate {
+                // スペアナ・currentTimeMs（2フレームごと 60fps）
+                if shouldUpdateSpectrum {
                     self.currentTimeMs = ms
                     self.spectrumBars = newBars
 
