@@ -12,7 +12,7 @@ final class FileBrowserViewModel {
     var currentDirectory: URL? {
         didSet {
             if let url = currentDirectory {
-                UserDefaults.standard.set(url, forKey: "mp4m_currentDirectory")
+                UserDefaults.standard.set(url, forKey: UserDefaultsKey.currentDirectory)
             }
         }
     }
@@ -27,7 +27,7 @@ final class FileBrowserViewModel {
         self.selectionStrategy = BrowserFileSelectionStrategy()
         
         // UserDefaults から設定を復帰
-        if let savedURL = UserDefaults.standard.url(forKey: "mp4m_currentDirectory") {
+        if let savedURL = UserDefaults.standard.url(forKey: UserDefaultsKey.currentDirectory) {
             currentDirectory = savedURL
             fileItems = FileItem.items(in: savedURL)
         }

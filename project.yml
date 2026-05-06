@@ -43,7 +43,11 @@ targets:
           - "**/Info.plist"
           - Bridge
           - Services
+          - Utilities
       - path: MP4M/Services
+        includes:
+          - "*.swift"
+      - path: MP4M/Utilities
         includes:
           - "*.swift"
       - path: MP4M/Bridge

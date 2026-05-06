@@ -70,9 +70,6 @@ protocol AudioEngineService: AnyObject {
     /// - Parameter volume: 設定する音量 (0.0=無音、1.0=最大)
     func setVolume(_ volume: Float)
 
-    /// ミュート対象チャンネルを設定
-    func setMutedChannels(_ mutedChannels: Set<Int>)
-
     /// チャンネルミュート制御 (出力レベル制御)
     /// - Parameters:
     ///   - ch: チャンネル番号 (0-15)

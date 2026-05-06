@@ -132,6 +132,13 @@ static BOOL isValidPDXFileName(NSString* fileName) {
     return YES;
 }
 
+// MXDRVG エンジンをリセット（初期化・開始）
+static void resetMXDRVGEngine(int sampleRate) {
+    MXDRVG_End();
+    MXDRVG_Start(sampleRate, 0, 64 * 1024, 1024 * 1024);
+    MXDRVG_TotalVolume(128);  // 音量を50%に設定
+}
+
 // 大文字小文字を区別せずにPDXファイルを検索
 static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
     if (!pdxFileName || !directory) return nil;
@@ -173,15 +180,10 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
     #ifdef DEBUG
     fprintf(stderr, "[MXDRVGBridge] startWithSampleRate: %d\n", sampleRate);
     #endif
-    MXDRVG_End();
-    #ifdef DEBUG
-    fprintf(stderr, "[MXDRVGBridge] calling MXDRVG_Start...\n");
-    #endif
-    MXDRVG_Start(sampleRate, 0, 64 * 1024, 1024 * 1024);
+    resetMXDRVGEngine(sampleRate);
     #ifdef DEBUG
     fprintf(stderr, "[MXDRVGBridge] MXDRVG_Start done\n");
     #endif
-    MXDRVG_TotalVolume(128);  // 音量を50%に設定（大きすぎる問題の対策）
 }
 
 + (void)end {
@@ -432,9 +434,7 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
 #ifdef DEBUG
         fprintf(stderr, "[PDX] PDX load failed: resetting MXDRVG engine and reloading MDX only\n");
 #endif
-        MXDRVG_End();
-        MXDRVG_Start(44100, 0, 64 * 1024, 1024 * 1024);
-        MXDRVG_TotalVolume(128);
+        resetMXDRVGEngine(44100);
     }
 
     // MDX/PDX データをエンジンに登録
@@ -541,7 +541,6 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
         // チャンネルマスクから有効な PCM チャンネル数を判定
         // L001e1a のビット 8-15 が PCM チャンネルに対応
         // bit 8: PCM1, bit 9: PCM2, ..., bit 15: PCM8
-        MXDRVG_WORK_GLOBAL* globalWork = (MXDRVG_WORK_GLOBAL*)MXDRVG_GetWork(MXDRVG_WORKADR_GLOBAL);
         uint16_t channelMask = globalWork ? globalWork->L001e1a : 0;
 
         for (int i = 0; i < 8; i++) {

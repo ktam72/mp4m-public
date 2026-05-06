@@ -68,16 +68,15 @@ struct ControlPanelView: View {
         return browserVM.playingIndex >= 0 && browserVM.playingIndex < browserVM.playableFiles.count
     }
 
-    /// PDXファイル名の調整：拡張子がない場合は .pdx を補完
+    /// PDXファイル名の調整：拡張子がない場合は .pdx を補完（"No PDX" はブリッジ側で正規化済み）
     private var adjustedPdxFileName: String {
         guard let raw = viewModel?.pdxFileName, !raw.isEmpty else {
             return "No PDX"
         }
-        // あらゆる "no pdx" の変種（大文字小文字問わず）を検出して統一
-        if raw.lowercased().contains("no pdx") {
+        // "No PDX" はブリッジ側で既に統一されているため、有効なファイル名の場合のみ拡張子処理
+        if raw == "No PDX" {
             return "No PDX"
         }
-        // 有効なPDXファイル名の場合のみ拡張子処理
         if raw.lowercased().hasSuffix(".pdx") {
             return raw
         } else {
@@ -95,33 +94,13 @@ struct ControlPanelView: View {
     }
 
     private func playNext() {
-        guard let viewModel, let browserVM,
-              let idx = viewModel.nextFileIndex(playableFiles: browserVM.playableFiles, playingIndex: browserVM.playingIndex)
-        else { return }
-
-        let files = browserVM.playableFiles
-        guard idx < files.count else { return }
-
-        browserVM.playingIndex = idx
-        Task {
-            await viewModel.load(url: files[idx].url)
-            viewModel.play()
-        }
+        guard let viewModel, let browserVM else { return }
+        viewModel.playNextFile(browserVM: browserVM)
     }
 
     private func playPrev() {
-        guard let viewModel, let browserVM,
-              let idx = viewModel.prevFileIndex(playableFiles: browserVM.playableFiles, playingIndex: browserVM.playingIndex)
-        else { return }
-
-        let files = browserVM.playableFiles
-        guard idx < files.count else { return }
-
-        browserVM.playingIndex = idx
-        Task {
-            await viewModel.load(url: files[idx].url)
-            viewModel.play()
-        }
+        guard let viewModel, let browserVM else { return }
+        viewModel.playPrevFile(browserVM: browserVM)
     }
 }
 

@@ -2,6 +2,8 @@ import SwiftUI
 
 // MARK: - PianoKey: 個別の鍵
 struct PianoKey: Identifiable {
+    static let noteNames = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
+
     let id: Int  // MIDI ノート番号
     let midiNote: Int
     let isBlackKey: Bool
@@ -9,10 +11,8 @@ struct PianoKey: Identifiable {
     var octave: Int { midiNote / 12 }
     var note: Int { midiNote % 12 }
 
-    private let noteNames = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
-
     var label: String {
-        "\(noteNames[note])\(octave)"
+        "\(Self.noteNames[note])\(octave)"
     }
 }
 
@@ -40,21 +40,6 @@ struct PianoKeyboard {
         return keys[midiNote - startMidiNote]
     }
 
-    // 現在点灯すべき MIDI ノートを取得
-    func litMidiNotes(channels: [ChannelDisplayState]) -> Set<Int> {
-        var result: Set<Int> = []
-
-        for ch in channels {
-            guard ch.keyOn else { continue }
-            let midiNote = Int(ch.keyCode) + Int(ch.keyOffset)
-            if midiNote >= startMidiNote && midiNote < endMidiNote {
-                result.insert(midiNote)
-            }
-        }
-
-        return result
-    }
-
     // note が黒鍵か判定
     private static func isBlackNote(_ note: Int) -> Bool {
         [1, 3, 6, 8, 10].contains(note)
@@ -75,8 +60,6 @@ struct PianoKeyboard {
 struct KeyboardView: View {
     let viewModel: PlayerViewModel?
     @State private var keyboard = PianoKeyboard(startMidiNote: 0, endMidiNote: 96)
-
-    private let noteNames = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
 
     var body: some View {
         VStack(spacing: 1) {

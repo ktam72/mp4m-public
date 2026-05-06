@@ -16,17 +16,17 @@ final class PlayerViewModel: @unchecked Sendable {
     var totalTimeMs: Int = 0
     var loopCount: Int = 2 {
         didSet {
-            UserDefaults.standard.set(loopCount, forKey: "mp4m_loopCount")
+            UserDefaults.standard.set(loopCount, forKey: UserDefaultsKey.loopCount)
         }
     }
     var autoMode: AutoMode = .normal {
         didSet {
-            UserDefaults.standard.set(autoMode.rawValue, forKey: "mp4m_autoMode")
+            UserDefaults.standard.set(autoMode.rawValue, forKey: UserDefaultsKey.autoMode)
         }
     }
     var repeatEnabled: Bool = true {
         didSet {
-            UserDefaults.standard.set(repeatEnabled, forKey: "mp4m_repeatEnabled")
+            UserDefaults.standard.set(repeatEnabled, forKey: UserDefaultsKey.repeatEnabled)
         }
     }
 
@@ -34,7 +34,7 @@ final class PlayerViewModel: @unchecked Sendable {
     var spectrumBars: [SpectrumBarState] = Array(repeating: SpectrumBarState(), count: 52)
     var mutedChannels: Set<Int> = [] {
         didSet {
-            UserDefaults.standard.set(Array(mutedChannels), forKey: "mp4m_mutedChannels")
+            UserDefaults.standard.set(Array(mutedChannels), forKey: UserDefaultsKey.mutedChannels)
         }
     }
 
@@ -72,17 +72,17 @@ final class PlayerViewModel: @unchecked Sendable {
         self.displayService = DisplayUpdateService()
 
         // UserDefaults から設定を復帰
-        if let savedLoopCount = UserDefaults.standard.object(forKey: "mp4m_loopCount") as? Int {
+        if let savedLoopCount = UserDefaults.standard.object(forKey: UserDefaultsKey.loopCount) as? Int {
             loopCount = savedLoopCount
         }
-        if let savedAutoModeRaw = UserDefaults.standard.string(forKey: "mp4m_autoMode"),
+        if let savedAutoModeRaw = UserDefaults.standard.string(forKey: UserDefaultsKey.autoMode),
            let savedAutoMode = AutoMode(rawValue: savedAutoModeRaw) {
             autoMode = savedAutoMode
         }
-        if UserDefaults.standard.object(forKey: "mp4m_repeatEnabled") != nil {
-            repeatEnabled = UserDefaults.standard.bool(forKey: "mp4m_repeatEnabled")
+        if UserDefaults.standard.object(forKey: UserDefaultsKey.repeatEnabled) != nil {
+            repeatEnabled = UserDefaults.standard.bool(forKey: UserDefaultsKey.repeatEnabled)
         }
-        if let savedMutedChannels = UserDefaults.standard.array(forKey: "mp4m_mutedChannels") as? [Int] {
+        if let savedMutedChannels = UserDefaults.standard.array(forKey: UserDefaultsKey.mutedChannels) as? [Int] {
             mutedChannels = Set(savedMutedChannels)
         }
 
@@ -123,12 +123,8 @@ final class PlayerViewModel: @unchecked Sendable {
 
             title = loadedTitle ?? url.deletingPathExtension().lastPathComponent
 
-            // PDX ファイル名をオーディオサービスから取得（"no pdx" を含む場合は統一）
-            if let pdxName = audioService.pdxFileName() {
-                pdxFileName = pdxName.lowercased().contains("no pdx") ? "No PDX" : pdxName
-            } else {
-                pdxFileName = "No PDX"
-            }
+            // PDX ファイル名をオーディオサービスから取得（既にブリッジ側で正規化済み）
+            pdxFileName = audioService.pdxFileName() ?? "No PDX"
 
             // PDX 読み込みエラーがあれば設定
             if let pdxError = audioService.pdxLoadError() {
@@ -271,6 +267,34 @@ final class PlayerViewModel: @unchecked Sendable {
         var prevIndex = playingIndex - 1
         if prevIndex < 0 { prevIndex = playableFiles.count - 1 }
         return prevIndex
+    }
+
+    /// 次の曲を再生
+    /// - Parameter browserVM: ファイルブラウザViewModel
+    nonisolated func playNextFile(browserVM: FileBrowserViewModel) {
+        Task { @MainActor in
+            let files = browserVM.playableFiles
+            guard let idx = nextFileIndex(playableFiles: files, playingIndex: browserVM.playingIndex),
+                  idx < files.count else { return }
+
+            browserVM.playingIndex = idx
+            await load(url: files[idx].url)
+            play()
+        }
+    }
+
+    /// 前の曲を再生
+    /// - Parameter browserVM: ファイルブラウザViewModel
+    nonisolated func playPrevFile(browserVM: FileBrowserViewModel) {
+        Task { @MainActor in
+            let files = browserVM.playableFiles
+            guard let idx = prevFileIndex(playableFiles: files, playingIndex: browserVM.playingIndex),
+                  idx < files.count else { return }
+
+            browserVM.playingIndex = idx
+            await load(url: files[idx].url)
+            play()
+        }
     }
 
     // MARK: - 表示更新タイマー

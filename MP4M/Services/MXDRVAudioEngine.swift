@@ -119,10 +119,6 @@ final class MXDRVAudioEngine: AudioEngineService {
         engine.mainMixerNode.outputVolume = max(0.0, min(volume, 1.0))
     }
 
-    func setMutedChannels(_ mutedChannels: Set<Int>) {
-        self.mutedChannels = mutedChannels
-    }
-
     func setChannelMute(_ ch: Int, isMuted: Bool) {
         MXDRVGBridge.setChannelMute(Int32(ch), isMuted: isMuted)
     }
@@ -156,15 +152,16 @@ final class MXDRVAudioEngine: AudioEngineService {
               frameCount * 2 <= Self.pcmBufferSize
         else { return }
 
-        os_unfair_lock_lock(&engineLock)
-        let ret = renderPCM(into: &pcmBuffer, frameCount: Int32(frameCount))
-        os_unfair_lock_unlock(&engineLock)
+        if os_unfair_lock_trylock(&engineLock) {
+            let ret = renderPCM(into: &pcmBuffer, frameCount: Int32(frameCount))
+            os_unfair_lock_unlock(&engineLock)
 
-        guard ret > 0 else { return }
+            guard ret > 0 else { return }
 
-        for i in 0..<frameCount {
-            leftPtr[i]  = Float(pcmBuffer[i * 2])     * (1.0 / 32768.0)
-            rightPtr[i] = Float(pcmBuffer[i * 2 + 1]) * (1.0 / 32768.0)
+            for i in 0..<frameCount {
+                leftPtr[i]  = Float(pcmBuffer[i * 2])     * (1.0 / 32768.0)
+                rightPtr[i] = Float(pcmBuffer[i * 2 + 1]) * (1.0 / 32768.0)
+            }
         }
     }
 }
