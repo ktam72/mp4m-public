@@ -20,6 +20,7 @@ final class BrowserFileSelectionStrategy: FileSelectionStrategy {
             panel.canChooseDirectories = true
             panel.allowsMultipleSelection = false
             panel.prompt = "フォルダを選択"
+            panel.directoryURL = URL(fileURLWithPath: "/tmp")
             return panel.runModal() == .OK ? panel.url : nil
         }
     }
