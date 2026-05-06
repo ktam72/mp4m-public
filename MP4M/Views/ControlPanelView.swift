@@ -43,13 +43,6 @@ struct ControlPanelView: View {
                 }
             }
             .padding(.horizontal, 8)
-            Divider().background(Color.mp4mBorder)
-            Button { viewModel?.toggleRepeat() } label: {
-                Text("REPEAT").font(.mp4mTiny)
-                    .foregroundColor(viewModel?.repeatEnabled ?? true ? Color.mp4mBright : Color.mp4mText.opacity(0.4))
-                    .padding(.horizontal, 8)
-            }
-            .buttonStyle(.plain)
             Spacer()
             Text(adjustedPdxFileName)
                 .font(.mp4mSmall)

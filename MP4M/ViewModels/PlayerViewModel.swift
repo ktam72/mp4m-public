@@ -24,11 +24,6 @@ final class PlayerViewModel: @unchecked Sendable {
             UserDefaults.standard.set(autoMode.rawValue, forKey: UserDefaultsKey.autoMode)
         }
     }
-    var repeatEnabled: Bool = true {
-        didSet {
-            UserDefaults.standard.set(repeatEnabled, forKey: UserDefaultsKey.repeatEnabled)
-        }
-    }
 
     var channels: [ChannelDisplayState] = Array(repeating: ChannelDisplayState(), count: 16)
     var spectrumBars: [SpectrumBarState] = Array(repeating: SpectrumBarState(), count: 52)
@@ -81,9 +76,6 @@ final class PlayerViewModel: @unchecked Sendable {
         if let savedAutoModeRaw = UserDefaults.standard.string(forKey: UserDefaultsKey.autoMode),
            let savedAutoMode = AutoMode(rawValue: savedAutoModeRaw) {
             autoMode = savedAutoMode
-        }
-        if UserDefaults.standard.object(forKey: UserDefaultsKey.repeatEnabled) != nil {
-            repeatEnabled = UserDefaults.standard.bool(forKey: UserDefaultsKey.repeatEnabled)
         }
         if let savedMutedChannels = UserDefaults.standard.array(forKey: UserDefaultsKey.mutedChannels) as? [Int] {
             mutedChannels = Set(savedMutedChannels)
@@ -224,10 +216,6 @@ final class PlayerViewModel: @unchecked Sendable {
     }
 
     /// リピート再生の有効/無効をトグル切り替え
-    func toggleRepeat() {
-        repeatEnabled.toggle()
-    }
-
     /// チャンネルのミュートをトグル切り替え
     /// - Parameter channelIndex: 対象チャンネル番号 (0-15)
     func toggleChannel(_ channelIndex: Int) {
@@ -367,14 +355,9 @@ final class PlayerViewModel: @unchecked Sendable {
         status = .stopped
 
         #if DEBUG
-        print("[TrackEnd] repeatEnabled=\(repeatEnabled), autoMode=\(autoMode)")
+        print("[TrackEnd] autoMode=\(autoMode)")
         #endif
-        if repeatEnabled {
-            audioService.stop()
-            play()
-        } else {
-            startFadeOut()
-        }
+        startFadeOut()
     }
 
     private func startFadeOut() {
