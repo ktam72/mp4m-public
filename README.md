@@ -66,8 +66,6 @@ xcodebuild -project MP4M.xcodeproj -scheme MP4M -configuration Release build
 - **MDX** — MXDRV 形式 (X68000 OPM FM 音源)
 - **PDX** — ADPCM サンプルデータ (MDX と同ディレクトリに配置で自動ロード)
 
-**注意**: ZMD/ZDF 形式（ZMUSIC）には対応していません。
-
 ## 技術スタック
 
 | 要素 | 技術 |
