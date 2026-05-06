@@ -35,6 +35,11 @@ final class FileBrowserViewModel {
 
     // MARK: - 公開 API
 
+    /// 再生可能なファイル（ディレクトリを除外）
+    var playableFiles: [FileItem] {
+        fileItems.filter { !$0.isDirectory }
+    }
+
     /// ディレクトリを開く
     func openDirectory(_ url: URL) {
         currentDirectory = url
@@ -59,9 +64,8 @@ final class FileBrowserViewModel {
 
     /// 現在再生中の URL を取得
     var playingURL: URL? {
-        let files = fileItems.filter { !$0.isDirectory }
-        guard playingIndex >= 0, playingIndex < files.count else { return nil }
-        return files[playingIndex].url
+        guard playingIndex >= 0, playingIndex < playableFiles.count else { return nil }
+        return playableFiles[playingIndex].url
     }
 
     /// 選択アイテムがディレクトリかどうか

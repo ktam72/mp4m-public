@@ -65,8 +65,7 @@ struct ControlPanelView: View {
     /// ファイルが選択されているかどうかを判定
     private var isFileSelected: Bool {
         guard let browserVM = browserVM else { return false }
-        let files = browserVM.fileItems.filter { !$0.isDirectory }
-        return browserVM.playingIndex >= 0 && browserVM.playingIndex < files.count
+        return browserVM.playingIndex >= 0 && browserVM.playingIndex < browserVM.playableFiles.count
     }
 
     /// PDXファイル名の調整：拡張子がない場合は .pdx を補完
@@ -97,10 +96,10 @@ struct ControlPanelView: View {
 
     private func playNext() {
         guard let viewModel, let browserVM,
-              let idx = viewModel.nextFileIndex(fileItems: browserVM.fileItems, playingIndex: browserVM.playingIndex)
+              let idx = viewModel.nextFileIndex(playableFiles: browserVM.playableFiles, playingIndex: browserVM.playingIndex)
         else { return }
 
-        let files = browserVM.fileItems.filter { !$0.isDirectory }
+        let files = browserVM.playableFiles
         guard idx < files.count else { return }
 
         browserVM.playingIndex = idx
@@ -112,10 +111,10 @@ struct ControlPanelView: View {
 
     private func playPrev() {
         guard let viewModel, let browserVM,
-              let idx = viewModel.prevFileIndex(fileItems: browserVM.fileItems, playingIndex: browserVM.playingIndex)
+              let idx = viewModel.prevFileIndex(playableFiles: browserVM.playableFiles, playingIndex: browserVM.playingIndex)
         else { return }
 
-        let files = browserVM.fileItems.filter { !$0.isDirectory }
+        let files = browserVM.playableFiles
         guard idx < files.count else { return }
 
         browserVM.playingIndex = idx

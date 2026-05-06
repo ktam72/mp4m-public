@@ -246,32 +246,30 @@ final class PlayerViewModel: @unchecked Sendable {
 
     /// 次の曲のファイルインデックスを取得
     /// - Parameters:
-    ///   - fileItems: ファイルアイテム配列
+    ///   - playableFiles: 再生可能なファイル配列
     ///   - playingIndex: 現在再生中のインデックス
     /// - Returns: 次のインデックス（該当なしの場合は nil）
-    func nextFileIndex(fileItems: [FileItem], playingIndex: Int) -> Int? {
-        let files = fileItems.filter { !$0.isDirectory }
-        guard !files.isEmpty else { return nil }
+    func nextFileIndex(playableFiles: [FileItem], playingIndex: Int) -> Int? {
+        guard !playableFiles.isEmpty else { return nil }
 
         var nextIndex = playingIndex + 1
         if autoMode == .shuffle {
-            nextIndex = Int.random(in: 0..<files.count)
+            nextIndex = Int.random(in: 0..<playableFiles.count)
         }
-        if nextIndex >= files.count { nextIndex = 0 }
+        if nextIndex >= playableFiles.count { nextIndex = 0 }
         return nextIndex
     }
 
     /// 前の曲のファイルインデックスを取得
     /// - Parameters:
-    ///   - fileItems: ファイルアイテム配列
+    ///   - playableFiles: 再生可能なファイル配列
     ///   - playingIndex: 現在再生中のインデックス
     /// - Returns: 前のインデックス（該当なしの場合は nil）
-    func prevFileIndex(fileItems: [FileItem], playingIndex: Int) -> Int? {
-        let files = fileItems.filter { !$0.isDirectory }
-        guard !files.isEmpty else { return nil }
+    func prevFileIndex(playableFiles: [FileItem], playingIndex: Int) -> Int? {
+        guard !playableFiles.isEmpty else { return nil }
 
         var prevIndex = playingIndex - 1
-        if prevIndex < 0 { prevIndex = files.count - 1 }
+        if prevIndex < 0 { prevIndex = playableFiles.count - 1 }
         return prevIndex
     }
 
@@ -289,21 +287,20 @@ final class PlayerViewModel: @unchecked Sendable {
 
         let isFullUpdate = displayService.advanceFrame()
 
-        // バックグラウンドで実行
+        // 再生時間計算（Timer から呼ばれているため メインスレッド上）
+        var ms = playStartTimeMs + Int(Date().timeIntervalSince(playStartDate) * 1000)
+
+        if abs(ms - lastSyncTimeMs) >= syncIntervalMs {
+            ms = audioService.currentPlayTimeMs()
+            playStartDate = Date()
+            playStartTimeMs = ms
+            lastSyncTimeMs = ms
+            lastSyncDate = Date()
+        }
+
+        // バックグラウンドで実行（計算処理）
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
             guard let self else { return }
-
-            // 再生時間の計算
-            var ms = playStartTimeMs + Int(Date().timeIntervalSince(playStartDate) * 1000)
-
-            // 1秒ごとに同期
-            if abs(ms - lastSyncTimeMs) >= syncIntervalMs {
-                ms = audioService.currentPlayTimeMs()
-                playStartDate = Date()
-                playStartTimeMs = ms
-                lastSyncTimeMs = ms
-                lastSyncDate = Date()
-            }
 
             // チャンネル状態の取得（キャッシング付き）
             let fmChannels = channelService.getChannels(currentTimeMs: ms)
@@ -399,13 +396,13 @@ final class PlayerViewModel: @unchecked Sendable {
                 return
             }
 
-            let files = browserVM.fileItems.filter { !$0.isDirectory }
+            let files = browserVM.playableFiles
             guard !files.isEmpty else {
                 self.stop()
                 return
             }
 
-            if let nextIdx = self.nextFileIndex(fileItems: browserVM.fileItems, playingIndex: browserVM.playingIndex) {
+            if let nextIdx = self.nextFileIndex(playableFiles: files, playingIndex: browserVM.playingIndex) {
                 browserVM.playingIndex = nextIdx
                 Task {
                     await self.load(url: files[nextIdx].url)

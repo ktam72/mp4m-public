@@ -28,7 +28,7 @@ final class SpectrumComputeService {
     /// - Note: GPU (Metal) が利用可能な場合はGPUで計算、不可時はCPUで計算
     func computeSpectrum(for channels: [ChannelDisplayState], currentBars: [SpectrumBarState]) -> [SpectrumBarState] {
         // GPU または CPU でビンマッピング + 拡散を計算
-        let speaBuf = metalCompute?.computeSpectrum(channels: channels) ?? [Float](repeating: 0, count: 52)
+        let speaBuf = metalCompute?.computeSpectrum(channels: channels) ?? computeSpectrumCPU(channels: channels)
 
         // バー状態更新
         var newBars = currentBars
@@ -66,5 +66,33 @@ final class SpectrumComputeService {
         }
 
         return newBars
+    }
+
+    /// CPU版スペクトラム計算（ビンマッピング + 拡散）
+    /// Metal が利用不可時のフォールバック用
+    private func computeSpectrumCPU(channels: [ChannelDisplayState]) -> [Float] {
+        var bins = [Float](repeating: 0, count: 52)
+
+        for ch in channels {
+            guard ch.keyOn else { continue }
+            let midiNote = Int(ch.keyCode)
+            let velocity = Float(ch.velocity) / 127.0
+
+            // MIDI ノート → 周波数ビンマッピング
+            let binIndex = midiNote / 12 * 4 + (midiNote % 12) / 3
+            guard binIndex >= 0, binIndex < bins.count else { continue }
+
+            // 拡散ロジック：周辺ビンに振幅を分散
+            let spreadFactors: [Float] = [1.0, 3.0 / 4.0, 5.0 / 16.0, 1.0 / 8.0, 1.0 / 4.0, 1.0 / 16.0]
+            let offsets = [0, -1, -2, 1, 2, 3]
+
+            for (offset, factor) in zip(offsets, spreadFactors) {
+                let targetBin = binIndex + offset
+                guard targetBin >= 0, targetBin < bins.count else { continue }
+                bins[targetBin] += velocity * factor
+            }
+        }
+
+        return bins
     }
 }
