@@ -43,6 +43,7 @@ struct ControlPanelView: View {
                 }
             }
             .padding(.horizontal, 8)
+            Divider().background(Color.mp4mBorder)
             Spacer()
             Text(adjustedPdxFileName)
                 .font(.mp4mSmall)
