@@ -28,14 +28,10 @@ xcodebuild -project MP4M.xcodeproj -scheme MP4M -configuration Release build
 
 ## App Store 配布について
 
-**当プロジェクトは App Store での配布を予定していません。**
+**当プロジェクトは X68000 フリーウェアの著作権者を尊重し、App Store での配布を予定していません。**
 
-### 理由
-
-**X68000 フリーウェアの著作権尊重**
-   - 本プロジェクトは GAMDX（MXDRVG、pcm8、x68pcm8）など X68000 時代のフリーウェア資産を活用しています
-   - これらの著作権者（GORRY、milk、K.MAEKAWA、m_puusan、Yosshin、Missy.M、Yatsube 等）のライセンス条項を厳密に遵守することを優先
-   - App Store 配布による商用化は、著作権者の意図に反する可能性があり、採用していません
+   -  GAMDX（MXDRVG、pcm8、x68pcm8）など X68000 時代のフリーウェア資産を活用しており、これらの著作権者（GORRY氏、milk氏、K.MAEKAWA氏、m_puusan氏、Yosshin氏、Missy.M氏、Yatsube氏 等）のライセンス条項を厳密に遵守することを優先
+   - App Store からの配布は、著作権者の意図に反する可能性がある
 
 
 
