@@ -60,6 +60,8 @@ struct PianoKeyboard {
 struct KeyboardView: View {
     let viewModel: PlayerViewModel?
     @State private var keyboard = PianoKeyboard(startMidiNote: 0, endMidiNote: 96)
+    @State private var cachedWhiteKeys: [PianoKey] = []
+    @State private var cachedBlackKeys: [PianoKey] = []
 
     var body: some View {
         VStack(spacing: 1) {
@@ -75,16 +77,16 @@ struct KeyboardView: View {
                 let keyH = (geo.size.height - 16) / 8
                 let leftMargin: CGFloat = 50
                 let drawWidth = geo.size.width - leftMargin
-                let whiteKeyW = drawWidth / CGFloat(keyboard.whiteKeys.count)
+                let whiteKeyW = drawWidth / CGFloat(cachedWhiteKeys.count)
 
                 Canvas { ctx, size in
                     // 背景
                     ctx.fill(Path(CGRect(origin: .zero, size: size)),
                             with: .color(Color.mp4mBackground))
 
-                    // 白鍵・黒鍵をフィルタ
-                    let whiteKeys = keyboard.keys.filter { !$0.isBlackKey }
-                    let blackKeys = keyboard.keys.filter { $0.isBlackKey }
+                    // キャッシュされた白鍵・黒鍵を使用（毎フレームフィルタ不要）
+                    let whiteKeys = cachedWhiteKeys
+                    let blackKeys = cachedBlackKeys
 
                     // FM 8チャンネル分のキーボード行を描画
                     for ch in 0..<8 {
@@ -135,6 +137,11 @@ struct KeyboardView: View {
             .padding(.horizontal, 4)
         }
         .background(Color.mp4mBackground)
+        .onAppear {
+            // キャッシュを初期化（1回だけ実行）
+            cachedWhiteKeys = keyboard.whiteKeys
+            cachedBlackKeys = keyboard.blackKeys
+        }
     }
 
     private func chLabel(for ch: ChannelDisplayState, keyboard: PianoKeyboard) -> String {
