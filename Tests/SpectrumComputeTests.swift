@@ -12,11 +12,16 @@ final class SpectrumComputeTests: XCTestCase {
     func testComputeSpectrum_EmptyChannels() {
         let channels = Array(repeating: ChannelDisplayState(), count: 16)
         let currentBars = Array(repeating: SpectrumBarState(), count: 52)
-        
+
         let result = service?.computeSpectrum(for: channels, currentBars: currentBars)
-        
+
         XCTAssertNotNil(result)
-        XCTAssertEqual(result?.count, 52)
+        // 実装では currentBars をそのまま返すため、入力と同じサイズになる
+        XCTAssertEqual(result?.count, currentBars.count)
+        // すべてのチャンネルが keyOn = false のため、すべてのバーが current = 0
+        for bar in result ?? [] {
+            XCTAssertEqual(bar.current, 0)
+        }
     }
     
     func testComputeSpectrum_ActiveChannel() {
