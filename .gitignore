@@ -65,5 +65,8 @@ SECURITY_ASSESSMENT_*.md
 SPECTRUM_REVIEW.md
 VULNERABILITY_FIX_LOG_*.md
 
+# Technical documentation (local development only)
+technical_docs/
+
 # Icon source files (generated icns already in Resources)
 mp4m.iconset/
