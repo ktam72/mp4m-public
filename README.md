@@ -156,6 +156,11 @@ xcodebuild -project MP4M.xcodeproj -scheme MP4M -configuration Release build
 
 ## 関連プロジェクト
 
+**MDX プレーヤー（参考実装）**
+- [mmdsp](https://github.com/gaolay/MMDSP) — X68000 時代のグラフィカル MDX プレーヤー（MP4M の UI デザインの参考にさせていただきました）
+- [MDXPlayer](https://github.com/asaday/MDXPlayer) — iOS 向け MDX プレーヤー（asaday さん作成）
+
+**技術基盤**
 - [fmgen](https://github.com/kichikuou/fmgen) — YM2151 FM エミュレーター
 - [GAMDX](https://gorry.haun.org/android/gamdx/) — GORRY の Android MDX プレーヤー（MXDRVG、pcm8/x68pcm8 公式リポジトリ）
 
