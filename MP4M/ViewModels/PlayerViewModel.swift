@@ -240,7 +240,7 @@ final class PlayerViewModel: @unchecked Sendable {
         guard !playableFiles.isEmpty else { return nil }
 
         var nextIndex = playingIndex + 1
-        if autoMode == .shuffle {
+        if autoMode == .random {
             nextIndex = Int.random(in: 0..<playableFiles.count)
         }
         if nextIndex >= playableFiles.count { nextIndex = 0 }
@@ -400,7 +400,7 @@ final class PlayerViewModel: @unchecked Sendable {
                         self.stop()
                     case .auto:
                         self.playNextTrack()
-                    case .shuffle:
+                    case .random:
                         self.playRandomTrack()
                     }
                 }

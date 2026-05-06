@@ -19,8 +19,8 @@ enum AutoMode: String, CaseIterable {
     case normal  = "NORMAL"
     /// オートモード（設定したループ回数を再生後、次の曲へ）
     case auto    = "AUTO"
-    /// シャッフルモード（ランダムに次の曲を選択）
-    case shuffle = "SHUFFLE"
+    /// ランダムモード（ランダムに次の曲を選択）
+    case random  = "RANDOM"
 }
 
 // MARK: - チャンネル表示データ
