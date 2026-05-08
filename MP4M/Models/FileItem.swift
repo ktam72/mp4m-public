@@ -9,7 +9,7 @@ struct FileItem: Identifiable, Hashable {
 
     var displayName: String {
         if let t = title, !t.isEmpty {
-            return "\(name)\t\(t)"
+            return "\(name)    \(t)"
         }
         return name
     }
