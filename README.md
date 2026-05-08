@@ -189,4 +189,5 @@ iOS向けのものはasadayさんというかたがMDXプレイヤー（ https:/
 **macOS Requirement**: 14.0 Sonoma+  
 **Build Tool**: Xcode 15.0+, xcodegen
 
-![アプリのメイン画面](screenshot/screen1.png)
+![メイン画面](screenshot/screen1.png)
+![再生画面](screenshot/screen2.png)
