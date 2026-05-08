@@ -41,7 +41,9 @@ final class MXDRVAudioEngine: AudioEngineService {
             if !FileManager.default.fileExists(atPath: path) {
                 throw MP4MError.fileAccessDenied("File not found at path: \(path)")
             } else {
-                throw MP4MError.mdxLoadFailed("Failed to load MDX file. The file may be corrupt or in an unsupported format.")
+                throw MP4MError.mdxLoadFailed(
+                    "Failed to load MDX file. The file may be corrupt or in an unsupported format."
+                )
             }
         }
         return title
@@ -91,12 +93,12 @@ final class MXDRVAudioEngine: AudioEngineService {
 
         return (0..<16).map { i in
             ChannelDisplayState(
-                keyCode:   raw[i].keyCode,
-                velocity:  raw[i].velocity,
-                keyOn:     raw[i].keyOn != 0,
-                volume:    raw[i].volume,
-                bend:      raw[i].bend,
-                pan:       raw[i].pan,
+                keyCode: raw[i].keyCode,
+                velocity: raw[i].velocity,
+                keyOn: raw[i].keyOn != 0,
+                volume: raw[i].volume,
+                bend: raw[i].bend,
+                pan: raw[i].pan,
                 keyOffset: raw[i].keyOffset
             )
         }

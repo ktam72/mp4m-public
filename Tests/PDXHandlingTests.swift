@@ -4,23 +4,23 @@ import AudioToolbox
 
 final class PDXHandlingTests: XCTestCase {
     var audioService: MXDRVAudioEngine?
-    
+
     override func setUp() {
         super.setUp()
         audioService = MXDRVAudioEngine()
         audioService?.start(sampleRate: 44100)
     }
-    
+
     override func tearDown() {
         audioService?.end()
         audioService = nil
         super.tearDown()
     }
-    
+
     func testPDXLoadError_InvalidFile() {
         // 存在しないファイルパスを渡すとエラーになるはず
         let expectation = self.expectation(description: "Load invalid file")
-        
+
         Task {
             do {
                 _ = try await Task.detached(priority: .userInitiated) { [weak self] in
@@ -34,7 +34,7 @@ final class PDXHandlingTests: XCTestCase {
             }
             expectation.fulfill()
         }
-        
+
         waitForExpectations(timeout: 5.0)
     }
 }

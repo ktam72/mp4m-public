@@ -2,7 +2,7 @@ import SwiftUI
 
 // MARK: - PianoKey: 個別の鍵
 struct PianoKey: Identifiable {
-    static let noteNames = ["C","C#","D","D#","E","F","F#","G","G#","A","A#","B"]
+    static let noteNames = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 
     let id: Int  // MIDI ノート番号
     let midiNote: Int

@@ -7,7 +7,7 @@ struct SpectrumAnalyzerView: View {
     private let maxLevel: Float = 28
 
     var body: some View {
-        GeometryReader { geo in
+        GeometryReader { _ in
             Canvas { ctx, size in
                 let bars = viewModel?.spectrumBars ?? []
                 let barW = size.width / CGFloat(barCount)

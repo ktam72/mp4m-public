@@ -25,7 +25,7 @@ final class FileBrowserViewModel {
     init() {
         // 選択ストラテジーを初期化
         self.selectionStrategy = BrowserFileSelectionStrategy()
-        
+
         // UserDefaults から設定を復帰
         if let savedURL = UserDefaults.standard.url(forKey: UserDefaultsKey.currentDirectory) {
             currentDirectory = savedURL

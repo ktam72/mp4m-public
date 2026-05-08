@@ -34,7 +34,11 @@ struct ControlPanelView: View {
                     Button { viewModel?.setAutoMode(mode) } label: {
                         Text(mode.rawValue)
                             .font(.mp4mTiny)
-                            .foregroundColor(viewModel?.autoMode == mode ? Color.mp4mBright : Color.mp4mText.opacity(0.5))
+                            .foregroundColor(
+                                viewModel?.autoMode == mode
+                                ? Color.mp4mBright
+                                : Color.mp4mText.opacity(0.5)
+                            )
                             .padding(.horizontal, 6)
                             .padding(.vertical, 3)
                             .background(viewModel?.autoMode == mode ? Color.mp4mSelected : Color.clear)

@@ -39,11 +39,9 @@ final class SpectrumComputeService {
             var targetBar: Float = 0
 
             if raw > 0 {
-                for j in 0..<routeTable.count {
-                    if raw < routeTable[j] {
-                        if bar.current < Float(j) { targetBar = Float(j) }
-                        break
-                    }
+                for j in 0..<routeTable.count where raw < routeTable[j] {
+                    if bar.current < Float(j) { targetBar = Float(j) }
+                    break
                 }
             }
 

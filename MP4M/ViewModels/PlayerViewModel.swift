@@ -35,7 +35,7 @@ final class PlayerViewModel: @unchecked Sendable {
 
     /// 現在のエラー状態（nil でエラーなし）
     /// - Note: エラー発生時に Alert で表示される
-    var currentError: MP4MError? = nil
+    var currentError: MP4MError?
 
     // MARK: - 内部
 
