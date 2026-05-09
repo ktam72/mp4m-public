@@ -8,19 +8,8 @@ extension Notification.Name {
 @main
 struct MP4MApp: App {
     static var pendingPath: String?
-    private let launchObserver: NSObjectProtocol
 
     init() {
-        launchObserver = NotificationCenter.default.addObserver(
-            forName: NSApplication.didFinishLaunchingNotification,
-            object: nil,
-            queue: .main
-        ) { _ in
-            DispatchQueue.main.async {
-                NSApp.activate(ignoringOtherApps: true)
-                NSApp.windows.first?.makeKeyAndOrderFront(nil)
-            }
-        }
         registerFonts()
         handleSingleInstance()
     }
@@ -36,8 +25,6 @@ struct MP4MApp: App {
             CommandGroup(replacing: .newItem) {}
         }
     }
-
-    // MARK: - フォント登録
 
     private func registerFonts() {
         let fontNames = ["MonaspaceNeon-Regular", "MonaspaceNeon-Bold"]

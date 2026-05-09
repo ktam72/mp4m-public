@@ -38,6 +38,11 @@ struct ContentView: View {
                 playerVM?.browserVM = browserVM
                 MP4MApp.setupFileOpenObserver()
 
+                DispatchQueue.main.async {
+                    NSApp.setActivationPolicy(.regular)
+                    NSApp.activate(ignoringOtherApps: true)
+                }
+
                 if let fileURL = browserVM.launchFileURL {
                     Task {
                         await playerVM?.load(url: fileURL)
