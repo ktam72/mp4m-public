@@ -1,12 +1,10 @@
 import SwiftUI
 
 struct ContentView: View {
-    @Environment(\.scenePhase) private var scenePhase
     @State private var playerVM: PlayerViewModel?
     @State private var browserVM = FileBrowserViewModel()
     @State private var showAbout = false
     @State private var ipcFileURL: URL?
-    @State private var hasActivated = false
 
     var body: some View {
         ZStack {
@@ -38,6 +36,15 @@ struct ContentView: View {
             .onAppear {
                 playerVM = PlayerViewModel(audioService: MXDRVAudioEngine())
                 playerVM?.browserVM = browserVM
+                MP4MApp.setupFileOpenObserver()
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    if let window = NSApp.windows.first {
+                        window.orderFrontRegardless()
+                        window.makeKeyAndOrderFront(nil)
+                    }
+                    NSApp.activate(ignoringOtherApps: true)
+                }
 
                 if let fileURL = browserVM.launchFileURL {
                     Task {
@@ -56,15 +63,6 @@ struct ContentView: View {
                 guard let path = notification.object as? String else { return }
                 handleIncomingFile(path: path)
             }
-            .onChange(of: scenePhase) { _, phase in
-                if phase == .active, !hasActivated {
-                    hasActivated = true
-                    DispatchQueue.main.async {
-                        activateWindow()
-                    }
-                }
-            }
-            .background(WindowActivator())
             .alert(item: Binding(
                 get: { playerVM?.currentError },
                 set: { playerVM?.currentError = $0 }
@@ -126,37 +124,6 @@ struct ContentView: View {
         Task {
             await playerVM.load(url: url)
             await playerVM.playAsync()
-        }
-    }
-
-    private func activateWindow() {
-        if let window = NSApplication.shared.windows.first {
-            window.makeKeyAndOrderFront(nil)
-        }
-        NSApplication.shared.activate(ignoringOtherApps: true)
-    }
-}
-
-/// 初回起動時にウィンドウを確実に前面に出すための NSViewRepresentable
-private struct WindowActivator: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSView {
-        let view = ActivatingView()
-        return view
-    }
-
-    func updateNSView(_ nsView: NSView, context: Context) {}
-
-    class ActivatingView: NSView {
-        override func viewDidMoveToWindow() {
-            super.viewDidMoveToWindow()
-            if window != nil {
-                DispatchQueue.main.async {
-                    if let win = NSApplication.shared.windows.first {
-                        win.makeKeyAndOrderFront(nil)
-                    }
-                    NSApplication.shared.activate(ignoringOtherApps: true)
-                }
-            }
         }
     }
 }

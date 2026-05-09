@@ -52,7 +52,6 @@ struct MP4MApp: App {
         if isFirst {
             Self.lockFD = fd
             Self.pendingPath = cliPath
-            setupFileOpenObserver()
         } else {
             if fd >= 0 { close(fd) }
             if let path = cliPath {
@@ -76,8 +75,8 @@ struct MP4MApp: App {
         return path
     }
 
-    /// 他インスタンスからのファイル開封通知を受信
-    private func setupFileOpenObserver() {
+    /// 他インスタンスからのファイル開封通知を受信（ContentView.onAppear から呼ばれる）
+    static func setupFileOpenObserver() {
         DistributedNotificationCenter.default().addObserver(
             forName: .init("MP4MOpenFile"),
             object: nil,
