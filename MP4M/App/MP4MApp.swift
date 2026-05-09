@@ -5,9 +5,19 @@ extension Notification.Name {
     static let mp4mOpenFile = Notification.Name("MP4MOpenFileRequest")
 }
 
+// MARK: - App Delegate
+
+final class MP4MAppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        NSApp.activate(ignoringOtherApps: true)
+    }
+}
+
+// MARK: - App
+
 @main
 struct MP4MApp: App {
-    /// コマンドライン引数で渡されたパス（FileBrowserViewModel が init で参照する）
+    @NSApplicationDelegateAdaptor(MP4MAppDelegate.self) private var appDelegate
     static var pendingPath: String?
 
     init() {
@@ -16,7 +26,7 @@ struct MP4MApp: App {
     }
 
     var body: some Scene {
-        Window("MP4M", id: "main") {
+        WindowGroup {
             ContentView()
         }
         .windowStyle(.hiddenTitleBar)
@@ -55,7 +65,6 @@ struct MP4MApp: App {
         } else {
             if fd >= 0 { close(fd) }
             if let path = cliPath {
-                // CFNotificationCenter で即時配送（DistributedNotification の Swift wrapper には deliverImmediately 相当がない）
                 let center = CFNotificationCenterGetDistributedCenter()
                 let name = CFNotificationName("MP4MOpenFile" as CFString)
                 let object = Unmanaged.passUnretained(path as CFString).toOpaque()
@@ -65,7 +74,6 @@ struct MP4MApp: App {
         }
     }
 
-    /// コマンドライン引数からパスを取得（存在確認付き）
     private static func parseCLIArg() -> String? {
         let args = CommandLine.arguments
         guard args.count > 1 else { return nil }
@@ -75,7 +83,6 @@ struct MP4MApp: App {
         return path
     }
 
-    /// 他インスタンスからのファイル開封通知を受信（ContentView.onAppear から呼ばれる）
     static func setupFileOpenObserver() {
         DistributedNotificationCenter.default().addObserver(
             forName: .init("MP4MOpenFile"),
