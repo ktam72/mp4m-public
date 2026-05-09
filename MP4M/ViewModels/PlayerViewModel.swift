@@ -43,7 +43,7 @@ final class PlayerViewModel: @unchecked Sendable {
     private let spectrumService: SpectrumComputeService
     private let channelService: ChannelStateService
     private let displayService: DisplayUpdateService
-    private var displayTimer: Timer?
+    private var displayTask: Task<Void, Never>?
     private var fadeOutTask: Task<Void, Never>?
     private var fadeOutVolume: Float = 1.0
     weak var browserVM: FileBrowserViewModel?
@@ -92,8 +92,8 @@ final class PlayerViewModel: @unchecked Sendable {
 
     /// 明示的クリーンアップ (deinit ではなく View の onDisappear で呼ぶ)
     func cleanup() {
-        displayTimer?.invalidate()
-        displayTimer = nil
+        displayTask?.cancel()
+        displayTask = nil
         fadeOutTask?.cancel()
         fadeOutTask = nil
         audioService.setVolume(1.0)
@@ -171,7 +171,9 @@ final class PlayerViewModel: @unchecked Sendable {
             }.value
         }
 
-        startPlayback()
+        await MainActor.run {
+            startPlayback()
+        }
     }
 
     /// play() / playAsync() 共通の再生開始処理
@@ -193,7 +195,7 @@ final class PlayerViewModel: @unchecked Sendable {
         lastSyncDate = Date()
 
         status = .playing
-        startDisplayTimer()
+        startDisplayUpdates()
     }
 
     /// 一時停止
@@ -202,14 +204,16 @@ final class PlayerViewModel: @unchecked Sendable {
         guard status == .playing else { return }
         audioService.pause()
         status = .paused
-        displayTimer?.invalidate()
+        displayTask?.cancel()
+        displayTask = nil
     }
 
     /// 停止
     /// - Note: 再生中・一時停止中の場合に動作、表示状態をリセット
     func stop() {
         audioService.stop()
-        displayTimer?.invalidate()
+        displayTask?.cancel()
+        displayTask = nil
         status = .stopped
         currentTimeMs = 0
         clearVisualState()
@@ -311,11 +315,14 @@ final class PlayerViewModel: @unchecked Sendable {
 
     // MARK: - 表示更新タイマー
 
-    private func startDisplayTimer() {
-        displayTimer?.invalidate()
-        displayFrameCount = 0
-        displayTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 120.0, repeats: true) { [weak self] _ in
-            self?.updateDisplay()
+    private func startDisplayUpdates() {
+        displayTask?.cancel()
+        displayTask = Task { @MainActor in
+            displayFrameCount = 0
+            while !Task.isCancelled && (status == .playing || fadeOutTask != nil) {
+                updateDisplay()
+                try? await Task.sleep(for: .seconds(1.0 / 120.0))
+            }
         }
     }
 
@@ -412,8 +419,8 @@ final class PlayerViewModel: @unchecked Sendable {
                 #endif
                 self.fadeOutVolume = 1.0
                 self.audioService.setVolume(1.0)
-                self.displayTimer?.invalidate()
-                self.displayTimer = nil
+                self.displayTask?.cancel()
+                self.displayTask = nil
                 self.fadeOutTask = nil
                 if !Task.isCancelled {
                     switch self.autoMode {

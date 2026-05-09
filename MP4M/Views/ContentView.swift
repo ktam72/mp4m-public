@@ -5,6 +5,7 @@ struct ContentView: View {
     @State private var browserVM = FileBrowserViewModel()
     @State private var showAbout = false
     @State private var ipcFileURL: URL?
+    @State private var isAppActivated = false
 
     var body: some View {
         ZStack {
@@ -38,17 +39,22 @@ struct ContentView: View {
                 playerVM?.browserVM = browserVM
                 MP4MApp.setupFileOpenObserver()
 
-                DispatchQueue.main.async {
-                    NSApp.setActivationPolicy(.regular)
-                    NSApp.activate(ignoringOtherApps: true)
-                }
-
+                // アプリがアクティベートされた後に再生を開始
                 if let fileURL = browserVM.launchFileURL {
-                    Task {
+                    Task { @MainActor in
+                        // アプリのアクティベーション完了を待機
+                        await waitForAppActivation()
+
+                        // ウィンドウが前面に表示されたことを確認するために少し待機
+                        try? await Task.sleep(for: .milliseconds(100))
+
                         await playerVM?.load(url: fileURL)
                         await playerVM?.playAsync()
                     }
                 }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .appDidActivate)) { _ in
+                isAppActivated = true
             }
             .onDisappear {
                 playerVM?.cleanup()
@@ -121,6 +127,20 @@ struct ContentView: View {
         Task {
             await playerVM.load(url: url)
             await playerVM.playAsync()
+        }
+    }
+
+    /// アプリのアクティベーション完了を待機
+    private func waitForAppActivation() async {
+        // すでにアクティベート済みの場合は即座にリターン
+        guard !isAppActivated else { return }
+
+        // タイムアウト付きで待機（最大2秒）
+        let timeout: TimeInterval = 2.0
+        let startTime = Date()
+
+        while !isAppActivated && Date().timeIntervalSince(startTime) < timeout {
+            try? await Task.sleep(for: .milliseconds(50))
         }
     }
 }

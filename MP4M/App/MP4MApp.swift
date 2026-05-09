@@ -3,11 +3,37 @@ import CoreText
 
 extension Notification.Name {
     static let mp4mOpenFile = Notification.Name("MP4MOpenFileRequest")
+    static let appDidActivate = Notification.Name("MP4MAppDidActivate")
+}
+
+/// CLI起動時のウィンドウアクティベーションと再生開始を制御するデリゲート
+final class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        #if DEBUG
+        print("[AppDelegate] applicationDidFinishLaunching")
+        #endif
+
+        // アクティベーションポリシーをregularに設定
+        NSApp.setActivationPolicy(.regular)
+
+        // アプリを前面に表示
+        NSApp.activate(ignoringOtherApps: true)
+
+        // ウィンドウを前面に表示
+        if let window = NSApp.windows.first {
+            window.orderFrontRegardless()
+            window.makeKeyAndOrderFront(nil)
+        }
+
+        // アクティベーション完了をContentViewに通知
+        NotificationCenter.default.post(name: .appDidActivate, object: nil)
+    }
 }
 
 @main
 struct MP4MApp: App {
     static var pendingPath: String?
+    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 
     init() {
         registerFonts()
