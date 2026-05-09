@@ -59,7 +59,7 @@ struct TrackInfoView: View {
     }
 
     private func formatTime(_ ms: Int) -> String {
-        let s = ms / 1000
-        return String(format: "%02d:%02d", s / 60, s % 60)
+        let seconds = ms / 1000
+        return String(format: "%02d:%02d", seconds / 60, seconds % 60)
     }
 }

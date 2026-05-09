@@ -67,8 +67,8 @@ final class MetalSpectrumCompute {
         // チャンネルデータを GPU バッファに転送
         let contents = channelBuffer.contents()
         var channelData = [UInt8](repeating: 0, count: 16 * 8)
-        for i in 0..<min(16, channels.count) {
-            let ch = channels[i]
+        for channelIndex in 0..<min(16, channels.count) {
+            let ch = channels[channelIndex]
             channelData[i * 8 + 0] = ch.keyCode
             channelData[i * 8 + 1] = ch.keyOffset
             channelData[i * 8 + 2] = ch.velocity
@@ -105,8 +105,8 @@ final class MetalSpectrumCompute {
         // 結果を読み込み
         let speaBufPtr = speaBuffer.contents().assumingMemoryBound(to: Float.self)
         var result = [Float](repeating: 0, count: 52)
-        for i in 0..<52 {
-            result[i] = speaBufPtr[i]
+        for barIndex in 0..<52 {
+            result[barIndex] = speaBufPtr[barIndex]
         }
 
         return result

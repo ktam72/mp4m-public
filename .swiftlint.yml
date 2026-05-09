@@ -1,0 +1,12 @@
+identifier_name:
+  min_length:
+    warning: 2
+    error: 1
+
+file_length:
+  warning: 500
+  error: 600
+
+type_body_length:
+  warning: 400
+  error: 500

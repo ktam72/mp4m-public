@@ -8,8 +8,8 @@ struct FileItem: Identifiable, Hashable {
     var title: String?    // MDX 内部タイトル (非同期でロード)
 
     var displayName: String {
-        if let t = title, !t.isEmpty {
-            return "\(name)    \(t)"
+        if let titleText = title, !titleText.isEmpty {
+            return "\(name)    \(titleText)"
         }
         return name
     }

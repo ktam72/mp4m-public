@@ -12,14 +12,14 @@ struct SpectrumAnalyzerView: View {
                 let bars = viewModel?.spectrumBars ?? []
                 let barW = size.width / CGFloat(barCount)
                 let gap: CGFloat = 1
-                for i in 0..<barCount {
-                    let bar = i < bars.count ? bars[i] : SpectrumBarState()
+                for index in 0..<barCount {
+                    let bar = index < bars.count ? bars[index] : SpectrumBarState()
                     let ratio = min(CGFloat(bar.current / maxLevel), 1.0)
                     let peakRatio = min(CGFloat(bar.peak / maxLevel), 1.0)
-                    let x = CGFloat(i) * barW
+                    let barX = CGFloat(index) * barW
                     let barHeight = ratio * size.height
                     let barRect = CGRect(
-                        x: x + gap / 2,
+                        x: barX + gap / 2,
                         y: size.height - barHeight,
                         width: barW - gap,
                         height: barHeight
@@ -32,21 +32,21 @@ struct SpectrumAnalyzerView: View {
                         Path(barRect),
                         with: .linearGradient(
                             gradient,
-                            startPoint: CGPoint(x: x, y: size.height),
-                            endPoint: CGPoint(x: x, y: size.height - barHeight)
+                            startPoint: CGPoint(x: barX, y: size.height),
+                            endPoint: CGPoint(x: barX, y: size.height - barHeight)
                         )
                     )
                     if bar.peak > 0 {
-                        let py = size.height - peakRatio * size.height - 2
-                        let peakRect = CGRect(x: x + gap / 2, y: py, width: barW - gap, height: 2)
+                        let peakY = size.height - peakRatio * size.height - 2
+                        let peakRect = CGRect(x: barX + gap / 2, y: peakY, width: barW - gap, height: 2)
                         ctx.fill(Path(peakRect), with: .color(Color.mp4mPeak))
                     }
                 }
                 for level in [0.25, 0.5, 0.75] {
-                    let y = size.height * (1 - CGFloat(level))
+                    let lineY = size.height * (1 - CGFloat(level))
                     var path = Path()
-                    path.move(to: CGPoint(x: 0, y: y))
-                    path.addLine(to: CGPoint(x: size.width, y: y))
+                    path.move(to: CGPoint(x: 0, y: lineY))
+                    path.addLine(to: CGPoint(x: size.width, y: lineY))
                     ctx.stroke(path, with: .color(Color.mp4mDim), lineWidth: 0.5)
                 }
             }

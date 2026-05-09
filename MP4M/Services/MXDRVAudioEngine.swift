@@ -91,15 +91,15 @@ final class MXDRVAudioEngine: AudioEngineService {
         var raw = [MP4MChannelState](repeating: MP4MChannelState(), count: 16)
         MXDRVGBridge.getChannelStates(&raw)
 
-        return (0..<16).map { i in
+        return (0..<16).map { channelIndex in
             ChannelDisplayState(
-                keyCode: raw[i].keyCode,
-                velocity: raw[i].velocity,
-                keyOn: raw[i].keyOn != 0,
-                volume: raw[i].volume,
-                bend: raw[i].bend,
-                pan: raw[i].pan,
-                keyOffset: raw[i].keyOffset
+                keyCode: raw[channelIndex].keyCode,
+                velocity: raw[channelIndex].velocity,
+                keyOn: raw[channelIndex].keyOn != 0,
+                volume: raw[channelIndex].volume,
+                bend: raw[channelIndex].bend,
+                pan: raw[channelIndex].pan,
+                keyOffset: raw[channelIndex].keyOffset
             )
         }
     }
@@ -160,9 +160,9 @@ final class MXDRVAudioEngine: AudioEngineService {
 
             guard ret > 0 else { return }
 
-            for i in 0..<frameCount {
-                leftPtr[i]  = Float(pcmBuffer[i * 2])     * (1.0 / 32768.0)
-                rightPtr[i] = Float(pcmBuffer[i * 2 + 1]) * (1.0 / 32768.0)
+            for frameIndex in 0..<frameCount {
+                leftPtr[frameIndex]  = Float(pcmBuffer[frameIndex * 2])     * (1.0 / 32768.0)
+                rightPtr[frameIndex] = Float(pcmBuffer[frameIndex * 2 + 1]) * (1.0 / 32768.0)
             }
         }
     }

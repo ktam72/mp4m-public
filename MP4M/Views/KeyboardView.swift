@@ -89,22 +89,22 @@ struct KeyboardView: View {
                     let blackKeys = cachedBlackKeys
 
                     // FM 8チャンネル分のキーボード行を描画
-                    for ch in 0..<8 {
-                        let y = CGFloat(ch) * keyH + 2
+                    for channelIndex in 0..<8 {
+                        let rowY = CGFloat(channelIndex) * keyH + 2
 
                         // 現在のチャンネルが再生中のノートを取得（このチャンネルのみ）
-                        let chState = ch < channels.count ? channels[ch] : ChannelDisplayState()
+                        let chState = channelIndex < channels.count ? channels[channelIndex] : ChannelDisplayState()
                         let litMidiNote: Int? = chState.keyOn ? Int(chState.keyCode) : nil
 
                         // 白鍵を描画
                         for (whiteIndex, whiteKey) in whiteKeys.enumerated() {
-                            let kx = leftMargin + CGFloat(whiteIndex) * whiteKeyW
-                            let kr = CGRect(x: kx + 0.5, y: y + 0.5,
-                                           width: whiteKeyW - 1, height: keyH - 1)
+                            let keyX = leftMargin + CGFloat(whiteIndex) * whiteKeyW
+                            let keyRect = CGRect(x: keyX + 0.5, y: rowY + 0.5,
+                                               width: whiteKeyW - 1, height: keyH - 1)
                             let isLit = litMidiNote == whiteKey.midiNote
                             let color = isLit ? Color.mp4mBright : Color(white: 0.7)
 
-                            ctx.fill(Path(kr), with: .color(color))
+                            ctx.fill(Path(keyRect), with: .color(color))
                         }
 
                         // 黒鍵を描画
@@ -114,14 +114,17 @@ struct KeyboardView: View {
                                 .filter { $0.midiNote < blackKey.midiNote }.count
 
                             // 黒鍵の X 位置: 前の白鍵の右端付近
-                            let bx = leftMargin + CGFloat(whitesBefore - 1) * whiteKeyW + whiteKeyW * 0.65
-                            let bw = whiteKeyW * 0.6
-                            let bh = keyH * 0.6
-                            let br = CGRect(x: bx, y: y, width: bw, height: bh)
+                            let blackKeyX = leftMargin + CGFloat(whitesBefore - 1) * whiteKeyW + whiteKeyW * 0.65
+                            let blackKeyWidth = whiteKeyW * 0.6
+                            let blackKeyHeight = keyH * 0.6
+                            let blackKeyRect = CGRect(
+                                x: blackKeyX, y: rowY,
+                                width: blackKeyWidth, height: blackKeyHeight
+                            )
 
                             let isLit = litMidiNote == blackKey.midiNote
                             let color = isLit ? Color.mp4mBright.opacity(0.9) : Color(white: 0.15)
-                            ctx.fill(Path(br), with: .color(color))
+                            ctx.fill(Path(blackKeyRect), with: .color(color))
                         }
 
                         // CHラベル：再生中は Note名 + オクターブ、それ以外は空白
@@ -129,7 +132,7 @@ struct KeyboardView: View {
                         ctx.draw(
                             Text(labelText).font(.mp4mTitle)
                                 .foregroundColor(Color.mp4mCyan.opacity(0.6)),
-                            at: CGPoint(x: 20, y: y + keyH / 2)
+                            at: CGPoint(x: 20, y: rowY + keyH / 2)
                         )
                     }
                 }

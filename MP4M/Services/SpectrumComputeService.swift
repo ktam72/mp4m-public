@@ -33,14 +33,14 @@ final class SpectrumComputeService {
         // バー状態更新
         var newBars = currentBars
         let maxBars = Float(routeTable.count - 1)
-        for i in 0..<32 {
-            var bar = newBars[i]
-            let raw = speaBuf[i + 5]
+        for barIndex in 0..<32 {
+            var bar = newBars[barIndex]
+            let raw = speaBuf[barIndex + 5]
             var targetBar: Float = 0
 
             if raw > 0 {
-                for j in 0..<routeTable.count where raw < routeTable[j] {
-                    if bar.current < Float(j) { targetBar = Float(j) }
+                for routeIndex in 0..<routeTable.count where raw < routeTable[routeIndex] {
+                    if bar.current < Float(routeIndex) { targetBar = Float(routeIndex) }
                     break
                 }
             }
@@ -60,7 +60,7 @@ final class SpectrumComputeService {
                 bar.peak = targetBar
                 bar.peakTimer = 10
             }
-            newBars[i] = bar
+            newBars[barIndex] = bar
         }
 
         return newBars
@@ -71,7 +71,7 @@ final class SpectrumComputeService {
     private func computeSpectrumCPU(channels: [ChannelDisplayState]) -> [Float] {
         var bins = [Float](repeating: 0, count: 52)
 
-        for ch in channels {
+        for channel in channels {
             guard ch.keyOn else { continue }
             let midiNote = Int(ch.keyCode)
             let velocity = Float(ch.velocity) / 127.0

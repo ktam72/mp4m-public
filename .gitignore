@@ -1,6 +1,7 @@
 # Build artifacts
 build/
 *.o
+*.profraw
 *.a
 *.so
 *.dylib

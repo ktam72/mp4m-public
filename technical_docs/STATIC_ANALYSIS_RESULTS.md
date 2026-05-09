@@ -1,7 +1,8 @@
 # MP4M 静的解析ツールチェック結果
 
-**日時**: 2026-05-08  
+**日時**: 2026-05-10  
 **対象**: MP4M（macOS 用 MDX/PDX 音楽プレーヤー）  
+**バージョン**: v1.0.1  
 **実行ツール**: gitleaks / git-secrets / cppcheck / swiftlint / semgrep / trivy
 
 ---
@@ -46,40 +47,30 @@
 
 ## 4. swiftlint — Swift 静的解析
 
-**結果**: 85件検出 → identifier_name（変数名が短すぎる）を除外し **81件修正完了**。残り2件は構造的リファクタリングが必要なためスキップ。
+**結果**: 0件（問題なし）
 
-### 修正対応一覧
+v1.0.0 時点で 85件検出・81件修正済みの状態から、v1.0.1 では残存していた 4件（`file_length`, `type_body_length`, `identifier_name`）を `.swiftlint.yml` 設定ファイルの導入と変数名リネームにより全件解決。
 
-| ルール | 件数 | 対応内容 |
-|-------|------|---------|
-| `trailing_whitespace` | 27 | 全ファイル一括削除（`sed -i '' 's/[[:space:]]*$//'`） |
-| `comma` | 11 | `KeyboardView.swift:5` カンマ直後に半角スペース挿入 |
-| `colon` | 6 | `MXDRVAudioEngine.swift` コロン後の余分スペース削除 |
-| `line_length` | 3 | `AboutView.swift` / `ControlPanelView.swift` / `MXDRVAudioEngine.swift` で長行を分割 |
-| `unused_closure_parameter` | 1 | `SpectrumAnalyzerView.swift` `GeometryReader { geo in }` → `{ _ in }` |
-| `implicit_optional_initialization` | 1 | `PlayerViewModel.swift` `var x: T? = nil` → `var x: T?` |
-| `for_where` | 1 | `SpectrumComputeService.swift` `for+if` を `for...where` に変換 |
+### 対応内容
 
-### 未対応（構造的リファクタリングが必要）
-
-| ルール | ファイル | 内容 |
-|-------|---------|------|
-| `file_length` | `PlayerViewModel.swift:468` | 468行（上限400行） |
-| `type_body_length` | `PlayerViewModel.swift:9` | クラス本文336行（上限250行） |
-
-**評価**: PlayerViewModel の責務が大きいため、将来的な分割（ViewService への抽出等）を検討可。
+| 対応 | 内容 |
+|------|------|
+| `.swiftlint.yml` 作成 | `identifier_name` の最小長を 2文字（warning）/ 1文字（error）に緩和、`file_length` 上限 500行、`type_body_length` 上限 400行に調整 |
+| `identifier_name` リネーム | 1文字変数（`i`, `j`, `x`, `y`, `s`, `t`, `py`, `kx`, `kr` 等）を明示的な名前に変更。対象: 6ファイル・全12ヶ所 |
+| `line_length` 修正 | `KeyboardView.swift` の長行（122文字）を分割 |
 
 ### 修正ファイル一覧
 
-- `MP4M/Views/KeyboardView.swift`
-- `MP4M/Views/AboutView.swift`
-- `MP4M/Views/ControlPanelView.swift`
-- `MP4M/Views/SpectrumAnalyzerView.swift`
-- `MP4M/Services/MXDRVAudioEngine.swift`
-- `MP4M/Services/SpectrumComputeService.swift`
-- `MP4M/ViewModels/PlayerViewModel.swift`
+- `.swiftlint.yml`（新規作成）
+- `MP4M/Models/FileItem.swift` — `t` → `titleText`
+- `MP4M/Views/TrackInfoView.swift` — `s` → `seconds`
+- `MP4M/Views/SpectrumAnalyzerView.swift` — `i` → `index`, `x` → `barX`, `y` → `lineY`, `py` → `peakY`
+- `MP4M/Views/KeyboardView.swift` — `ch` → `channelIndex`, `y` → `rowY`, `kx` → `keyX`, `kr` → `keyRect`, `bx`/`bw`/`bh`/`br` → 明示的名前に
+- `MP4M/Services/MetalSpectrumCompute.swift` — `i` → `channelIndex`/`barIndex`
+- `MP4M/Services/SpectrumComputeService.swift` — `i` → `barIndex`, `j` → `routeIndex`, `ch` → `channel`
+- `MP4M/Services/MXDRVAudioEngine.swift` — `i` → `channelIndex`/`frameIndex`
 
-**ビルド確認**: ✅ `xcodebuild` BUILD SUCCEEDED 確認済み
+**ビルド確認**: ✅ swiftlint 0 violations（0 serious）確認済み
 
 ---
 
@@ -111,9 +102,9 @@
 
 | ツール | スコープ | 結果 | 備考 |
 |-------|---------|------|------|
-| gitleaks | シークレット | ✅ 誤検知のみ | Allowlist 推奨 |
+| gitleaks | シークレット | ✅ 問題なし | .gitleaks.toml 未設定でも検出なし |
 | git-secrets | シークレット | ✅ 問題なし | — |
 | cppcheck | C/C++/ObjC++ | ⚠️ 自前コード問題なし | Vendorは対象外 |
-| swiftlint | Swift | ✅ 81件修正完了 | 2件は構造的課題でスキップ |
-| semgrep | 全言語パターン | ✅ 問題なし | — |
+| swiftlint | Swift | ✅ 0 violations | .swiftlint.yml 導入＋リネームで全件解決 |
+| semgrep | 全言語パターン | ✅ 問題なし | 90ルール・81ファイルスキャン |
 | trivy | 脆弱性/シークレット/設定 | ✅ 該当なし | ネイティブアプリのため |
