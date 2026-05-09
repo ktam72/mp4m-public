@@ -26,6 +26,8 @@ final class FileBrowserViewModel {
     // MARK: - 初期化
 
     init() {
+        print("[FileBrowserViewModel] init - START")
+        print("[FileBrowserViewModel] MP4MApp.pendingPath: \(MP4MApp.pendingPath ?? "nil")")
         self.selectionStrategy = BrowserFileSelectionStrategy()
 
         if let pendingPath = MP4MApp.pendingPath {
@@ -35,15 +37,19 @@ final class FileBrowserViewModel {
             if isDir.boolValue {
                 currentDirectory = url
                 fileItems = FileItem.items(in: url)
+                print("[FileBrowserViewModel] init - Directory: \(url.path)")
             } else {
                 currentDirectory = url.deletingLastPathComponent()
                 fileItems = FileItem.items(in: url.deletingLastPathComponent())
                 launchFileURL = url
+                print("[FileBrowserViewModel] init - File: \(url.path), launchFileURL set")
             }
         } else if let savedURL = UserDefaults.standard.url(forKey: UserDefaultsKey.currentDirectory) {
             currentDirectory = savedURL
             fileItems = FileItem.items(in: savedURL)
+            print("[FileBrowserViewModel] init - Restored from UserDefaults: \(savedURL.path)")
         }
+        print("[FileBrowserViewModel] init - END")
     }
 
     // MARK: - 公開 API

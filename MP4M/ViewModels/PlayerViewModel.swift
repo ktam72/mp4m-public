@@ -61,9 +61,7 @@ final class PlayerViewModel: @unchecked Sendable {
     // MARK: - 初期化
 
     init(audioService: any AudioEngineService) {
-        #if DEBUG
-        print("[PlayerViewModel.init] START")
-        #endif
+        print("[PlayerViewModel] init - START")
         self.audioService = audioService
         self.spectrumService = SpectrumComputeService()
         self.channelService = ChannelStateService(audioService: audioService)
@@ -81,13 +79,10 @@ final class PlayerViewModel: @unchecked Sendable {
             mutedChannels = Set(savedMutedChannels)
         }
 
-        #if DEBUG
-        print("[PlayerViewModel.init] calling audioService.start()")
-        #endif
+        print("[PlayerViewModel] init - calling audioService.start()")
         audioService.start(sampleRate: 44100)
-        #if DEBUG
-        print("[PlayerViewModel.init] audioService.start() done")
-        #endif
+        print("[PlayerViewModel] init - audioService.start() done")
+        print("[PlayerViewModel] init - END")
     }
 
     /// 明示的クリーンアップ (deinit ではなく View の onDisappear で呼ぶ)
@@ -160,30 +155,44 @@ final class PlayerViewModel: @unchecked Sendable {
 
     /// バックグラウンドで再生時間を計測してから再生開始（メインスレッドをブロックしない）
     func playAsync() async {
-        guard status != .playing else { return }
+        print("[PlayerViewModel] playAsync - START, status: \(status)")
+        guard status != .playing else {
+            print("[PlayerViewModel] playAsync - Already playing, returning")
+            return
+        }
 
         let isPaused = (status == .paused)
         if isPaused {
+            print("[PlayerViewModel] playAsync - Resuming")
             audioService.resume()
         } else {
+            print("[PlayerViewModel] playAsync - Starting new playback")
             totalTimeMs = await Task.detached(priority: .userInitiated) { [self] in
                 audioService.playWithLoopCount(Int32(loopCount))
             }.value
+            print("[PlayerViewModel] playAsync - playWithLoopCount done, totalTimeMs: \(totalTimeMs)")
         }
 
         await MainActor.run {
+            print("[PlayerViewModel] playAsync - Calling startPlayback on MainActor")
             startPlayback()
+            print("[PlayerViewModel] playAsync - startPlayback done")
         }
+        print("[PlayerViewModel] playAsync - END")
     }
 
     /// play() / playAsync() 共通の再生開始処理
     private func startPlayback() {
+        print("[PlayerViewModel] startPlayback - START")
         do {
             try audioService.startEngine()
+            print("[PlayerViewModel] startPlayback - audioEngine started")
         } catch let error as MP4MError {
+            print("[PlayerViewModel] startPlayback - audioEngine failed: \(error)")
             currentError = error
             return
         } catch {
+            print("[PlayerViewModel] startPlayback - audioEngine failed: \(error)")
             currentError = MP4MError.audioEngineFailed(error.localizedDescription)
             return
         }
@@ -193,9 +202,12 @@ final class PlayerViewModel: @unchecked Sendable {
         playStartDate = Date()
         lastSyncTimeMs = playStartTimeMs
         lastSyncDate = Date()
+        print("[PlayerViewModel] startPlayback - playStartTimeMs: \(playStartTimeMs)")
 
         status = .playing
+        print("[PlayerViewModel] startPlayback - status set to .playing")
         startDisplayUpdates()
+        print("[PlayerViewModel] startPlayback - END")
     }
 
     /// 一時停止
@@ -316,14 +328,18 @@ final class PlayerViewModel: @unchecked Sendable {
     // MARK: - 表示更新タイマー
 
     private func startDisplayUpdates() {
+        print("[PlayerViewModel] startDisplayUpdates - START")
         displayTask?.cancel()
         displayTask = Task { @MainActor in
+            print("[PlayerViewModel] startDisplayUpdates - Task started")
             displayFrameCount = 0
             while !Task.isCancelled && (status == .playing || fadeOutTask != nil) {
                 updateDisplay()
                 try? await Task.sleep(for: .seconds(1.0 / 120.0))
             }
+            print("[PlayerViewModel] startDisplayUpdates - Task ended")
         }
+        print("[PlayerViewModel] startDisplayUpdates - END")
     }
 
     private func updateDisplay() {
@@ -341,6 +357,10 @@ final class PlayerViewModel: @unchecked Sendable {
             playStartTimeMs = ms
             lastSyncTimeMs = ms
             lastSyncDate = Date()
+        }
+
+        if displayFrameCount % 120 == 0 {
+            print("[PlayerViewModel] updateDisplay - frame: \(displayFrameCount), currentTimeMs: \(ms)")
         }
 
         // バックグラウンドで実行（計算処理）

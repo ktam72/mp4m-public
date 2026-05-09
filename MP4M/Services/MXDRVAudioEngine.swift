@@ -18,16 +18,17 @@ final class MXDRVAudioEngine: AudioEngineService {
     nonisolated(unsafe) private var mutedChannels: Set<Int> = []
 
     init() {
-        #if DEBUG
-        fputs("[MXDRVAudioEngine.init]\n", stderr)
-        #endif
+        print("[MXDRVAudioEngine] init - START")
+        print("[MXDRVAudioEngine] init - END")
     }
 
     var sourceNode: AVAudioSourceNode? { node }
 
     func start(sampleRate: Int32) {
+        print("[MXDRVAudioEngine] start - sampleRate: \(sampleRate)")
         MXDRVGBridge.start(withSampleRate: sampleRate)
         setupAudioEngine()
+        print("[MXDRVAudioEngine] start - END")
     }
 
     func end() {

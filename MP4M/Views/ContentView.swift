@@ -35,25 +35,42 @@ struct ContentView: View {
             .background(Color.mp4mBackground)
             .foregroundColor(Color.mp4mText)
             .onAppear {
+                print("[ContentView] onAppear - START")
+                print("[ContentView] pendingPath: \(MP4MApp.pendingPath ?? "nil")")
+                print("[ContentView] launchFileURL: \(browserVM.launchFileURL?.path ?? "nil")")
+
                 playerVM = PlayerViewModel(audioService: MXDRVAudioEngine())
                 playerVM?.browserVM = browserVM
                 MP4MApp.setupFileOpenObserver()
+                print("[ContentView] PlayerViewModel initialized")
+
+                // ウィンドウを前面に表示
+                activateWindow()
 
                 // アプリがアクティベートされた後に再生を開始
                 if let fileURL = browserVM.launchFileURL {
+                    print("[ContentView] Starting playback task for: \(fileURL.path)")
                     Task { @MainActor in
                         // アプリのアクティベーション完了を待機
                         await waitForAppActivation()
+                        print("[ContentView] waitForAppActivation done")
 
                         // ウィンドウが前面に表示されたことを確認するために少し待機
                         try? await Task.sleep(for: .milliseconds(100))
 
+                        print("[ContentView] Calling load(url:)")
                         await playerVM?.load(url: fileURL)
+                        print("[ContentView] Calling playAsync()")
                         await playerVM?.playAsync()
+                        print("[ContentView] Playback task complete")
                     }
+                } else {
+                    print("[ContentView] No launchFileURL, skipping auto-play")
                 }
+                print("[ContentView] onAppear - END")
             }
             .onReceive(NotificationCenter.default.publisher(for: .appDidActivate)) { _ in
+                print("[ContentView] Received appDidActivate notification")
                 isAppActivated = true
             }
             .onDisappear {
@@ -132,8 +149,12 @@ struct ContentView: View {
 
     /// アプリのアクティベーション完了を待機
     private func waitForAppActivation() async {
+        print("[ContentView] waitForAppActivation - START, isAppActivated: \(isAppActivated)")
         // すでにアクティベート済みの場合は即座にリターン
-        guard !isAppActivated else { return }
+        guard !isAppActivated else {
+            print("[ContentView] waitForAppActivation - Already activated")
+            return
+        }
 
         // タイムアウト付きで待機（最大2秒）
         let timeout: TimeInterval = 2.0
@@ -141,6 +162,33 @@ struct ContentView: View {
 
         while !isAppActivated && Date().timeIntervalSince(startTime) < timeout {
             try? await Task.sleep(for: .milliseconds(50))
+        }
+        print("[ContentView] waitForAppActivation - END, isAppActivated: \(isAppActivated)")
+    }
+
+    /// ウィンドウを前面に表示
+    private func activateWindow() {
+        // ウィンドウが見つかるまで一定間隔でリトライ
+        Task { @MainActor in
+            for attempt in 1...10 {
+                if let window = NSApp.windows.first {
+                    print("[ContentView] Activating window (attempt \(attempt)): \(window.title)")
+                    window.level = .floating
+                    window.orderFrontRegardless()
+                    window.makeKeyAndOrderFront(nil)
+                    NSApp.activate(ignoringOtherApps: true)
+
+                    // 0.5秒後に通常のレベルに戻す
+                    try? await Task.sleep(for: .milliseconds(500))
+                    window.level = .normal
+
+                    self.isAppActivated = true
+                    return
+                }
+                print("[ContentView] No window found, attempt \(attempt)/10")
+                try? await Task.sleep(for: .milliseconds(100))
+            }
+            print("[ContentView] Failed to find window after 10 attempts")
         }
     }
 }
