@@ -69,10 +69,10 @@ final class MetalSpectrumCompute {
         var channelData = [UInt8](repeating: 0, count: 16 * 8)
         for channelIndex in 0..<min(16, channels.count) {
             let ch = channels[channelIndex]
-            channelData[i * 8 + 0] = ch.keyCode
-            channelData[i * 8 + 1] = ch.keyOffset
-            channelData[i * 8 + 2] = ch.velocity
-            channelData[i * 8 + 3] = ch.keyOn ? 1 : 0
+            channelData[channelIndex * 8 + 0] = ch.keyCode
+            channelData[channelIndex * 8 + 1] = ch.keyOffset
+            channelData[channelIndex * 8 + 2] = ch.velocity
+            channelData[channelIndex * 8 + 3] = ch.keyOn ? 1 : 0
         }
         memcpy(contents, &channelData, channelData.count)
 

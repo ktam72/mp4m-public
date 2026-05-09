@@ -72,9 +72,9 @@ final class SpectrumComputeService {
         var bins = [Float](repeating: 0, count: 52)
 
         for channel in channels {
-            guard ch.keyOn else { continue }
-            let midiNote = Int(ch.keyCode)
-            let velocity = Float(ch.velocity) / 127.0
+            guard channel.keyOn else { continue }
+            let midiNote = Int(channel.keyCode)
+            let velocity = Float(channel.velocity) / 127.0
 
             // MIDI ノート → 周波数ビンマッピング
             let binIndex = midiNote / 12 * 4 + (midiNote % 12) / 3
