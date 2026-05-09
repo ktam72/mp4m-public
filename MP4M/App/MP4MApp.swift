@@ -5,22 +5,22 @@ extension Notification.Name {
     static let mp4mOpenFile = Notification.Name("MP4MOpenFileRequest")
 }
 
-// MARK: - App Delegate
-
-final class MP4MAppDelegate: NSObject, NSApplicationDelegate {
-    func applicationDidFinishLaunching(_ notification: Notification) {
-        NSApp.activate(ignoringOtherApps: true)
-    }
-}
-
-// MARK: - App
-
 @main
 struct MP4MApp: App {
-    @NSApplicationDelegateAdaptor(MP4MAppDelegate.self) private var appDelegate
     static var pendingPath: String?
+    private let launchObserver: NSObjectProtocol
 
     init() {
+        launchObserver = NotificationCenter.default.addObserver(
+            forName: NSApplication.didFinishLaunchingNotification,
+            object: nil,
+            queue: .main
+        ) { _ in
+            DispatchQueue.main.async {
+                NSApp.activate(ignoringOtherApps: true)
+                NSApp.windows.first?.makeKeyAndOrderFront(nil)
+            }
+        }
         registerFonts()
         handleSingleInstance()
     }
