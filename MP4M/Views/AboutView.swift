@@ -14,7 +14,8 @@ struct AboutView: View {
             Text("mp4m").font(.mp4mTitle).foregroundColor(.mp4mAmber)
 
             // バージョン情報
-            Text("Version 1.0 β").font(.mp4mSmall).foregroundColor(.mp4mText)
+            let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+            Text("Version \(version)").font(.mp4mSmall).foregroundColor(.mp4mText)
             Text("MDX Player for macOS").font(.mp4mTiny).foregroundColor(.mp4mDim)
 
             Divider().background(Color.mp4mBorder)

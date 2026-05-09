@@ -155,6 +155,27 @@ final class PlayerViewModel: @unchecked Sendable {
             totalTimeMs = audioService.playWithLoopCount(Int32(loopCount))
         }
 
+        startPlayback()
+    }
+
+    /// バックグラウンドで再生時間を計測してから再生開始（メインスレッドをブロックしない）
+    func playAsync() async {
+        guard status != .playing else { return }
+
+        let isPaused = (status == .paused)
+        if isPaused {
+            audioService.resume()
+        } else {
+            totalTimeMs = await Task.detached(priority: .userInitiated) { [self] in
+                audioService.playWithLoopCount(Int32(loopCount))
+            }.value
+        }
+
+        startPlayback()
+    }
+
+    /// play() / playAsync() 共通の再生開始処理
+    private func startPlayback() {
         do {
             try audioService.startEngine()
         } catch let error as MP4MError {

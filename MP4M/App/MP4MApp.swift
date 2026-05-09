@@ -1,16 +1,18 @@
 import SwiftUI
 import CoreText
 
+extension Notification.Name {
+    static let mp4mOpenFile = Notification.Name("MP4MOpenFileRequest")
+}
+
 @main
 struct MP4MApp: App {
+    /// コマンドライン引数で渡されたパス（FileBrowserViewModel が init で参照する）
+    static var pendingPath: String?
+
     init() {
-        // Monaspace Neon フォントを登録
-        let fontNames = ["MonaspaceNeon-Regular", "MonaspaceNeon-Bold"]
-        for fontName in fontNames {
-            if let url = Bundle.main.url(forResource: fontName, withExtension: "otf") {
-                CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
-            }
-        }
+        registerFonts()
+        handleSingleInstance()
     }
 
     var body: some Scene {
@@ -22,6 +24,67 @@ struct MP4MApp: App {
         .windowResizability(.contentSize)
         .commands {
             CommandGroup(replacing: .newItem) {}
+        }
+    }
+
+    // MARK: - フォント登録
+
+    private func registerFonts() {
+        let fontNames = ["MonaspaceNeon-Regular", "MonaspaceNeon-Bold"]
+        for fontName in fontNames {
+            if let url = Bundle.main.url(forResource: fontName, withExtension: "otf") {
+                CTFontManagerRegisterFontsForURL(url as CFURL, .process, nil)
+            }
+        }
+    }
+
+    // MARK: - シングルインスタンス制御
+
+    private static var lockFD: Int32 = -1
+
+    private func handleSingleInstance() {
+        let cliPath = Self.parseCLIArg()
+
+        let lockPath = "/tmp/com.ktam.MP4M.lock"
+        let fd = open(lockPath, O_CREAT | O_RDWR, 0o644)
+        let isFirst = (fd >= 0 && flock(fd, LOCK_EX | LOCK_NB) == 0)
+
+        if isFirst {
+            Self.lockFD = fd
+            Self.pendingPath = cliPath
+            setupFileOpenObserver()
+        } else {
+            if fd >= 0 { close(fd) }
+            if let path = cliPath {
+                // CFNotificationCenter で即時配送（DistributedNotification の Swift wrapper には deliverImmediately 相当がない）
+                let center = CFNotificationCenterGetDistributedCenter()
+                let name = CFNotificationName("MP4MOpenFile" as CFString)
+                let object = Unmanaged.passUnretained(path as CFString).toOpaque()
+                CFNotificationCenterPostNotification(center, name, object, nil, true)
+            }
+            exit(0)
+        }
+    }
+
+    /// コマンドライン引数からパスを取得（存在確認付き）
+    private static func parseCLIArg() -> String? {
+        let args = CommandLine.arguments
+        guard args.count > 1 else { return nil }
+        let path = (args[1] as NSString).expandingTildeInPath
+        var isDir: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: path, isDirectory: &isDir) else { return nil }
+        return path
+    }
+
+    /// 他インスタンスからのファイル開封通知を受信
+    private func setupFileOpenObserver() {
+        DistributedNotificationCenter.default().addObserver(
+            forName: .init("MP4MOpenFile"),
+            object: nil,
+            queue: .main
+        ) { notification in
+            guard let path = notification.object as? String else { return }
+            NotificationCenter.default.post(name: .mp4mOpenFile, object: path)
         }
     }
 }

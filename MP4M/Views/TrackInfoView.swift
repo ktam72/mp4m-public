@@ -17,8 +17,14 @@ struct TrackInfoView: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            Text("mp4m β版")
-                .font(.mp4mTitle)
+            VStack(spacing: 0) {
+                let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "?"
+                Text("mp4m \(version)")
+                    .font(.mp4mTitle)
+                Text("by ktam72")
+                    .font(.mp4mTiny)
+                    .foregroundColor(Color.mp4mAmber.opacity(0.7))
+            }
                 .foregroundColor(Color.mp4mAmber)
                 .frame(width: 160)
                 .padding(.horizontal, 8)

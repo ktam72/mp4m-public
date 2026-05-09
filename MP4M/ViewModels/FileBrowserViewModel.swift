@@ -20,14 +20,27 @@ final class FileBrowserViewModel {
     var selectedIndex: Int = -1
     var playingIndex: Int = -1
 
+    /// コマンドライン引数で指定されたファイルのURL（再生用）
+    var launchFileURL: URL?
+
     // MARK: - 初期化
 
     init() {
-        // 選択ストラテジーを初期化
         self.selectionStrategy = BrowserFileSelectionStrategy()
 
-        // UserDefaults から設定を復帰
-        if let savedURL = UserDefaults.standard.url(forKey: UserDefaultsKey.currentDirectory) {
+        if let pendingPath = MP4MApp.pendingPath {
+            let url = URL(fileURLWithPath: pendingPath)
+            var isDir: ObjCBool = false
+            guard FileManager.default.fileExists(atPath: pendingPath, isDirectory: &isDir) else { return }
+            if isDir.boolValue {
+                currentDirectory = url
+                fileItems = FileItem.items(in: url)
+            } else {
+                currentDirectory = url.deletingLastPathComponent()
+                fileItems = FileItem.items(in: url.deletingLastPathComponent())
+                launchFileURL = url
+            }
+        } else if let savedURL = UserDefaults.standard.url(forKey: UserDefaultsKey.currentDirectory) {
             currentDirectory = savedURL
             fileItems = FileItem.items(in: savedURL)
         }

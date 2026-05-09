@@ -4,6 +4,7 @@ struct ContentView: View {
     @State private var playerVM: PlayerViewModel?
     @State private var browserVM = FileBrowserViewModel()
     @State private var showAbout = false
+    @State private var ipcFileURL: URL?
 
     var body: some View {
         ZStack {
@@ -35,12 +36,26 @@ struct ContentView: View {
             .onAppear {
                 playerVM = PlayerViewModel(audioService: MXDRVAudioEngine())
                 playerVM?.browserVM = browserVM
+
+                // 他プロセスからの起動時にウィンドウを前面に出す
+                NSApp.activate(ignoringOtherApps: true)
+
+                if let fileURL = browserVM.launchFileURL {
+                    Task {
+                        await playerVM?.load(url: fileURL)
+                        await playerVM?.playAsync()
+                    }
+                }
             }
             .onDisappear {
                 playerVM?.cleanup()
             }
             .onDrop(of: [.fileURL], isTargeted: nil) { providers in
                 handleDrop(providers: providers)
+            }
+            .onReceive(NotificationCenter.default.publisher(for: .mp4mOpenFile)) { notification in
+                guard let path = notification.object as? String else { return }
+                handleIncomingFile(path: path)
             }
             .alert(item: Binding(
                 get: { playerVM?.currentError },
@@ -77,5 +92,32 @@ struct ContentView: View {
             }
         }
         return true
+    }
+
+    /// 他インスタンスからのファイル開封要求を処理
+    private func handleIncomingFile(path: String) {
+        var isDir: ObjCBool = false
+        guard FileManager.default.fileExists(atPath: path, isDirectory: &isDir) else { return }
+
+        let url = URL(fileURLWithPath: path)
+
+        if isDir.boolValue {
+            browserVM.openDirectory(url)
+            return
+        }
+
+        let parentDir = url.deletingLastPathComponent()
+        browserVM.openDirectory(parentDir)
+        if let index = browserVM.playableFiles.firstIndex(where: { $0.url.path == url.path }) {
+            browserVM.playingIndex = index
+        }
+
+        NSApp.activate(ignoringOtherApps: true)
+
+        guard let playerVM else { return }
+        Task {
+            await playerVM.load(url: url)
+            await playerVM.playAsync()
+        }
     }
 }
