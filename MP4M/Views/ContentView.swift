@@ -37,8 +37,10 @@ struct ContentView: View {
                 playerVM = PlayerViewModel(audioService: MXDRVAudioEngine())
                 playerVM?.browserVM = browserVM
 
-                // 他プロセスからの起動時にウィンドウを前面に出す
-                NSApp.activate(ignoringOtherApps: true)
+                // 初回起動時にウィンドウを前面に出す（次の runloop で行う）
+                DispatchQueue.main.async {
+                    NSApp.activate(ignoringOtherApps: true)
+                }
 
                 if let fileURL = browserVM.launchFileURL {
                     Task {
