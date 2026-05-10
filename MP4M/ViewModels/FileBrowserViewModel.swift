@@ -31,23 +31,24 @@ final class FileBrowserViewModel {
         self.selectionStrategy = BrowserFileSelectionStrategy()
 
         if let pendingPath = MP4MApp.pendingPath {
+            Log.debug("[BrowserVM] pendingPath=\(pendingPath)")
             let url = URL(fileURLWithPath: pendingPath)
             var isDir: ObjCBool = false
             guard FileManager.default.fileExists(atPath: pendingPath, isDirectory: &isDir) else { return }
             if isDir.boolValue {
                 currentDirectory = url
                 fileItems = FileItem.items(in: url)
-                print("[FileBrowserViewModel] init - Directory: \(url.path)")
+                Log.debug("[BrowserVM] Set currentDirectory to: \(url.path)")
             } else {
                 currentDirectory = url.deletingLastPathComponent()
                 fileItems = FileItem.items(in: url.deletingLastPathComponent())
                 launchFileURL = url
-                print("[FileBrowserViewModel] init - File: \(url.path), launchFileURL set")
+                Log.debug("[BrowserVM] launchFileURL set to: \(url.path)")
             }
         } else if let savedURL = UserDefaults.standard.url(forKey: UserDefaultsKey.currentDirectory) {
             currentDirectory = savedURL
             fileItems = FileItem.items(in: savedURL)
-            print("[FileBrowserViewModel] init - Restored from UserDefaults: \(savedURL.path)")
+            Log.debug("[BrowserVM] Restored saved directory: \(savedURL.path)")
         }
         print("[FileBrowserViewModel] init - END")
     }

@@ -61,7 +61,7 @@ final class PlayerViewModel: @unchecked Sendable {
     // MARK: - 初期化
 
     init(audioService: any AudioEngineService) {
-        print("[PlayerViewModel] init - START")
+        Log.debug("[PlayerViewModel.init] START")
         self.audioService = audioService
         self.spectrumService = SpectrumComputeService()
         self.channelService = ChannelStateService(audioService: audioService)
@@ -79,10 +79,9 @@ final class PlayerViewModel: @unchecked Sendable {
             mutedChannels = Set(savedMutedChannels)
         }
 
-        print("[PlayerViewModel] init - calling audioService.start()")
+        Log.debug("[PlayerViewModel.init] calling audioService.start()")
         audioService.start(sampleRate: 44100)
-        print("[PlayerViewModel] init - audioService.start() done")
-        print("[PlayerViewModel] init - END")
+        Log.debug("[PlayerViewModel.init] audioService.start() done")
     }
 
     /// 明示的クリーンアップ (deinit ではなく View の onDisappear で呼ぶ)
@@ -101,6 +100,7 @@ final class PlayerViewModel: @unchecked Sendable {
     /// - Parameter url: ロードする MDX ファイルの URL
     /// - Note: エラー発生時は currentError に MP4MError を設定
     func load(url: URL) async {
+        Log.debug("[PlayerVM.load] START url=\(url.path)")
         stop()
         mutedChannels = []
         channelService.resetCache()
@@ -118,23 +118,27 @@ final class PlayerViewModel: @unchecked Sendable {
 
             // PDX 読み込みエラーがあれば設定
             if let pdxError = audioService.pdxLoadError() {
+                Log.debug("[PlayerVM.load] PDX load error: \(pdxError.errorDescription ?? "unknown")")
                 currentError = pdxError
             }
 
             currentTimeMs = 0
             totalTimeMs = 0
+            Log.debug("[PlayerVM.load] SUCCESS title=\(title) pdxFileName=\(pdxFileName)")
         } catch let error as MP4MError {
             currentError = error
             title = url.deletingPathExtension().lastPathComponent
             pdxFileName = "No PDX"
             currentTimeMs = 0
             totalTimeMs = 0
+            Log.debug("[PlayerVM.load] MP4MError: \(error.errorDescription ?? "unknown")")
         } catch {
             currentError = MP4MError.mdxLoadFailed(error.localizedDescription)
             title = url.deletingPathExtension().lastPathComponent
             pdxFileName = "No PDX"
             currentTimeMs = 0
             totalTimeMs = 0
+            Log.debug("[PlayerVM.load] Error: \(error.localizedDescription)")
         }
     }
 
@@ -155,44 +159,45 @@ final class PlayerViewModel: @unchecked Sendable {
 
     /// バックグラウンドで再生時間を計測してから再生開始（メインスレッドをブロックしない）
     func playAsync() async {
-        print("[PlayerViewModel] playAsync - START, status: \(status)")
+        Log.debug("[PlayerVM.playAsync] START status=\(status) loopCount=\(loopCount)")
         guard status != .playing else {
-            print("[PlayerViewModel] playAsync - Already playing, returning")
+            Log.debug("[PlayerVM.playAsync] already playing, skipping")
             return
         }
 
         let isPaused = (status == .paused)
         if isPaused {
-            print("[PlayerViewModel] playAsync - Resuming")
+            Log.debug("[PlayerVM.playAsync] resuming from pause")
             audioService.resume()
         } else {
             print("[PlayerViewModel] playAsync - Starting new playback")
             totalTimeMs = await Task.detached(priority: .userInitiated) { [self] in
-                audioService.playWithLoopCount(Int32(loopCount))
+                Log.debug("[PlayerVM.playAsync] calling playWithLoopCount(\(loopCount))...")
+                let result = audioService.playWithLoopCount(Int32(loopCount))
+                Log.debug("[PlayerVM.playAsync] playWithLoopCount returned totalTimeMs=\(result)")
+                return result
             }.value
             print("[PlayerViewModel] playAsync - playWithLoopCount done, totalTimeMs: \(totalTimeMs)")
         }
 
         await MainActor.run {
-            print("[PlayerViewModel] playAsync - Calling startPlayback on MainActor")
             startPlayback()
-            print("[PlayerViewModel] playAsync - startPlayback done")
         }
-        print("[PlayerViewModel] playAsync - END")
+        Log.debug("[PlayerVM.playAsync] playback started, status=\(status)")
     }
 
     /// play() / playAsync() 共通の再生開始処理
     private func startPlayback() {
-        print("[PlayerViewModel] startPlayback - START")
+        Log.debug("[PlayerVM] startPlayback - START")
         do {
             try audioService.startEngine()
-            print("[PlayerViewModel] startPlayback - audioEngine started")
+            Log.debug("[PlayerVM] startEngine succeeded")
         } catch let error as MP4MError {
-            print("[PlayerViewModel] startPlayback - audioEngine failed: \(error)")
+            Log.debug("[PlayerVM] startEngine MP4MError: \(error.errorDescription ?? "unknown")")
             currentError = error
             return
         } catch {
-            print("[PlayerViewModel] startPlayback - audioEngine failed: \(error)")
+            Log.debug("[PlayerVM] startEngine error: \(error.localizedDescription)")
             currentError = MP4MError.audioEngineFailed(error.localizedDescription)
             return
         }
@@ -202,12 +207,11 @@ final class PlayerViewModel: @unchecked Sendable {
         playStartDate = Date()
         lastSyncTimeMs = playStartTimeMs
         lastSyncDate = Date()
-        print("[PlayerViewModel] startPlayback - playStartTimeMs: \(playStartTimeMs)")
+        Log.debug("[PlayerVM] startPlayback - playStartTimeMs: \(playStartTimeMs)")
 
         status = .playing
-        print("[PlayerViewModel] startPlayback - status set to .playing")
         startDisplayUpdates()
-        print("[PlayerViewModel] startPlayback - END")
+        Log.debug("[PlayerVM] status set to .playing, display timer started")
     }
 
     /// 一時停止
@@ -328,18 +332,18 @@ final class PlayerViewModel: @unchecked Sendable {
     // MARK: - 表示更新タイマー
 
     private func startDisplayUpdates() {
-        print("[PlayerViewModel] startDisplayUpdates - START")
+        Log.debug("[PlayerVM] startDisplayUpdates - START")
         displayTask?.cancel()
         displayTask = Task { @MainActor in
-            print("[PlayerViewModel] startDisplayUpdates - Task started")
+            Log.debug("[PlayerVM] startDisplayUpdates - Task started on MainActor")
             displayFrameCount = 0
             while !Task.isCancelled && (status == .playing || fadeOutTask != nil) {
                 updateDisplay()
                 try? await Task.sleep(for: .seconds(1.0 / 120.0))
             }
-            print("[PlayerViewModel] startDisplayUpdates - Task ended")
+            Log.debug("[PlayerVM] startDisplayUpdates - Task ended")
         }
-        print("[PlayerViewModel] startDisplayUpdates - END")
+        Log.debug("[PlayerVM] startDisplayUpdates - END")
     }
 
     private func updateDisplay() {
@@ -360,7 +364,7 @@ final class PlayerViewModel: @unchecked Sendable {
         }
 
         if displayFrameCount % 120 == 0 {
-            print("[PlayerViewModel] updateDisplay - frame: \(displayFrameCount), currentTimeMs: \(ms)")
+            Log.debug("[PlayerVM] updateDisplay - frame: \(displayFrameCount), currentTimeMs: \(ms)")
         }
 
         // バックグラウンドで実行（計算処理）
@@ -402,16 +406,12 @@ final class PlayerViewModel: @unchecked Sendable {
 
         status = .stopped
 
-        #if DEBUG
-        print("[TrackEnd] autoMode=\(autoMode)")
-        #endif
+        Log.debug("[TrackEnd] autoMode=\(autoMode)")
         startFadeOut()
     }
 
     private func startFadeOut() {
-        #if DEBUG
-        print("[FadeOut] Starting fadeout (autoMode=\(autoMode))")
-        #endif
+        Log.debug("[FadeOut] Starting fadeout (autoMode=\(autoMode))")
         fadeOutVolume = 1.0
         let fadeOutSteps = 60
         let decrement = 1.0 / Float(fadeOutSteps)
@@ -419,9 +419,7 @@ final class PlayerViewModel: @unchecked Sendable {
         fadeOutTask = Task {
             for step in 0..<fadeOutSteps {
                 guard !Task.isCancelled else {
-                    #if DEBUG
-                    print("[FadeOut] Cancelled at step \(step)")
-                    #endif
+                    Log.debug("[FadeOut] Cancelled at step \(step)")
                     break
                 }
 
@@ -434,9 +432,7 @@ final class PlayerViewModel: @unchecked Sendable {
             }
 
             await MainActor.run {
-                #if DEBUG
-                print("[FadeOut] Complete (autoMode=\(self.autoMode))")
-                #endif
+                Log.debug("[FadeOut] Complete (autoMode=\(self.autoMode))")
                 self.fadeOutVolume = 1.0
                 self.audioService.setVolume(1.0)
                 self.displayTask?.cancel()
@@ -457,9 +453,7 @@ final class PlayerViewModel: @unchecked Sendable {
     }
 
     private func playNextTrack() {
-        #if DEBUG
-        print("[NextTrack] AUTO mode - playing next track")
-        #endif
+        Log.debug("[NextTrack] AUTO mode - playing next track")
         DispatchQueue.main.async { [weak self] in
             guard let self = self, let browserVM = self.browserVM else {
                 self?.stop()
@@ -485,9 +479,7 @@ final class PlayerViewModel: @unchecked Sendable {
     }
 
     private func playRandomTrack() {
-        #if DEBUG
-        print("[RandomTrack] SHUFFLE mode - playing random track")
-        #endif
+        Log.debug("[RandomTrack] SHUFFLE mode - playing random track")
         DispatchQueue.main.async { [weak self] in
             guard let self = self, let browserVM = self.browserVM else {
                 self?.stop()

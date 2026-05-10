@@ -1,4 +1,5 @@
 import SwiftUI
+import Foundation
 
 struct ContentView: View {
     @State private var playerVM: PlayerViewModel?
@@ -49,20 +50,20 @@ struct ContentView: View {
 
                 // アプリがアクティベートされた後に再生を開始
                 if let fileURL = browserVM.launchFileURL {
-                    print("[ContentView] Starting playback task for: \(fileURL.path)")
-                    Task { @MainActor in
-                        // アプリのアクティベーション完了を待機
-                        await waitForAppActivation()
-                        print("[ContentView] waitForAppActivation done")
-
-                        // ウィンドウが前面に表示されたことを確認するために少し待機
-                        try? await Task.sleep(for: .milliseconds(100))
-
-                        print("[ContentView] Calling load(url:)")
+                    Log.debug("[Launch] launchFileURL detected: \(fileURL.path)")
+                    let resolvedURL = fileURL.resolvingSymlinksInPath()
+                    if let index = browserVM.playableFiles.firstIndex(where: { $0.url.resolvingSymlinksInPath().path == resolvedURL.path }) {
+                        browserVM.playingIndex = index
+                        Log.debug("[Launch] playingIndex set to \(index)")
+                    } else {
+                        Log.debug("[Launch] file not found in playableFiles, skipping index")
+                    }
+                    Task {
+                        Log.debug("[Launch] Starting load+playAsync for URL: \(fileURL.path)")
                         await playerVM?.load(url: fileURL)
-                        print("[ContentView] Calling playAsync()")
+                        Log.debug("[Launch] load completed, now calling playAsync")
                         await playerVM?.playAsync()
-                        print("[ContentView] Playback task complete")
+                        Log.debug("[Launch] playAsync returned")
                     }
                 } else {
                     print("[ContentView] No launchFileURL, skipping auto-play")
@@ -122,28 +123,40 @@ struct ContentView: View {
 
     /// 他インスタンスからのファイル開封要求を処理
     private func handleIncomingFile(path: String) {
+        Log.debug("[IPC] handleIncomingFile: \(path)")
         var isDir: ObjCBool = false
-        guard FileManager.default.fileExists(atPath: path, isDirectory: &isDir) else { return }
+        guard FileManager.default.fileExists(atPath: path, isDirectory: &isDir) else {
+            Log.debug("[IPC] path does not exist: \(path)")
+            return
+        }
 
         let url = URL(fileURLWithPath: path)
 
         if isDir.boolValue {
+            Log.debug("[IPC] path is a directory, opening in file browser")
             browserVM.openDirectory(url)
             return
         }
 
         let parentDir = url.deletingLastPathComponent()
         browserVM.openDirectory(parentDir)
-        if let index = browserVM.playableFiles.firstIndex(where: { $0.url.path == url.path }) {
+        let resolvedURL = url.resolvingSymlinksInPath()
+        if let index = browserVM.playableFiles.firstIndex(where: { $0.url.resolvingSymlinksInPath().path == resolvedURL.path }) {
             browserVM.playingIndex = index
         }
 
         NSApp.activate(ignoringOtherApps: true)
 
-        guard let playerVM else { return }
+        guard let playerVM else {
+            Log.debug("[IPC] playerVM is nil, cannot play")
+            return
+        }
         Task {
+                Log.debug("[IPC] Starting load+playAsync for: \(url.path)")
             await playerVM.load(url: url)
+                Log.debug("[IPC] load completed, now calling playAsync")
             await playerVM.playAsync()
+                Log.debug("[IPC] playAsync returned")
         }
     }
 
