@@ -125,14 +125,19 @@ void opm_registers::operator_map(operator_mapping &dest) const
 	//    carrier 1, modulator 1, carrier 2, modulator 2
 	static const operator_mapping s_fixed_map =
 	{ {
-		operator_list(  0, 16,  8, 24 ),  // Channel 0 operators
-		operator_list(  1, 17,  9, 25 ),  // Channel 1 operators
-		operator_list(  2, 18, 10, 26 ),  // Channel 2 operators
-		operator_list(  3, 19, 11, 27 ),  // Channel 3 operators
-		operator_list(  4, 20, 12, 28 ),  // Channel 4 operators
-		operator_list(  5, 21, 13, 29 ),  // Channel 5 operators
-		operator_list(  6, 22, 14, 30 ),  // Channel 6 operators
-		operator_list(  7, 23, 15, 31 ),  // Channel 7 operators
+		// YM2151 slot order: OP1=n, OP2=n+8, OP3=n+16, OP4=n+24
+		// The ALGORITHM table in ymfm_fm.ipp expects [C1, M1, C2, M2] order,
+		// but YM2151 algorithms use [OP1, OP2, OP3, OP4] order.
+		// Since YM2151 algorithms map OP1=C1, OP2=M1, OP3=C2, OP4=M2,
+		// we must preserve the natural YM2151 order here.
+		operator_list(  0,  8, 16, 24 ),  // Channel 0 operators (OP1,OP2,OP3,OP4)
+		operator_list(  1,  9, 17, 25 ),  // Channel 1 operators
+		operator_list(  2, 10, 18, 26 ),  // Channel 2 operators
+		operator_list(  3, 11, 19, 27 ),  // Channel 3 operators
+		operator_list(  4, 12, 20, 28 ),  // Channel 4 operators
+		operator_list(  5, 13, 21, 29 ),  // Channel 5 operators
+		operator_list(  6, 14, 22, 30 ),  // Channel 6 operators
+		operator_list(  7, 15, 23, 31 ),  // Channel 7 operators
 	} };
 	dest = s_fixed_map;
 }

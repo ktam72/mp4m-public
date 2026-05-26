@@ -741,17 +741,7 @@ static void OPM_SUB(
 	void
 ) {
 #if LOGOPM
-#if 0
-	FILE *fout;
-	fout = fopen( "c:\\temp\\opm.log", "ab+" );
-	fprintf( fout, "%02X %02X\n", D1&0xff, D2&0xff );
-	fclose( fout );
-#endif
-	{
-		char s[1024];
-		sprintf(s, "OPM Write: %02X %02X", D1&0xff, D2&0xff);
-		LOG_D(s);
-	}
+	fprintf(stderr, "OPM: %02X %02X\n", D1&0xff, D2&0xff);
 #endif
 
 	OPM.SetReg( (UBYTE)D1, (UBYTE)D2 );
