@@ -37,7 +37,7 @@
 #include <float.h>
 #include "mxdrvg.h"
 
-#include "../fmgen/opm.h"
+#include "../../ymfm/opm_wrapper.h"
 #include "../pcm8/x68pcm8.h"
 #include "../downsample/downsample.h"
 
@@ -74,7 +74,7 @@ static void OPMINTFUNC(
 	void
 );
 
-class X68OPM : public FM::OPM {
+class X68OPM : public OpmWrapper {
 	public:
 		virtual void Intr(bool irq) {
 			if (irq) {
@@ -614,12 +614,9 @@ ULONG MXDRVG_MeasurePlayTime(
 	int loop,
 	int fadeout
 ) {
-	X68REG reg;
 	void (MXDRVG_CALLBACK *opmintback)(void);
+	UWORD chmaskback;
 
-	SETOPMINT( NULL );
-
-	MeasurePlayTime = TRUE;
 	TerminatePlay = FALSE;
 	LoopCount = 0;
 	LoopLimit = loop;
@@ -629,19 +626,22 @@ ULONG MXDRVG_MeasurePlayTime(
 	opmintback = MXDRVG_CALLBACK_OPMINT;
 	MXDRVG_CALLBACK_OPMINT = MXDRVG_MeasurePlayTime_OPMINT;
 
-	reg.d0 = 0x0f;
-	reg.d1 = -1;
-	MXDRVG( &reg );
+	chmaskback = G.L001e1c;
+	L_PLAY();
 
-	while ( !TerminatePlay ) OPMINTFUNC();
+	while ( !TerminatePlay )
+	{
+		OPM.Count(1000);
+	}
+
+	ULONG result = ( (ULONG)(G.PLAYTIME*(LONGLONG)1024/4000+(1-DBL_EPSILON))+2000 );
 
 	MXDRVG_Stop();
 
+	G.L001e1c = chmaskback;
 	MXDRVG_CALLBACK_OPMINT = opmintback;
-	MeasurePlayTime = FALSE;
-	SETOPMINT( L_OPMINT );
 
-	return ( (ULONG)(G.PLAYTIME*(LONGLONG)1024/4000+(1-DBL_EPSILON))+2000 );
+	return result;
 }
 
 /***************************************************************/
@@ -651,13 +651,9 @@ void MXDRVG_PlayAt(
 	ULONG playat,
 	int loop,
 	int fadeout
-
 ) {
-	X68REG reg;
 	MXDRVG_CALLBACK_OPMINTFUNC *opmintback;
 	UWORD chmaskback;
-
-	SETOPMINT( NULL );
 
 	TerminatePlay = FALSE;
 	LoopCount = 0;
@@ -673,18 +669,14 @@ void MXDRVG_PlayAt(
 	MXDRVG_CALLBACK_OPMINT = MXDRVG_MeasurePlayTime_OPMINT;
 	chmaskback = G.L001e1c;
 
-	reg.d0 = 0x0f;
-	reg.d1 = -1;
-	MXDRVG( &reg );
-
-	while ( G.PLAYTIME < playat ) {
+	while ( G.PLAYTIME < playat )
+	{
 		if ( TerminatePlay ) break;
-		OPMINTFUNC();
+		OPM.Count(1000);
 	}
 
 	G.L001e1c = chmaskback;
 	MXDRVG_CALLBACK_OPMINT = opmintback;
-	SETOPMINT( L_OPMINT );
 }
 
 /***************************************************************/
@@ -765,8 +757,6 @@ static void OPM_SUB(
 		LOG_D(s);
 	}
 #endif
-
-	if ( MeasurePlayTime ) return;
 
 	OPM.SetReg( (UBYTE)D1, (UBYTE)D2 );
 }

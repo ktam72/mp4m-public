@@ -24,9 +24,9 @@ struct AboutView: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 8) {
                     LicenseRow(
-                        name: "fmgen",
-                        author: "cisc",
-                        license: "cisc Copyright (Commercial use requires prior agreement)"
+                        name: "ymfm",
+                        author: "Aaron Giles",
+                        license: "BSD 3-Clause (Commercial use permitted)"
                     )
                     LicenseRow(
                         name: "GAMDX",

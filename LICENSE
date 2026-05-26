@@ -207,32 +207,43 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 END OF TERMS AND CONDITIONS
 
 ========================================
-(2) fmgen — YM2151 FM Synthesizer Emulator
+(2) ymfm — YM2151/OPM FM Synthesizer Engine
 ========================================
 
-Copyright (c) cisc
+Copyright (c) Aaron Giles
 
-Author: cisc
-Repository: https://github.com/kichikuou/fmgen
+Author: Aaron Giles
+Repository: https://github.com/aaronsgiles/ymfm
 
-========== fmgen License (cisc) ==========
+======== BSD 3-Clause License ========
 
-以下の条件下で自由に利用、改変、配布できます。
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
 
-1. 改変・組み込み・配布・利用は自由です。
-2. ただし以下の条件を満たす必要があります：
-   (1) 作者および著作権者（cisc）を明記してください。
-   (2) 配布する場合は、これがフリーソフトであることを明示してください。
-   (3) ソースコードを改変した場合、その改変内容を明示してください。
-   (4) ソースコードを配布する場合、このテキストをそのまま添付してください。
+1. Redistributions of source code must retain the above copyright notice,
+   this list of conditions and the following disclaimer.
 
-3. 商用ソフトウェア（シェアウェアを含む）に組み込む場合は、
-   事前に cisc に合意を得てください。
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
 
-このソフトウェアは「現状有姿」で提供されます。
-著者は一切の保証責任を負わず、いかなる損害についても責任を負いません。
+3. Neither the name of the copyright holder nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
 
-===========================================
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
+THE POSSIBILITY OF SUCH DAMAGE.
+
+=====================================
 
 ========================================
 (3) MXDRVG — MDX Decoder & Sequencer
@@ -409,7 +420,7 @@ SUMMARY OF INCLUDED LICENSES
 ========================================
 
 Project Code:        MIT License
-fmgen:               cisc Copyright (Commercial use requires prior agreement)
+ymfm:                BSD 3-Clause License (商用利用可能)
 MXDRVG:              Apache 2.0 License
 pcm8/x68pcm8:        Apache 2.0 License
 LZX Decompression:   0BSD License (商用利用可能)
@@ -422,8 +433,7 @@ When redistributing this software:
 
 1. Include this LICENSE file in its entirety.
 2. Maintain all copyright notices and license texts.
-3. For commercial distribution, ensure fmgen license compliance
-   (商用利用には cisc に事前合意が必須です).
+3. ymfm is BSD 3-Clause — commercial use is permitted without additional approval.
 4. Update CHANGELOG if modifications are made.
 5. Retain attribution to original authors and projects.
 
@@ -436,9 +446,9 @@ Author: ktam72
 Email: ktam72@gmail.com
 Repository: https://github.com/ktam72/MP4M
 
-For fmgen licensing questions:
-https://github.com/kichikuou/fmgen
+For ymfm licensing questions:
+https://github.com/aaronsgiles/ymfm
 
 ========================================
-Last Updated: 2026-05-05
+Last Updated: 2026-05-26
 ========================================
