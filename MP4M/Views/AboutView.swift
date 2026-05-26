@@ -2,6 +2,7 @@ import SwiftUI
 
 struct AboutView: View {
     @Binding var isPresented: Bool
+    @AppStorage(UserDefaultsKey.opmEngine) private var opmEngineType: Int = 0
 
     var body: some View {
         VStack(spacing: 16) {
@@ -18,6 +19,22 @@ struct AboutView: View {
             Text("Version \(version)").font(.mp4mSmall).foregroundColor(.mp4mText)
             Text("MDX Player for macOS").font(.mp4mTiny).foregroundColor(.mp4mDim)
 
+            // OPM エンジン切替
+            VStack(spacing: 6) {
+                Text("OPM Engine")
+                    .font(.mp4mTiny)
+                    .foregroundColor(.mp4mDim)
+
+                HStack(spacing: 0) {
+                    engineButton("ymfm", type: 0)
+                    engineButton("fmgen", type: 1)
+                }
+                .overlay(
+                    RoundedRectangle(cornerRadius: 2)
+                        .stroke(Color.mp4mBorder, lineWidth: 1)
+                )
+            }
+
             Divider().background(Color.mp4mBorder)
 
             // ライセンス情報（スクロール可能）
@@ -27,6 +44,11 @@ struct AboutView: View {
                         name: "ymfm",
                         author: "Aaron Giles",
                         license: "BSD 3-Clause (Commercial use permitted)"
+                    )
+                    LicenseRow(
+                        name: "fmgen",
+                        author: "cisc",
+                        license: "Free for non-commercial use"
                     )
                     LicenseRow(
                         name: "GAMDX",
@@ -101,6 +123,22 @@ struct AboutView: View {
         )
         .frame(width: 480)
         .shadow(color: .black.opacity(0.8), radius: 24)
+    }
+
+    @ViewBuilder
+    private func engineButton(_ label: String, type: Int) -> some View {
+        Button {
+            opmEngineType = type
+            MXDRVGBridge.setOpmEngine(Int32(type))
+        } label: {
+            Text(label)
+                .font(.mp4mTiny)
+                .foregroundColor(opmEngineType == type ? .mp4mAmber : .mp4mDim)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 6)
+                .background(opmEngineType == type ? Color.mp4mAmber.opacity(0.12) : Color.clear)
+        }
+        .buttonStyle(.plain)
     }
 }
 

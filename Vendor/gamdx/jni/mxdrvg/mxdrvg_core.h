@@ -37,7 +37,6 @@
 #include <float.h>
 #include "mxdrvg.h"
 
-#include "../../ymfm/opm_wrapper.h"
 #include "../pcm8/x68pcm8.h"
 #include "../downsample/downsample.h"
 
@@ -74,30 +73,22 @@ static void OPMINTFUNC(
 	void
 );
 
-// A/B 比較用: 1 にすると ymfm ではなく fmgen を使用
-// #define USE_FMGEN_OPM 1
+// ランタイム OPM エンジン切替対応（バージョンポップアップで切替可能）
+//   0 = ymfm  (デフォルト)
+//   1 = fmgen
+#include "../../ymfm/IOpmEngine.h"
+#include "../../ymfm/OpmEngineYmfm.h"
+#include "../fmgen/OpmEngineFmgen.h"
 
-#if USE_FMGEN_OPM
-#include "../fmgen/opm.h"
-class X68OPM : public FM::OPM {
-	public:
-		virtual void Intr(bool irq) {
-			if (irq) {
-				OPMINTFUNC();
-			}
-		}
-};
-#else
-class X68OPM : public OpmWrapper {
-	public:
-		virtual void Intr(bool irq) {
-			if (irq) {
-				OPMINTFUNC();
-			}
-		}
-};
-#endif
-static X68OPM OPM;
+static int g_opm_engine_type = 0;     // 0:ymfm, 1:fmgen
+static IOpmEngine* g_engine = nullptr;
+static uint8_t g_opm_regs[256] = {};  // 全レジスタ状態保存（エンジン切替時のリプレイ用）
+
+static void engine_intr_callback(bool irq) {
+	if (irq) {
+		OPMINTFUNC();
+	}
+}
 static X68K::X68PCM8 PCM8;
 static X68K::DOWNSAMPLE DS;
 
@@ -136,7 +127,7 @@ void OPM_GetChannelStates(void* states, int max_channels) {
         // OPMレジスタから直接KCを読み取る
         // YM2151 KCレジスタ構造: 上位3ビット=オクターブ(0-7), 下位4ビット=ノート(0-11)
         // MIDI note = (オクターブ) * 12 + ノート
-        uint8_t kc = OPM.GetChannelNote(i);
+		uint8_t kc = g_engine->GetChannelNote(i);
         uint8_t octave = (kc >> 4) & 0x07;  // 上位3ビット
         uint8_t note = kc & 0x0F;           // 下位4ビット
         ch_states[i].keyCode = octave * 12 + note;
@@ -383,11 +374,19 @@ int MXDRVG_Start(
 		return -1;
 	}
 
-	OPM.Init(4000000, G.INNERSAMPRATE, (G.OPMFILTER != 0));
+	if (!g_engine) {
+		if (g_opm_engine_type == 1)
+			g_engine = new OpmEngineFmgen();
+		else
+			g_engine = new OpmEngineYmfm();
+		g_engine->SetIntrCallback(engine_intr_callback);
+	}
+	g_engine->Init(4000000, G.INNERSAMPRATE, (G.OPMFILTER != 0));
+	memset(g_opm_regs, 0, sizeof(g_opm_regs));
 	PCM8.Init(G.INNERSAMPRATE);
 	DS.Init(G.INNERSAMPRATE, G.SAMPRATE, ((filtermode&1) == 0));
 
-	OPM.SetVolume(-12);
+	g_engine->SetVolume(-12);
 	PCM8.SetVolume(0);
 
 	ret = Initialize( mdxbufsize, pdxbufsize );
@@ -428,6 +427,9 @@ void MXDRVG_End(
 	memset((void*)MXDRVG_WORK_CHBUF_PCM, 0, sizeof(MXDRVG_WORK_CHBUF_PCM));
 	memset((void*)&OPMBUF, 0, sizeof(OPMBUF));
 
+	delete g_engine;
+	g_engine = nullptr;
+	memset(g_opm_regs, 0, sizeof(g_opm_regs));
 }
 
 /***************************************************************/
@@ -448,7 +450,7 @@ int MXDRVG_GetPCM(
 	rest_len = len;
 	while (rest_len > 0) {
 		ULONG create_len = (ULONG)rest_len;
-		ULONG event_us = OPM.GetNextEvent();
+		ULONG event_us = g_engine->GetNextEvent();
 		if (event_us == 0) {
 			//
 		} else if ((SLONG)event_us < rest_us) {
@@ -468,25 +470,8 @@ int MXDRVG_GetPCM(
 		}
 		if (innerbuf) {
 			memset(innerbuf, 0, create_len2*sizeof(Sample)*2);
-			OPM.Mix(innerbuf, create_len2);
+			g_engine->Mix(innerbuf, create_len2);
 			PCM8.Mix(innerbuf, create_len2);
-#if USE_FMGEN_OPM
-			#define ENGINE_NAME "fmgen"
-#else
-			#define ENGINE_NAME "ymfm"
-#endif
-			// 5バッファ目から 128 サンプルをダンプ
-			static int _pcm_buf = 0;
-			static int _pcm_dumped = 0;
-			_pcm_buf++;
-			if (_pcm_buf > 5 && _pcm_dumped < 128) {
-				int n = (128 - _pcm_dumped) < (int)create_len2 ? (128 - _pcm_dumped) : (int)create_len2;
-				for (int j = 0; j < n; j++) {
-					fprintf(stderr, "[PCM_" ENGINE_NAME "] %d %d\n", innerbuf[j*2], innerbuf[j*2+1]);
-				}
-				_pcm_dumped += n;
-			}
-			#undef ENGINE_NAME
 			if (TotalVolume != 256) {
 				for (ULONG j=0; j<create_len2; j++) {
 					int v0 = (innerbuf[j*2+0] * TotalVolume) >> 8;
@@ -504,7 +489,7 @@ int MXDRVG_GetPCM(
 		}
 		G.PLAYSAMPLES += create_len;
 		ULONG use_us = (create_len*1000000)/G.SAMPRATE;
-		OPM.Count(use_us);
+		g_engine->Count(use_us);
 		rest_us -= use_us;
 		rest_len -= create_len;
 	}
@@ -545,6 +530,57 @@ int MXDRVG_GetChannelMask(
 	void
 ) {
 	return G.L001e1c;
+}
+
+/***************************************************************/
+
+MXDRVG_EXPORT
+void MXDRVG_SetOpmEngine(
+	int type
+) {
+	if (type < 0 || type > 1) return;
+	if (type == g_opm_engine_type) return;
+
+	g_opm_engine_type = type;
+
+	// 再生中にエンジンを切り替える場合はレジストリプレイで状態を復元
+	if (g_engine) {
+		IOpmEngine* new_engine = nullptr;
+
+		if (type == 1)
+			new_engine = new OpmEngineFmgen();
+		else
+			new_engine = new OpmEngineYmfm();
+
+		new_engine->SetIntrCallback(engine_intr_callback);
+		new_engine->Init(4000000, G.INNERSAMPRATE, (G.OPMFILTER != 0));
+		new_engine->SetVolume(-12);
+
+		// 全 256 レジスタをリプレイ
+		for (int addr = 0; addr < 256; addr++)
+			new_engine->SetReg(addr, g_opm_regs[addr]);
+
+		delete g_engine;
+		g_engine = new_engine;
+	}
+}
+
+/***************************************************************/
+
+MXDRVG_EXPORT
+int MXDRVG_GetOpmEngine(
+	void
+) {
+	return g_opm_engine_type;
+}
+
+/***************************************************************/
+
+MXDRVG_EXPORT
+const char* MXDRVG_GetOpmEngineName(
+	void
+) {
+	return g_engine ? g_engine->GetEngineName() : "none";
 }
 
 /***************************************************************/
@@ -659,7 +695,7 @@ ULONG MXDRVG_MeasurePlayTime(
 
 	while ( !TerminatePlay )
 	{
-		OPM.Count(1000);
+		g_engine->Count(1000);
 	}
 
 	ULONG result = ( (ULONG)(G.PLAYTIME*(LONGLONG)1024/4000+(1-DBL_EPSILON))+2000 );
@@ -700,7 +736,7 @@ void MXDRVG_PlayAt(
 	while ( G.PLAYTIME < playat )
 	{
 		if ( TerminatePlay ) break;
-		OPM.Count(1000);
+		g_engine->Count(1000);
 	}
 
 	G.L001e1c = chmaskback;
@@ -776,7 +812,10 @@ static void OPM_SUB(
 	fprintf(stderr, "OPM: %02X %02X\n", D1&0xff, D2&0xff);
 #endif
 
-	OPM.SetReg( (UBYTE)D1, (UBYTE)D2 );
+	uint8_t addr = (UBYTE)D1;
+	uint8_t data = (UBYTE)D2;
+	g_opm_regs[addr] = data;
+	if (g_engine) g_engine->SetReg(addr, data);
 }
 
 /***************************************************************/

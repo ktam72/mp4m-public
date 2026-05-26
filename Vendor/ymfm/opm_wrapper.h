@@ -26,6 +26,11 @@ public:
     int32 GetNextEvent();
     bool Count(int32 us);
 
+    // fmgen 互換タイマーモード切替 (default: true)
+    // true  = fmgen 準拠の 64x 高速タイマー (MXDRV 互換)
+    // false = ymfm 正規の YM2151 実機相当タイマー
+    void SetFmgenTimerCompat(bool enable) { m_fmgen_compat_timer = enable; }
+
     // Intr callback (overridable by X68OPM)
     virtual void Intr(bool) {}
 
@@ -45,6 +50,9 @@ private:
 
     // Channel note cache (key code from regs 0x28-0x2F)
     uint8_t m_kc[8];
+
+    // fmgen compat timer mode flag
+    bool m_fmgen_compat_timer;
 
     // Output volume factor (fmgen compatible)
     int m_fmvolume;

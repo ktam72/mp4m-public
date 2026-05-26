@@ -25,4 +25,8 @@
 + (nullable NSString *)pdxLoadError;
 + (void)setChannelMute:(int)ch isMuted:(BOOL)isMuted;
 
++ (void)setOpmEngine:(int)type;
++ (int)opmEngine;
++ (NSString *)opmEngineName;
+
 @end

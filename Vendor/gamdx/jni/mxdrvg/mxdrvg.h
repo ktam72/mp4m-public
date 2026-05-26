@@ -222,6 +222,21 @@ int MXDRVG_GetChannelMask(
 	void
 );
 
+MXDRVG_EXPORT
+void MXDRVG_SetOpmEngine(
+	int type
+);
+
+MXDRVG_EXPORT
+int MXDRVG_GetOpmEngine(
+	void
+);
+
+MXDRVG_EXPORT
+const char* MXDRVG_GetOpmEngineName(
+	void
+);
+
 #endif // __MXDRVG_LOADMODULE
 
 #ifdef __cplusplus

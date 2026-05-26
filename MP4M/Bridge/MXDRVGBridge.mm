@@ -134,9 +134,12 @@ static BOOL isValidPDXFileName(NSString* fileName) {
 
 // MXDRVG エンジンをリセット（初期化・開始）
 static void resetMXDRVGEngine(int sampleRate) {
+    // UserDefaults からエンジン種別を復元（初回起動時はデフォルト=ymfm）
+    NSInteger engineType = [[NSUserDefaults standardUserDefaults] integerForKey:@"mp4m_opmEngine"];
     MXDRVG_End();
+    MXDRVG_SetOpmEngine((int)engineType);
     MXDRVG_Start(sampleRate, 0, 64 * 1024, 1024 * 1024);
-    MXDRVG_TotalVolume(128);  // 音量を50%に設定
+    MXDRVG_TotalVolume(128);
 }
 
 // 大文字小文字を区別せずにPDXファイルを検索
@@ -602,6 +605,21 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
             states[chIdx].velocity = isPlaying ? 100 : 0;
         }
     }
+}
+
++ (void)setOpmEngine:(int)type {
+    if (type == MXDRVG_GetOpmEngine()) return;
+    // 再生中にエンジンを切り替えるとスレッド競合のリスクがあるため停止する
+    MXDRVG_Stop();
+    MXDRVG_SetOpmEngine(type);
+}
+
++ (int)opmEngine {
+    return MXDRVG_GetOpmEngine();
+}
+
++ (NSString *)opmEngineName {
+    return [NSString stringWithUTF8String:MXDRVG_GetOpmEngineName()];
 }
 
 + (void)setChannelMute:(int)ch isMuted:(BOOL)isMuted {

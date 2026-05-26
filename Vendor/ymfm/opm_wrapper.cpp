@@ -8,6 +8,7 @@ OpmWrapper::OpmWrapper() :
     m_clock(0),
     m_rate(0),
     m_chip_clocks(0),
+    m_fmgen_compat_timer(true),
     m_fmvolume(16384)
 {
     m_timer_expire[0] = 0;
@@ -25,6 +26,7 @@ bool OpmWrapper::Init(uint clock, uint rate, bool filter)
     m_timer_active[0] = false;
     m_timer_active[1] = false;
 
+    m_fmgen_compat_timer = true;
     m_ymfm.reset();
     SetVolume(0);
     SetChannelMask(0);
@@ -147,6 +149,12 @@ void OpmWrapper::ymfm_set_timer(uint32_t tnum, int32_t duration_in_clocks)
     }
     else
     {
+        // NOTE: 将来 m_fmgen_compat_timer による分岐を入れる場合はここ
+        // ymfm のタイマー周期は YM2151 実機準拠:
+        //   Timer A: (1024 - regval) * 32 ops * 2 prescale = (1024 - regval) * 64 chip clocks
+        //   Timer B: 16 * (256 - regval) * 32 ops * 2 prescale = (256 - regval) * 1024 chip clocks
+        // 現在は fmgen 互換補正なし (ymfm 正規タイミング)
+
         m_timer_expire[tnum] = m_chip_clocks + duration_in_clocks;
         m_timer_active[tnum] = true;
     }
