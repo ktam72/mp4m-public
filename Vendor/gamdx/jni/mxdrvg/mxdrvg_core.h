@@ -75,7 +75,7 @@ static void OPMINTFUNC(
 );
 
 // A/B 比較用: 1 にすると ymfm ではなく fmgen を使用
-// #define USE_FMGEN_OPM 1
+#define USE_FMGEN_OPM 1
 
 #if USE_FMGEN_OPM
 #include "../fmgen/opm.h"
@@ -475,10 +475,12 @@ int MXDRVG_GetPCM(
 #else
 			#define ENGINE_NAME "ymfm"
 #endif
-			// 最初の 64 サンプルだけダンプ
+			// 5バッファ目から 128 サンプルをダンプ
+			static int _pcm_buf = 0;
 			static int _pcm_dumped = 0;
-			if (_pcm_dumped < 64) {
-				int n = (64 - _pcm_dumped) < (int)create_len2 ? (64 - _pcm_dumped) : (int)create_len2;
+			_pcm_buf++;
+			if (_pcm_buf > 5 && _pcm_dumped < 128) {
+				int n = (128 - _pcm_dumped) < (int)create_len2 ? (128 - _pcm_dumped) : (int)create_len2;
 				for (int j = 0; j < n; j++) {
 					fprintf(stderr, "[PCM_" ENGINE_NAME "] %d %d\n", innerbuf[j*2], innerbuf[j*2+1]);
 				}
