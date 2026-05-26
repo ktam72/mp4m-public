@@ -74,6 +74,20 @@ static void OPMINTFUNC(
 	void
 );
 
+// A/B 比較用: 1 にすると ymfm ではなく fmgen を使用
+// #define USE_FMGEN_OPM 1
+
+#if USE_FMGEN_OPM
+#include "../fmgen/opm.h"
+class X68OPM : public FM::OPM {
+	public:
+		virtual void Intr(bool irq) {
+			if (irq) {
+				OPMINTFUNC();
+			}
+		}
+};
+#else
 class X68OPM : public OpmWrapper {
 	public:
 		virtual void Intr(bool irq) {
@@ -82,6 +96,7 @@ class X68OPM : public OpmWrapper {
 			}
 		}
 };
+#endif
 static X68OPM OPM;
 static X68K::X68PCM8 PCM8;
 static X68K::DOWNSAMPLE DS;

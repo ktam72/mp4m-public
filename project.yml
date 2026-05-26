@@ -69,6 +69,11 @@ targets:
       - path: Vendor/ymfm
         includes:
           - "*.cpp"
+      - path: Vendor/gamdx/jni/fmgen
+        includes:
+          - "fmgen.cpp"
+          - "opm.cpp"
+          - "fmtimer.cpp"
 
     settings:
       BRIDGING_HEADER: MP4M/Bridge/MP4M-Bridging-Header.h

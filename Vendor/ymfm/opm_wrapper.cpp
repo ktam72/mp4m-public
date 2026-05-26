@@ -73,9 +73,8 @@ void OpmWrapper::Mix(int16_t* buffer, int nsamples)
 		int32_t l = output.data[0];
 		int32_t r = output.data[1];
 
-		// TODO: 音量調整用 2x ゲイン、確認後削除
-		l = (l * m_fmvolume * 2) >> 14;
-		r = (r * m_fmvolume * 2) >> 14;
+		l = (l * m_fmvolume) >> 14;
+		r = (r * m_fmvolume) >> 14;
 
         buffer[i * 2]     = (int16_t)ymfm::clamp(l, -32768, 32767);
         buffer[i * 2 + 1] = (int16_t)ymfm::clamp(r, -32768, 32767);
