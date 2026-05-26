@@ -231,10 +231,11 @@ protected:
 
 	// internal state
 	uint32_t m_lfo_counter;               // LFO counter
-	uint32_t m_noise_lfsr;                // noise LFSR state
+	uint32_t m_noise_lfsr;                // noise LFSR state (原 LFO 用)
 	uint8_t m_noise_counter;              // noise counter
 	uint8_t m_noise_state;                // latched noise state
 	uint8_t m_noise_lfo;                  // latched LFO noise value
+	uint16_t m_fmgen_noise;               // fmgen 互換 noise LFSR (16-bit CRC-CCITT)
 	uint8_t m_lfo_am;                     // current LFO AM value
 	uint8_t m_regdata[REGISTERS];         // register data
 	int16_t m_lfo_waveform[4][LFO_WAVEFORM_LENGTH]; // LFO waveforms; AM in low 8, PM in upper 8

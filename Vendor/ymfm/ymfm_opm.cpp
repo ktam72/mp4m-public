@@ -48,7 +48,8 @@ opm_registers::opm_registers() :
 	m_noise_counter(0),
 	m_noise_state(0),
 	m_noise_lfo(0),
-	m_lfo_am(0)
+	m_lfo_am(0),
+	m_fmgen_noise(0x1234)
 {
 	// create the waveforms
 	for (uint32_t index = 0; index < WAVEFORM_LENGTH; index++)
@@ -90,6 +91,9 @@ void opm_registers::reset()
 	// enable output on both channels by default
 	m_regdata[0x20] = m_regdata[0x21] = m_regdata[0x22] = m_regdata[0x23] = 0xc0;
 	m_regdata[0x24] = m_regdata[0x25] = m_regdata[0x26] = m_regdata[0x27] = 0xc0;
+
+	m_fmgen_noise = 0x1234;
+	m_noise_counter = 0;
 }
 
 
@@ -177,24 +181,18 @@ bool opm_registers::write(uint16_t index, uint8_t data, uint32_t &channel, uint3
 
 int32_t opm_registers::clock_noise_and_lfo()
 {
-	// base noise frequency is measured at 2x 1/2 FM frequency; this
-	// means each tick counts as two steps against the noise counter
-	uint32_t freq = noise_frequency();
-	for (int rep = 0; rep < 2; rep++)
+	// fmgen 互換ノイズ: 16-bit CRC-CCITT LFSR + 周波数式 n = 32 - nfrq
+	uint32_t nfrq = byte(0x0f, 0, 5);
+	uint32_t n = 32 - nfrq;
+	if (n == 1) n = 2;
+	m_noise_counter += 2;
+	if (m_noise_counter >= 32)
 	{
-		// evidence seems to suggest the LFSR is clocked continually and just
-		// sampled at the noise frequency for output purposes; note that the
-		// low 8 bits are the most recent 8 bits of history while bits 8-24
-		// contain the 17 bit LFSR state
-		m_noise_lfsr <<= 1;
-		m_noise_lfsr |= bitfield(m_noise_lfsr, 17) ^ bitfield(m_noise_lfsr, 14) ^ 1;
-
-		// compare against the frequency and latch when we exceed it
-		if (m_noise_counter++ >= freq)
-		{
-			m_noise_counter = 0;
-			m_noise_state = bitfield(m_noise_lfsr, 17);
-		}
+		m_noise_counter -= n;
+		if (nfrq == 0x1f)
+			m_noise_counter--;
+		m_fmgen_noise = (m_fmgen_noise >> 1) ^ ((m_fmgen_noise & 1) ? 0x8408 : 0);
+		m_noise_state = m_fmgen_noise & 1;
 	}
 
 	// treat the rate as a 4.4 floating-point step value with implied
