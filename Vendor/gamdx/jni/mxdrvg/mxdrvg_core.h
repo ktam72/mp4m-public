@@ -831,7 +831,17 @@ static void OPM_SUB(
 	void
 ) {
 #if LOGOPM
-	fprintf(stderr, "OPM: %02X %02X\n", D1&0xff, D2&0xff);
+	{
+		uint8_t log_addr = D1 & 0xff;
+		uint8_t log_data = D2 & 0xff;
+		// ch2=0x22, ch3=0x23, keyon=0x08, TL(60-7F), AR(80-9F) 他
+		bool log_it = false;
+		if (log_addr == 0x08) log_it = true; // key-on全般
+		else if (log_addr >= 0x20 && log_addr <= 0x27) log_it = true; // ch param
+		else if ((log_addr & 0x07) == 2 || (log_addr & 0x07) == 3) log_it = true; // ch2 or ch3
+		if (log_it)
+			fprintf(stderr, "OPM: %02X %02X\n", log_addr, log_data);
+	}
 #endif
 
 	uint8_t addr = (UBYTE)D1;
