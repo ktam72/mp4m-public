@@ -181,22 +181,18 @@ bool opm_registers::write(uint16_t index, uint8_t data, uint32_t &channel, uint3
 
 int32_t opm_registers::clock_noise_and_lfo()
 {
-	// fmgen 互換ノイズ: 16-bit CRC-CCITT LFSR + 周波数式 n = 32 - nfrq
-	// fmgen の rateratio ベースのカウンタを近似。
-	// rateratio = (fmclock/64) << FM_RATIOBITS / rate ≈ 1486068 (at 44.1kHz)
-	// 1 サンプルあたりの加算: 2 * rateratio ≈ 2972136
-	// 基準閾値: 32 << FM_RATIOBITS = 33554432
-	// 1/baseclock ≒ 11.3 samples → ここでは閾値 22、加算 2 で近似
-	static const uint32_t NOISE_THRESH = 22;
+	// fmgen 互換ノイズ: LFSR + カウンタを fmgen の Noise() から直接移植
+	// rateratio = ((clock/64) << 20) / rate = (62500 << 20) / 44100 ≈ 1486068
+	// noisecount += 2 * rateratio, threshold = 32 << 20
 	uint32_t nfrq = byte(0x0f, 0, 5);
-	uint32_t n = 32 - nfrq;
+	int n = 32 - nfrq;
 	if (n == 1) n = 2;
-	m_noise_counter += 2;
-	if (m_noise_counter >= NOISE_THRESH)
+	m_noise_counter += 2 * 1486068;
+	if (m_noise_counter >= (32 << 20))
 	{
-		m_noise_counter -= n;
+		m_noise_counter -= n << 20;
 		if (nfrq == 0x1f)
-			m_noise_counter--;
+			m_noise_counter -= 1 << 20;
 		m_fmgen_noise = (m_fmgen_noise >> 1) ^ ((m_fmgen_noise & 1) ? 0x8408 : 0);
 		m_noise_state = m_fmgen_noise & 1;
 	}
