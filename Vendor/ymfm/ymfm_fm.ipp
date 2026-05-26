@@ -434,7 +434,7 @@ bool fm_operator<RegisterType>::prepare()
 	m_keyon_live &= ~(1 << KEYON_CSM);
 
 	// we're active until we're quiet after the release
-	return (m_env_state != (RegisterType::EG_HAS_REVERB ? EG_REVERB : EG_RELEASE) || m_env_attenuation < EG_QUIET);
+	return (m_env_state != (RegisterType::EG_HAS_REVERB ? EG_REVERB : EG_RELEASE) || m_env_attenuation <= EG_QUIET);
 }
 
 
@@ -1240,6 +1240,10 @@ void fm_engine_base<RegisterType>::reset()
 	// reset the operators
 	for (auto &op : m_operator)
 		op->reset();
+
+	// reset engine-level cached state
+	m_active_channels = ALL_CHANNELS;
+	m_prepare_count = 0;
 }
 
 
@@ -1337,8 +1341,8 @@ void fm_engine_base<RegisterType>::output(output_data &output, uint32_t rshift, 
 	// mask out some channels for debug purposes
 	chanmask &= debug::GLOBAL_FM_CHANNEL_MASK;
 
-	// mask out inactive channels
-	if (!YMFM_DEBUG_LOG_WAVFILES)
+	// mask out inactive channels (skip for small channel count chips like OPM)
+	if (!YMFM_DEBUG_LOG_WAVFILES && RegisterType::CHANNELS > 8)
 		chanmask &= m_active_channels;
 
 	// handle the rhythm case, where some of the operators are dedicated

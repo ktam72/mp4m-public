@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <float.h>
+#include <mutex>
 #include "mxdrvg.h"
 
 #include "../pcm8/x68pcm8.h"
@@ -83,6 +84,7 @@ static void OPMINTFUNC(
 static int g_opm_engine_type = 0;     // 0:ymfm, 1:fmgen
 static IOpmEngine* g_engine = nullptr;
 static uint8_t g_opm_regs[256] = {};  // 全レジスタ状態保存（エンジン切替時のリプレイ用）
+static std::mutex s_engine_mtx;       // g_engine へのスレッドセーフアクセス用
 
 static void engine_intr_callback(bool irq) {
 	if (irq) {
@@ -118,6 +120,10 @@ void OPM_GetChannelStates(void* states, int max_channels) {
     // MXDRVG の FM チャンネルワークエリアから状態を取得
     // MXDRVG_WORK_CH: S0016 (flags, bit3=keyon), S0012 (note+D), S0022 (volume)
     static int log_count = 0;
+
+    // g_engine が切り替え中は古い値のままスキップ（UI表示用なので問題なし）
+    bool engine_locked = s_engine_mtx.try_lock();
+
     for (int i = 0; i < 8 && i < max_channels; i++) {
         uint8_t flags = MXDRVG_WORK_CHBUF_FM[i].S0016;
         uint8_t keyOn = (flags >> 3) & 1;  // bit3 = keyon（0 or 1）
@@ -127,7 +133,9 @@ void OPM_GetChannelStates(void* states, int max_channels) {
         // OPMレジスタから直接KCを読み取る
         // YM2151 KCレジスタ構造: 上位3ビット=オクターブ(0-7), 下位4ビット=ノート(0-11)
         // MIDI note = (オクターブ) * 12 + ノート
-		uint8_t kc = g_engine->GetChannelNote(i);
+        uint8_t kc = 0;
+        if (engine_locked && g_engine)
+            kc = g_engine->GetChannelNote(i);
         uint8_t octave = (kc >> 4) & 0x07;  // 上位3ビット
         uint8_t note = kc & 0x0F;           // 下位4ビット
         ch_states[i].keyCode = octave * 12 + note;
@@ -155,6 +163,8 @@ void OPM_GetChannelStates(void* states, int max_channels) {
         ch_states[i].bend = 0;
         ch_states[i].keyOffset = 0;
     }
+
+    if (engine_locked) s_engine_mtx.unlock();
 
 }
 }
@@ -438,13 +448,21 @@ int MXDRVG_GetPCM(
 	SWORD *buf,
 	int len
 ) {
+	if (len > 1024) return (0);
+
+	// エンジン切替中は無音を返す（ノンブロッキング）
+	if (!s_engine_mtx.try_lock())
+	{
+		memset(buf, 0, len * (int)sizeof(SWORD));
+		return len;
+	}
+	std::lock_guard<std::mutex> lock(s_engine_mtx, std::adopt_lock);
+
 	SLONG rest_us;
 	static Sample *innerbuf = NULL;
 	static ULONG innerbuflen = 0;
 	int rest_len = len;
 	Sample *outerbuf = (Sample *)buf;
-
-	if (len > 1024) return (0);
 
 	rest_us = (SLONG)(len*1000000)/G.SAMPRATE;
 	rest_len = len;
@@ -560,8 +578,12 @@ void MXDRVG_SetOpmEngine(
 		for (int addr = 0; addr < 256; addr++)
 			new_engine->SetReg(addr, g_opm_regs[addr]);
 
-		delete g_engine;
-		g_engine = new_engine;
+		// オーディオスレッドとの競合を防止（ブロッキング）
+		{
+			std::lock_guard<std::mutex> lock(s_engine_mtx);
+			delete g_engine;
+			g_engine = new_engine;
+		}
 	}
 }
 

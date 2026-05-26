@@ -160,7 +160,14 @@ bool opm_registers::write(uint16_t index, uint8_t data, uint32_t &channel, uint3
 	if (index == 0x19)
 		m_regdata[index + bitfield(data, 7)] = data;
 	else if (index != 0x1a)
+	{
+		// preserve pan (LR) bits on channel registers $20-$27 when
+		// writing ALG/FB only; MXDRV writes these registers without
+		// LR bits, causing silent channels
+		if (index >= 0x20 && index <= 0x27 && (data & 0xc0) == 0)
+			data |= (m_regdata[index] & 0xc0);
 		m_regdata[index] = data;
+	}
 
 	// handle writes to the key on index
 	if (index == 0x08)
