@@ -518,7 +518,17 @@ int32_t fm_operator<RegisterType>::compute_noise_volume(uint32_t am_offset) cons
 template<class RegisterType>
 void fm_operator<RegisterType>::keyonoff(uint32_t on, keyon_type type)
 {
+	uint32_t prev = m_keyon_live;
 	m_keyon_live = (m_keyon_live & ~(1 << int(type))) | (bitfield(on, 0) << int(type));
+
+	// fmgen 互換: key-off → key-on が同一 Count() 内で連続した場合でも
+	// attack を確実に再始動する。clock_keystate は m_keyon_live の状態を
+	// 見るため、中間の 0 状態が prepare() に観測されず attack がスキップされる。
+	if (on && (prev & (1 << int(type))) == 0)
+	{
+		if (m_env_state != EG_ATTACK)
+			start_attack();
+	}
 }
 
 
