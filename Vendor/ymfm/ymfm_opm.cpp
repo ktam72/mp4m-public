@@ -182,11 +182,17 @@ bool opm_registers::write(uint16_t index, uint8_t data, uint32_t &channel, uint3
 int32_t opm_registers::clock_noise_and_lfo()
 {
 	// fmgen 互換ノイズ: 16-bit CRC-CCITT LFSR + 周波数式 n = 32 - nfrq
+	// fmgen の rateratio ベースのカウンタを近似。
+	// rateratio = (fmclock/64) << FM_RATIOBITS / rate ≈ 1486068 (at 44.1kHz)
+	// 1 サンプルあたりの加算: 2 * rateratio ≈ 2972136
+	// 基準閾値: 32 << FM_RATIOBITS = 33554432
+	// 1/baseclock ≒ 11.3 samples → ここでは閾値 22、加算 2 で近似
+	static const uint32_t NOISE_THRESH = 22;
 	uint32_t nfrq = byte(0x0f, 0, 5);
 	uint32_t n = 32 - nfrq;
 	if (n == 1) n = 2;
 	m_noise_counter += 2;
-	if (m_noise_counter >= 32)
+	if (m_noise_counter >= NOISE_THRESH)
 	{
 		m_noise_counter -= n;
 		if (nfrq == 0x1f)

@@ -232,7 +232,7 @@ protected:
 	// internal state
 	uint32_t m_lfo_counter;               // LFO counter
 	uint32_t m_noise_lfsr;                // noise LFSR state (原 LFO 用)
-	uint8_t m_noise_counter;              // noise counter
+	int32_t m_noise_counter;              // noise counter (fmgen 互換のため符号付き)
 	uint8_t m_noise_state;                // latched noise state
 	uint8_t m_noise_lfo;                  // latched LFO noise value
 	uint16_t m_fmgen_noise;               // fmgen 互換 noise LFSR (16-bit CRC-CCITT)
