@@ -583,10 +583,6 @@ static int ReqFadeout;
 static void MXDRVG_CALLBACK MXDRVG_MeasurePlayTime_OPMINT(
 	void
 ) {
-// 20minループ制限を削除
-//	if ( G.PLAYTIME >= G.MEASURETIMELIMIT ) {
-//		TerminatePlay = TRUE;
-//	}
 	if ( G.L001e13 != 0 ) {
 		TerminatePlay = TRUE;
 	}
@@ -595,7 +591,7 @@ static void MXDRVG_CALLBACK MXDRVG_MeasurePlayTime_OPMINT(
 	} else {
 		LoopCount = G.L002246;
 		if ( !FadeoutStart ) {
-			if ( LoopCount >= LoopLimit ) {
+			if ( LoopLimit > 0 && LoopCount >= LoopLimit ) {
 				if ( ReqFadeout ) {
 					FadeoutStart = TRUE;
 					MXDRVG_Fadeout();
@@ -619,7 +615,7 @@ ULONG MXDRVG_MeasurePlayTime(
 
 	TerminatePlay = FALSE;
 	LoopCount = 0;
-	LoopLimit = loop;
+	LoopLimit = (loop > 0) ? loop : 1;
 	FadeoutStart = FALSE;
 	ReqFadeout = fadeout;
 
@@ -657,7 +653,7 @@ void MXDRVG_PlayAt(
 
 	TerminatePlay = FALSE;
 	LoopCount = 0;
-	LoopLimit = loop;
+	LoopLimit = (loop > 0) ? loop : 1;
 	FadeoutStart = FALSE;
 	ReqFadeout = fadeout;
 
