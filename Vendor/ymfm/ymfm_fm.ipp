@@ -499,9 +499,12 @@ int32_t fm_operator<RegisterType>::compute_volume(uint32_t phase, uint32_t am_of
 template<class RegisterType>
 int32_t fm_operator<RegisterType>::compute_noise_volume(uint32_t am_offset) const
 {
-	// fmgen 互換: LogToLin と同じ対数→線形変換を適用し、ノイズビットで符号反転
-	uint32_t env_attenuation = envelope_attenuation(am_offset) << 2;
-	int32_t result = attenuation_to_volume(env_attenuation);
+	// application manual says the logarithmic transform is not applied here, so we
+	// just use the raw envelope attenuation, inverted (since 0 attenuation should be
+	// maximum), and shift it up from a 10-bit value to an 11-bit value
+	int32_t result = (envelope_attenuation(am_offset) ^ 0x3ff) << 1;
+
+	// negate based on the noise state
 	return bitfield(m_regs.noise_state(), 0) ? -result : result;
 }
 
