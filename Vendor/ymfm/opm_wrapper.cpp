@@ -127,8 +127,14 @@ bool OpmWrapper::Count(int32 us)
     {
         if (m_timer_active[i] && m_chip_clocks >= m_timer_expire[i])
         {
+            uint8_t old_status = m_ymfm.read_status();
             m_engine->engine_timer_expired(i);
-            Intr(true);
+            // engine_timer_expired はタイマー割り込みが有効な場合のみ
+            // ステータスフラグをセットする。実際にセットされた場合のみ
+            // Intr(true) を呼び出し、不要な割り込みを防止する。
+            uint8_t timer_bit = (i == 0) ? 0x01 : 0x02;
+            if ((m_ymfm.read_status() & timer_bit) && !(old_status & timer_bit))
+                Intr(true);
         }
     }
     return true;
