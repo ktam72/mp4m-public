@@ -192,9 +192,9 @@ public:
 	uint32_t lfo_waveform() const                    { return byte(0x1b, 0, 2); }
 
 	// per-channel registers
-	uint32_t ch_output_any(uint32_t choffs) const    { return byte(0x20, 6, 2, choffs); }
-	uint32_t ch_output_0(uint32_t choffs) const      { return byte(0x20, 6, 1, choffs); }
-	uint32_t ch_output_1(uint32_t choffs) const      { return byte(0x20, 7, 1, choffs); }
+	uint32_t ch_output_any(uint32_t choffs) const    { return 1; } // YM2151 は常にいずれかの出力にルーティング
+	uint32_t ch_output_0(uint32_t choffs) const      { return byte(0x20, 6, 2, choffs) != 1; } // code!=01 → L
+	uint32_t ch_output_1(uint32_t choffs) const      { return byte(0x20, 6, 2, choffs) >= 1; } // code>=01 → R
 	uint32_t ch_output_2(uint32_t choffs) const      { return 0; }
 	uint32_t ch_output_3(uint32_t choffs) const      { return 0; }
 	uint32_t ch_feedback(uint32_t choffs) const      { return byte(0x20, 3, 3, choffs); }
