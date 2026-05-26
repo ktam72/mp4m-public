@@ -470,6 +470,21 @@ int MXDRVG_GetPCM(
 			memset(innerbuf, 0, create_len2*sizeof(Sample)*2);
 			OPM.Mix(innerbuf, create_len2);
 			PCM8.Mix(innerbuf, create_len2);
+#if USE_FMGEN_OPM
+			#define ENGINE_NAME "fmgen"
+#else
+			#define ENGINE_NAME "ymfm"
+#endif
+			// 最初の 64 サンプルだけダンプ
+			static int _pcm_dumped = 0;
+			if (_pcm_dumped < 64) {
+				int n = (64 - _pcm_dumped) < (int)create_len2 ? (64 - _pcm_dumped) : (int)create_len2;
+				for (int j = 0; j < n; j++) {
+					fprintf(stderr, "[PCM_" ENGINE_NAME "] %d %d\n", innerbuf[j*2], innerbuf[j*2+1]);
+				}
+				_pcm_dumped += n;
+			}
+			#undef ENGINE_NAME
 			if (TotalVolume != 256) {
 				for (ULONG j=0; j<create_len2; j++) {
 					int v0 = (innerbuf[j*2+0] * TotalVolume) >> 8;
