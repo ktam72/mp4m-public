@@ -192,9 +192,13 @@ public:
 	uint32_t lfo_waveform() const                    { return byte(0x1b, 0, 2); }
 
 	// per-channel registers
-	uint32_t ch_output_any(uint32_t choffs) const    { return 1; } // YM2151 は常にいずれかの出力にルーティング
-	uint32_t ch_output_0(uint32_t choffs) const      { return byte(0x20, 6, 2, choffs) != 1; } // code!=01 → L
-	uint32_t ch_output_1(uint32_t choffs) const      { return byte(0x20, 6, 2, choffs) >= 1; } // code>=01 → R
+	// fmgen 互換 pan マッピング: 00=MUTE, 01=L, 10=R, 11=L+R
+	// YM2151 本来は 00=L, 01=R, 10=L+R, 11=L+R だが、fmgen(cisc 実装) は
+	// ibuf[pan] の配列参照で pan=0 → &ibuf[0](未使用)=MUTE としており、
+	// MXDRV はこのマッピングを前提としている。
+	uint32_t ch_output_any(uint32_t choffs) const    { return 1; }
+	uint32_t ch_output_0(uint32_t choffs) const      { uint32_t c = byte(0x20, 6, 2, choffs); return (c == 1 || c == 3); } // 01 or 11 → L
+	uint32_t ch_output_1(uint32_t choffs) const      { uint32_t c = byte(0x20, 6, 2, choffs); return (c == 2 || c == 3); } // 10 or 11 → R
 	uint32_t ch_output_2(uint32_t choffs) const      { return 0; }
 	uint32_t ch_output_3(uint32_t choffs) const      { return 0; }
 	uint32_t ch_feedback(uint32_t choffs) const      { return byte(0x20, 3, 3, choffs); }
