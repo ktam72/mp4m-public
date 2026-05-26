@@ -114,26 +114,30 @@ int32 OpmWrapper::GetNextEvent()
         }
     }
     if (nearest <= 0) return 0;
-    return (int32)(nearest * 1000000LL / m_clock);
+    int32_t event_us = (int32)(nearest * 1000000LL / m_clock);
+    if (m_timer_active[0] || m_timer_active[1])
+        fprintf(stderr, "GNE nearest=%lld event_us=%d\n", (long long)nearest, event_us);
+    return event_us;
 }
 
 bool OpmWrapper::Count(int32 us)
 {
     if (m_clock == 0 || us <= 0) return false;
 
+    int64_t prev = m_chip_clocks;
     m_chip_clocks += (int64_t)us * m_clock / 1000000LL;
+    if (m_timer_active[0] || m_timer_active[1])
+        fprintf(stderr, "CT us=%d clocks=%lld->%lld TA_exp=%lld TB_exp=%lld\n",
+                us, (long long)prev, (long long)m_chip_clocks,
+                (long long)m_timer_expire[0], (long long)m_timer_expire[1]);
 
     for (int i = 0; i < 2; i++)
     {
         if (m_timer_active[i] && m_chip_clocks >= m_timer_expire[i])
         {
+            if (i == 0 || i == 1)
+                fprintf(stderr, "CT FIRE T%d at clocks=%lld\n", i, (long long)m_chip_clocks);
             m_engine->engine_timer_expired(i);
-            // engine_timer_expired 内部で set_reset_status →
-            // engine_check_interrupts → ymfm_update_irq が呼ばれ、
-            // IRQ 状態変化時のみ Intr() が発火する。
-            // さらに Count() 側でもステータスビットがセットされていれば
-            // Intr(true) を呼び、fmgen の OPM::Count→GetStatus→Intr
-            // と同等の二重通知を実現する。
             uint8_t timer_bit = (i == 0) ? 0x01 : 0x02;
             if (m_ymfm.read_status() & timer_bit)
                 Intr(true);
@@ -153,17 +157,14 @@ void OpmWrapper::ymfm_set_timer(uint32_t tnum, int32_t duration_in_clocks)
 
     if (duration_in_clocks < 0)
     {
+        fprintf(stderr, "ST T%d cancel at clocks=%lld\n", tnum, (long long)m_chip_clocks);
         m_timer_active[tnum] = false;
     }
     else
     {
-        // NOTE: 将来 m_fmgen_compat_timer による分岐を入れる場合はここ
-        // ymfm のタイマー周期は YM2151 実機準拠:
-        //   Timer A: (1024 - regval) * 32 ops * 2 prescale = (1024 - regval) * 64 chip clocks
-        //   Timer B: 16 * (256 - regval) * 32 ops * 2 prescale = (256 - regval) * 1024 chip clocks
-        // 現在は fmgen 互換補正なし (ymfm 正規タイミング)
-
-        m_timer_expire[tnum] = m_chip_clocks + duration_in_clocks;
+        int64_t expire = m_chip_clocks + duration_in_clocks;
+        fprintf(stderr, "ST T%d dur=%d expire=%lld at=%lld\n", tnum, duration_in_clocks, (long long)expire, (long long)m_chip_clocks);
+        m_timer_expire[tnum] = expire;
         m_timer_active[tnum] = true;
     }
 }
