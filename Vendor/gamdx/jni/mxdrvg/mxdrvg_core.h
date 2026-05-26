@@ -75,7 +75,7 @@ static void OPMINTFUNC(
 );
 
 // A/B 比較用: 1 にすると ymfm ではなく fmgen を使用
-#define USE_FMGEN_OPM 1
+// #define USE_FMGEN_OPM 1
 
 #if USE_FMGEN_OPM
 #include "../fmgen/opm.h"
