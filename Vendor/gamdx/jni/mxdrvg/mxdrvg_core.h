@@ -43,7 +43,8 @@
 
 extern volatile unsigned char OpmReg1B;  // OPM ÉåÉWÉXÉ^ $1B ÇÃì‡óe
 
-#define LOGOPM 0
+// デバッグ: 1 にすると全 OPM レジスタ書き込みを stderr に出力
+#define LOGOPM 1
 #define LOGPCM 0
 #define LOGSEQ 0
 #define LOGINT 0
