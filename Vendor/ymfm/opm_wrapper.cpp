@@ -128,12 +128,15 @@ bool OpmWrapper::Count(int32 us)
         if (m_timer_active[i] && m_chip_clocks >= m_timer_expire[i])
         {
             m_engine->engine_timer_expired(i);
-            // engine_timer_expired はタイマー割り込みが有効な場合のみ
-            // ステータスフラグをセットする。fmgen は 1 発火につき
-            // Intr(true) を 2 回呼ぶ（Timer::Count→SetStatus→Intr
-            // および OPM::Count→GetStatus→Intr）。ymfm でも
-            // 毎回 Intr(true) を呼び MXDRV エンジンへの通知を保証する。
-            Intr(true);
+            // engine_timer_expired 内部で set_reset_status →
+            // engine_check_interrupts → ymfm_update_irq が呼ばれ、
+            // IRQ 状態変化時のみ Intr() が発火する。
+            // さらに Count() 側でもステータスビットがセットされていれば
+            // Intr(true) を呼び、fmgen の OPM::Count→GetStatus→Intr
+            // と同等の二重通知を実現する。
+            uint8_t timer_bit = (i == 0) ? 0x01 : 0x02;
+            if (m_ymfm.read_status() & timer_bit)
+                Intr(true);
         }
     }
     return true;
@@ -165,9 +168,10 @@ void OpmWrapper::ymfm_set_timer(uint32_t tnum, int32_t duration_in_clocks)
     }
 }
 
-void OpmWrapper::ymfm_update_irq(bool /*asserted*/)
+void OpmWrapper::ymfm_update_irq(bool asserted)
 {
-    // IRQ assertion is handled in Count() to ensure exactly one
-    // Intr(true) call per timer expiry. Blocking here prevents
-    // double-firing from engine_timer_expired's internal chain.
+    // engine_timer_expired 内部の engine_check_interrupts から呼ばれる。
+    // fmgen の SetStatus → Intr(true) に相当する第一通知。
+    if (asserted)
+        Intr(true);
 }
