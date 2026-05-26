@@ -173,7 +173,14 @@ bool opm_registers::write(uint16_t index, uint8_t data, uint32_t &channel, uint3
 	if (index == 0x08)
 	{
 		channel = bitfield(data, 0, 3);
-		opmask = bitfield(data, 3, 4);
+		// bits 4-7: Operator key on/off (Slot 0-3 in YM2151 order)
+		// Slot 0 (bit4) → m_op[0] (carrier 1)
+		// Slot 1 (bit5) → m_op[2] (carrier 2)
+		// Slot 2 (bit6) → m_op[1] (modulator 1)
+		// Slot 3 (bit7) → m_op[3] (modulator 2)
+		// m_keyonoff uses bit positions as m_op[] indices, so we swap bits 1 and 2
+		uint8_t keybits = bitfield(data, 4, 4);
+		opmask = (keybits & 0b1001) | ((keybits & 0b0100) >> 1) | ((keybits & 0b0010) << 1);
 		return true;
 	}
 	return false;
