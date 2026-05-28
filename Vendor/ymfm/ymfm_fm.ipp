@@ -526,6 +526,10 @@ void fm_operator<RegisterType>::keyonoff(uint32_t on, keyon_type type)
 	{
 		if (m_env_state != EG_ATTACK)
 			start_attack();
+		// clock_keystate で m_key_state==0 による start_attack 再呼び出しを
+		// 防ぐ。再呼び出しされると m_env_state==EG_ATTACK で early return し、
+		// m_phase がリセットされず前のノートの位相を引き継いでしまう。
+		m_key_state = 1;
 	}
 }
 
