@@ -16,6 +16,7 @@ public:
 
     bool Init(uint clock, uint rate, bool filter);
     void Reset();
+    void ResetSound() { m_ymfm.reset_sound(); }
     void SetReg(uint addr, uint data);
     uint GetReg(uint addr);
     uint ReadStatus();

@@ -171,6 +171,19 @@ public:
 	// log a key-on event
 	std::string log_keyon(uint32_t choffs, uint32_t opoffs);
 
+	// reset LFO and noise state (keeps registers)
+	void reset_sound() {
+		m_lfo_counter = 0;
+		m_noise_lfsr = 1;
+		m_noise_counter = 0;
+		m_noise_state = 0;
+		m_noise_lfo = 0;
+		m_lfo_am = 0;
+		m_fmgen_noise = 0x1234;
+	}
+
+
+
 	// system-wide registers
 	uint32_t test() const                            { return byte(0x01, 0, 8); }
 	uint32_t lfo_reset() const                       { return byte(0x01, 1, 1); }
@@ -285,6 +298,9 @@ public:
 
 	// generate one sample of sound
 	void generate(output_data *output, uint32_t numsamples = 1);
+
+	// reset LFO/noise/envelopes (preserves timers and registers)
+	void reset_sound() { m_fm.regs().reset_sound(); }
 
 protected:
 	// variants

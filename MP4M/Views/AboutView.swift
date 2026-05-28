@@ -2,7 +2,7 @@ import SwiftUI
 
 struct AboutView: View {
     @Binding var isPresented: Bool
-    @AppStorage(UserDefaultsKey.opmEngine) private var opmEngineType: Int = 0
+    @AppStorage(UserDefaultsKey.opmEngine) private var opmEngineType: Int = 1
 
     var body: some View {
         VStack(spacing: 16) {

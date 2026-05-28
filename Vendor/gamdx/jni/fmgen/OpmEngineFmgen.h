@@ -19,6 +19,11 @@ public:
         FM::OPM::Reset();
     }
 
+    void ResetSound() override
+    {
+        // fmgen は再生間で内部状態が適切にリセットされるため不要
+    }
+
     void SetReg(uint32_t addr, uint32_t data) override
     {
         FM::OPM::SetReg(addr, data);

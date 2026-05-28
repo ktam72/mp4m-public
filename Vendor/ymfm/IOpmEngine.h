@@ -10,6 +10,7 @@ public:
 
     virtual bool Init(uint32_t clock, uint32_t rate, bool filter) = 0;
     virtual void Reset() = 0;
+    virtual void ResetSound() = 0;
 
     virtual void SetReg(uint32_t addr, uint32_t data) = 0;
     virtual uint32_t GetReg(uint32_t addr) = 0;

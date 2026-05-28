@@ -832,15 +832,15 @@ static void OPM_SUB(
 ) {
 #if LOGOPM
 	{
+		static uint32_t log_seq = 0;
+		if (!g_log_fp) g_log_fp = fopen("/tmp/opm_trace.log", "wb");
 		uint8_t log_addr = D1 & 0xff;
 		uint8_t log_data = D2 & 0xff;
-		// ch2=0x22, ch3=0x23, keyon=0x08, TL(60-7F), AR(80-9F) 他
-		bool log_it = false;
-		if (log_addr == 0x08) log_it = true; // key-on全般
-		else if (log_addr >= 0x20 && log_addr <= 0x27) log_it = true; // ch param
-		else if ((log_addr & 0x07) == 2 || (log_addr & 0x07) == 3) log_it = true; // ch2 or ch3
-		if (log_it)
-			fprintf(stderr, "OPM: %02X %02X\n", log_addr, log_data);
+		if (g_log_fp && log_seq < 300000) {
+			log_seq++;
+			fprintf(g_log_fp, "OPM[%u]: %02X %02X\n", log_seq, log_addr, log_data);
+			fflush(g_log_fp);
+		}
 	}
 #endif
 
@@ -3070,8 +3070,13 @@ static void L_PLAY(
 														clr.w   (L001e1c)
 														bra     L0007c0
 */
+#if LOGOPM
+	fprintf(stderr, "OPM: === L_PLAY ===\n");
+#endif
 	G.L001e1c = CLR;
-	L0007c0(); return;
+	L0007c0();
+	if (g_engine) g_engine->ResetSound();
+	return;
 }
 
 
@@ -3364,6 +3369,14 @@ L00094c:;
 														moveq.l #$00,d0
 														rts
 */
+#if LOGOPM
+	if (g_log_fp) {
+		fprintf(g_log_fp, "CH_INIT:");
+		for (int _i=0; _i<9; _i++) fprintf(g_log_fp, " %p", (void*)MXDRVG_WORK_CHBUF_FM[_i].S0000);
+		fprintf(g_log_fp, "\n");
+		fflush(g_log_fp);
+	}
+#endif
 	L00056a();
 	L000756();
 	D0 = 0;
