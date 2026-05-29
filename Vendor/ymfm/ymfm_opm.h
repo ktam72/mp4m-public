@@ -317,6 +317,10 @@ protected:
 	opm_variant m_variant;           // chip variant
 	uint8_t m_address;               // address register
 	fm_engine m_fm;                  // core FM engine
+
+public:
+	// A-2 用：エンベロープ強制リセットのために一時的に公開
+	fm_engine& debug_get_fm_engine() { return m_fm; }
 };
 
 

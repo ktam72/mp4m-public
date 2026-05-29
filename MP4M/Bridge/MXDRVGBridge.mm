@@ -23,6 +23,13 @@ static char g_lastPDXFileName[256] = {0};
 static int g_totalPlayTimeMs = 0;
 static int g_hasPDX = 0;  // PDX が存在するかどうか
 static char g_pdxLoadError[256] = {0};  // PDX ロード失敗時のエラーメッセージ（空=エラーなし）
+
+// エンジン切り替え比較用：最後にロードしたファイルパスを保持
+static NSString *g_lastLoadedMDXPath = nil;
+
+// ymfmデバッグログ用（MP4M_YMFM_DEBUG=1 で有効化）
+static BOOL g_ymfmDebugEnabled = NO;
+static int g_ymfmDebugFrameCount = 0;
 // チャンネルミュート用：元の出力レベルを保存
 static uint8_t g_fmMutedTL[8] = {0};  // FM 各チャンネルのミュート時の元 TL 値
 static uint8_t g_pcmMutedVol[8] = {0};  // PCM 各チャンネルのミュート時の元 volume 値
@@ -140,6 +147,13 @@ static void resetMXDRVGEngine(int sampleRate) {
     MXDRVG_SetOpmEngine((int)engineType);
     MXDRVG_Start(sampleRate, 0, 64 * 1024, 1024 * 1024);
     MXDRVG_TotalVolume(128);
+
+    // 【重要】アプリ起動直後 / エンジン再初期化直後に ymfm の状態を強めにクリーンアップ
+    // これにより、最初の MeasurePlayTime が「真のゼロ状態」に対して行われる際の極端な汚染を緩和する。
+    if (engineType == 0) {
+        MXDRVG_ForceYmfmRelease();
+        fprintf(stderr, "[resetMXDRVGEngine] ForceReleaseAllChannels executed at engine start (ymfm)\n");
+    }
 }
 
 // 大文字小文字を区別せずにPDXファイルを検索
@@ -184,6 +198,14 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
     fprintf(stderr, "[MXDRVGBridge] startWithSampleRate: %d\n", sampleRate);
     #endif
     resetMXDRVGEngine(sampleRate);
+
+    // ymfm詳細デバッグログの有効化（MP4M_YMFM_DEBUG=1）
+    const char* env = getenv("MP4M_YMFM_DEBUG");
+    g_ymfmDebugEnabled = (env && atoi(env) != 0);
+    if (g_ymfmDebugEnabled) {
+        fprintf(stderr, "[YMFM_DEBUG] ymfm詳細ログを有効化 (MP4M_YMFM_DEBUG=1)\n");
+    }
+
     #ifdef DEBUG
     fprintf(stderr, "[MXDRVGBridge] MXDRVG_Start done\n");
     #endif
@@ -212,6 +234,9 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
 }
 
 + (nullable NSString *)loadMDXFile:(NSString *)mdxPath {
+    // エンジン切り替え比較用に最後にロードしたパスを保持
+    g_lastLoadedMDXPath = [mdxPath copy];
+
     // 最初に "No PDX" を設定（PDX未指定や読み込み失敗時に使用）
     strncpy(g_lastPDXFileName, "No PDX", sizeof(g_lastPDXFileName) - 1);
     g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
@@ -473,6 +498,17 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
         g_pdxData ? (unsigned long)g_pdxData.length : 0
     );
 
+    // 【重要改善】SetData直後（MXDRVが音色データを書き込む直前）に
+    // ymfmのエンベロープを強制RELEASE状態にリセットする。
+    // これにより、MeasurePlayTimeで汚れた状態が曲頭の音色に影響するのを防ぐ。
+    NSInteger currentEngine = [[NSUserDefaults standardUserDefaults] integerForKey:@"mp4m_opmEngine"];
+    if (currentEngine == 0) {
+        MXDRVG_ForceYmfmRelease();
+#ifdef DEBUG
+        fprintf(stderr, "[playWithLoopCount] ForceReleaseAllChannels executed after SetData (ymfm)\n");
+#endif
+    }
+
     MXDRVG_PlayAt(0, loopCount, 1);
 }
 
@@ -527,6 +563,25 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
     MXDRVG_WORK_GLOBAL* globalWork = (MXDRVG_WORK_GLOBAL*)MXDRVG_GetWork(MXDRVG_WORKADR_GLOBAL);
 
     OPM_GetChannelStates(opmStates, 8);
+
+    // [YMFM_DEBUG] 定期的に8chの発音状態を詳細ログ出力（MP4M_YMFM_DEBUG=1時のみ）
+    if (g_ymfmDebugEnabled) {
+        g_ymfmDebugFrameCount++;
+        if (g_ymfmDebugFrameCount % 60 == 0) {  // 約1秒間隔（60fps想定）
+            NSInteger engineType = [[NSUserDefaults standardUserDefaults] integerForKey:@"mp4m_opmEngine"];
+            if (engineType == 0) {  // ymfmのみ
+                fprintf(stderr, "[YMFM_CH] ");
+                for (int i = 0; i < 8; i++) {
+                    fprintf(stderr, "CH%d:%s(kc=%02X,vol=%02X) ",
+                            i+1,
+                            opmStates[i].keyOn ? "ON " : "OFF",
+                            opmStates[i].keyCode,
+                            opmStates[i].volume);
+                }
+                fprintf(stderr, "\n");
+            }
+        }
+    }
 
     // Convert FM channels (0-7)
     for (int i = 0; i < 8; i++) {
@@ -609,9 +664,36 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
 
 + (void)setOpmEngine:(int)type {
     if (type == MXDRVG_GetOpmEngine()) return;
+
+    NSString *fromName = [self opmEngineName];
+    int currentTime = [self currentPlayTimeMs];
+
+    // 切り替え前の状態を明確にログ出力（比較用）
+    fprintf(stderr, "\n[ENGINE SWITCH] ========== ENGINE SWITCH ==========\n");
+    fprintf(stderr, "[ENGINE SWITCH] From: %s → To: %s\n",
+            [fromName UTF8String],
+            (type == 0) ? "ymfm" : "fmgen");
+    fprintf(stderr, "[ENGINE SWITCH] At currentTimeMs: %d\n", currentTime);
+    fprintf(stderr, "[ENGINE SWITCH] ====================================\n\n");
+
     // 再生中にエンジンを切り替えるとスレッド競合のリスクがあるため停止する
     MXDRVG_Stop();
     MXDRVG_SetOpmEngine(type);
+
+    // 切り替え完了ログ
+    fprintf(stderr, "[ENGINE SWITCH] Engine switched successfully. New engine: %s\n", [[self opmEngineName] UTF8String]);
+
+    // 比較用途のため、同じ曲を自動で最初からロードし直す（位置0から）
+    if (g_lastLoadedMDXPath) {
+        fprintf(stderr, "[ENGINE SWITCH] Auto-reloading same file for comparison: %s\n", [g_lastLoadedMDXPath UTF8String]);
+        [self loadMDXFile:g_lastLoadedMDXPath];
+        // 自動で再生開始（loopCount=2固定で比較しやすくする）
+        [self playWithLoopCount:2];
+        fprintf(stderr, "[ENGINE SWITCH] Auto playback started after engine switch.\n");
+    } else {
+        fprintf(stderr, "[ENGINE SWITCH] No previous file loaded. Please manually load the same MDX to compare.\n");
+    }
+    fprintf(stderr, "[ENGINE SWITCH] ====================================\n\n");
 }
 
 + (int)opmEngine {

@@ -163,3 +163,30 @@ void OpmWrapper::ymfm_update_irq(bool asserted)
     if (asserted)
         Intr(true);
 }
+
+void OpmWrapper::ForceReleaseAllChannels()
+{
+    // 1. 全8チャンネルを強制 Key Off
+    for (int ch = 0; ch < 8; ++ch) {
+        SetReg(0x08, ch);
+    }
+
+    // 2. 全オペレーターの TL を最大減衰（127）に設定
+    for (int ch = 0; ch < 8; ++ch) {
+        for (int op = 0; op < 4; ++op) {
+            uint8_t tl_reg = 0x60 + (ch * 8) + op;
+            SetReg(tl_reg, 127);
+        }
+    }
+
+    // 3. ymfm 内部のエンベロープ状態を直接強制リセット（A-2）
+    auto& fm = m_ymfm.debug_get_fm_engine();
+    for (uint32_t i = 0; i < std::remove_reference<decltype(fm)>::type::OPERATORS; ++i) {
+        if (auto* op = fm.debug_operator(i)) {
+            op->force_full_release();
+        }
+    }
+
+    // 4. LFO/Noise をリセット
+    m_ymfm.reset_sound();
+}

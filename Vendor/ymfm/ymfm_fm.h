@@ -177,6 +177,13 @@ public:
 	// reset the operator state
 	void reset();
 
+	// A-2 用：エンベロープを強制的に RELEASE + 最大減衰にする
+	void force_full_release()
+	{
+		m_env_state = EG_RELEASE;
+		m_env_attenuation = 0x3ff;
+	}
+
 	// return the operator/channel offset
 	uint32_t opoffs() const { return m_opoffs; }
 	uint32_t choffs() const { return m_choffs; }
