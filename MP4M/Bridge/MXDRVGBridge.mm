@@ -30,6 +30,7 @@ static NSString *g_lastLoadedMDXPath = nil;
 // ymfmデバッグログ用（MP4M_YMFM_DEBUG=1 で有効化）
 static BOOL g_ymfmDebugEnabled = NO;
 static int g_ymfmDebugFrameCount = 0;
+static int g_ymfmDebugHighResInterval = 60;  // 60=通常(約1s), 6=HIGHRES(約50ms)
 // チャンネルミュート用：元の出力レベルを保存
 static uint8_t g_fmMutedTL[8] = {0};  // FM 各チャンネルのミュート時の元 TL 値
 static uint8_t g_pcmMutedVol[8] = {0};  // PCM 各チャンネルのミュート時の元 volume 値
@@ -148,11 +149,11 @@ static void resetMXDRVGEngine(int sampleRate) {
     MXDRVG_Start(sampleRate, 0, 64 * 1024, 1024 * 1024);
     MXDRVG_TotalVolume(128);
 
-    // 【重要】アプリ起動直後 / エンジン再初期化直後に ymfm の状態を強めにクリーンアップ
-    // これにより、最初の MeasurePlayTime が「真のゼロ状態」に対して行われる際の極端な汚染を緩和する。
+    // 【一時停止中】A-2 強制リセット（KNA03.MDX 等で一部パートが発音されなくなる副作用確認のため）
+    // 初回音色不良対策として有効だったが、他の曲に悪影響が出るため一旦無効化。
     if (engineType == 0) {
-        MXDRVG_ForceYmfmRelease();
-        fprintf(stderr, "[resetMXDRVGEngine] ForceReleaseAllChannels executed at engine start (ymfm)\n");
+        // MXDRVG_ForceYmfmRelease();
+        // fprintf(stderr, "[resetMXDRVGEngine] ForceReleaseAllChannels executed at engine start (ymfm)\n");
     }
 }
 
@@ -203,7 +204,12 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
     const char* env = getenv("MP4M_YMFM_DEBUG");
     g_ymfmDebugEnabled = (env && atoi(env) != 0);
     if (g_ymfmDebugEnabled) {
-        fprintf(stderr, "[YMFM_DEBUG] ymfm詳細ログを有効化 (MP4M_YMFM_DEBUG=1)\n");
+        // HIGHRES が指定されていれば高頻度（約50ms間隔）に切り替え
+        const char* highResEnv = getenv("MP4M_YMFM_HIGHRES");
+        g_ymfmDebugHighResInterval = (highResEnv && atoi(highResEnv) != 0) ? 6 : 60;
+
+        fprintf(stderr, "[OPM_DEBUG] OPM詳細ログを有効化 (MP4M_YMFM_DEBUG=1, interval=%d frames)\n",
+                g_ymfmDebugHighResInterval);
     }
 
     #ifdef DEBUG
@@ -498,15 +504,37 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
         g_pdxData ? (unsigned long)g_pdxData.length : 0
     );
 
-    // 【重要改善】SetData直後（MXDRVが音色データを書き込む直前）に
-    // ymfmのエンベロープを強制RELEASE状態にリセットする。
-    // これにより、MeasurePlayTimeで汚れた状態が曲頭の音色に影響するのを防ぐ。
+    // 【一時停止中】A-2 強制リセット（KNA03.MDX 等で一部パートが発音されなくなる副作用確認のため）
+    // 初回音色不良対策として有効だったが、他の曲に悪影響が出るため一旦無効化。
     NSInteger currentEngine = [[NSUserDefaults standardUserDefaults] integerForKey:@"mp4m_opmEngine"];
     if (currentEngine == 0) {
-        MXDRVG_ForceYmfmRelease();
+        // MXDRVG_ForceYmfmRelease();
 #ifdef DEBUG
-        fprintf(stderr, "[playWithLoopCount] ForceReleaseAllChannels executed after SetData (ymfm)\n");
+        // fprintf(stderr, "[playWithLoopCount] ForceReleaseAllChannels executed after SetData (ymfm)\n");
 #endif
+
+        // デバッグ用：SetData直後の初期状態を高密度でダンプ（KNA03などの曲頭パーカッション問題調査用）
+        // ymfm / fmgen 両方で同じ条件で出力して比較できるようにする
+        if (g_ymfmDebugEnabled) {
+            const char* initTag = (currentEngine == 0) ? "YMFM_CH_INIT" : "FMGEN_CH_INIT";
+            const char* engineName = (currentEngine == 0) ? "ymfm" : "fmgen";
+            fprintf(stderr, "[%s] === Initial state burst right after SetData (%s) ===\n", initTag, engineName);
+            MP4MChannelState initStates[8];
+            for (int burst = 0; burst < 12; ++burst) {
+                memset(initStates, 0, sizeof(initStates));
+                OPM_GetChannelStates(initStates, 8);
+                fprintf(stderr, "[%s] ", initTag);
+                for (int i = 0; i < 8; i++) {
+                    fprintf(stderr, "CH%d:%s(kc=%02X,vol=%02X) ",
+                            i+1,
+                            initStates[i].keyOn ? "ON " : "OFF",
+                            initStates[i].keyCode,
+                            initStates[i].volume);
+                }
+                fprintf(stderr, "\n");
+            }
+            fprintf(stderr, "[%s] === End of initial burst ===\n", initTag);
+        }
     }
 
     MXDRVG_PlayAt(0, loopCount, 1);
@@ -564,22 +592,22 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
 
     OPM_GetChannelStates(opmStates, 8);
 
-    // [YMFM_DEBUG] 定期的に8chの発音状態を詳細ログ出力（MP4M_YMFM_DEBUG=1時のみ）
+    // OPMチャンネル状態の詳細ログ出力（MP4M_YMFM_DEBUG=1時のみ）
+    // ymfm / fmgen 両方で同じフォーマットで出力して比較しやすくする
     if (g_ymfmDebugEnabled) {
         g_ymfmDebugFrameCount++;
-        if (g_ymfmDebugFrameCount % 60 == 0) {  // 約1秒間隔（60fps想定）
+        if (g_ymfmDebugFrameCount % g_ymfmDebugHighResInterval == 0) {
             NSInteger engineType = [[NSUserDefaults standardUserDefaults] integerForKey:@"mp4m_opmEngine"];
-            if (engineType == 0) {  // ymfmのみ
-                fprintf(stderr, "[YMFM_CH] ");
-                for (int i = 0; i < 8; i++) {
-                    fprintf(stderr, "CH%d:%s(kc=%02X,vol=%02X) ",
-                            i+1,
-                            opmStates[i].keyOn ? "ON " : "OFF",
-                            opmStates[i].keyCode,
-                            opmStates[i].volume);
-                }
-                fprintf(stderr, "\n");
+            const char* tag = (engineType == 0) ? "[YMFM_CH]" : "[FMGEN_CH]";
+            fprintf(stderr, "%s ", tag);
+            for (int i = 0; i < 8; i++) {
+                fprintf(stderr, "CH%d:%s(kc=%02X,vol=%02X) ",
+                        i+1,
+                        opmStates[i].keyOn ? "ON " : "OFF",
+                        opmStates[i].keyCode,
+                        opmStates[i].volume);
             }
+            fprintf(stderr, "\n");
         }
     }
 
