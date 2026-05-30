@@ -87,11 +87,17 @@ private struct FileRowView: View {
             Text(item.displayName)
                 .font(.mp4mText)
                 .foregroundColor(isPlaying ? Color.mp4mBright : Color.mp4mText)
+                .shadow(color: isPlaying ? Color.mp4mBright.opacity(0.6) : .clear, radius: isPlaying ? 12 : 0)
+                .shadow(color: isPlaying ? Color.mp4mBright.opacity(0.3) : .clear, radius: isPlaying ? 24 : 0)
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .frame(maxWidth: .infinity, alignment: .leading)
             if isPlaying {
-                Text("▶").font(.mp4mTiny).foregroundColor(Color.mp4mBright)
+                Text("▶")
+                    .font(.mp4mTiny)
+                    .foregroundColor(Color.mp4mBright)
+                    .shadow(color: Color.mp4mBright.opacity(0.6), radius: 12)
+                    .shadow(color: Color.mp4mBright.opacity(0.3), radius: 24)
             }
         }
         .padding(.horizontal, 8)

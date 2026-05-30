@@ -4,6 +4,14 @@ import SwiftUI
 struct LevelMeterView: View {
     let viewModel: PlayerViewModel?
     @State private var keyboardHovered: Int? = nil
+    @State private var channelPeaks: [ChannelPeak] = Array(
+        repeating: ChannelPeak(), count: AudioConstants.channelCount
+    )
+
+    private struct ChannelPeak {
+        var level: CGFloat = 0
+        var timer: Int = 0
+    }
 
     var body: some View {
         VStack(spacing: 1) {
@@ -16,7 +24,7 @@ struct LevelMeterView: View {
                 let channels = viewModel?.channels ?? []
                 let mutedSet = viewModel?.mutedChannels ?? []
                 let chCount = AudioConstants.channelCount
-                let spacing: CGFloat = 3
+                let spacing: CGFloat = 1
                 let totalSpacing = spacing * CGFloat(chCount - 1)
                 let chW = max(4, (geo.size.width - totalSpacing) / CGFloat(chCount))
                 let labelH: CGFloat = 22
@@ -51,18 +59,42 @@ struct LevelMeterView: View {
                                 )
                             }
 
-                            // Level bar
-                            if state.keyOn {
-                                let level = state.displayLevel
-                                let fillH = barHeight * level
+                            // 現在のレベル
+                            let currentLevel: CGFloat = state.keyOn ? state.displayLevel : 0
 
-                                ctx.opacity = mutedOpacity
-                                let bgRect = CGRect(x: x + 1, y: barAreaTop, width: chW - 2, height: barHeight)
-                                ctx.fill(Path(bgRect), with: .color(Color.mp4mDim.opacity(0.15)))
-                                let fillRect = CGRect(x: x + 1, y: barBottom - fillH, width: chW - 2, height: fillH)
-                                ctx.fill(Path(fillRect), with: .color(Color.mp4mBright))
-                                ctx.opacity = 1.0
+                            // ピーク値の更新（減衰付き）
+                            var peak = channelPeaks[ch]
+                            if currentLevel > peak.level {
+                                peak.level = currentLevel
+                                peak.timer = 10
+                            } else if peak.timer > 0 {
+                                peak.timer -= 1
+                            } else if peak.level > 0 {
+                                peak.level = max(0, peak.level - 0.04)
                             }
+                            channelPeaks[ch] = peak
+
+                            ctx.opacity = mutedOpacity
+
+                            // レベルバー背景
+                            let bgRect = CGRect(x: x + 1, y: barAreaTop, width: chW - 2, height: barHeight)
+                            ctx.fill(Path(bgRect), with: .color(Color.mp4mDim.opacity(0.12)))
+
+                            // レベルバー（現在値）
+                            if currentLevel > 0 {
+                                let fillH = barHeight * currentLevel
+                                let fillRect = CGRect(x: x + 1, y: barBottom - fillH, width: chW - 2, height: fillH)
+                                ctx.fill(Path(fillRect), with: .color(Color(red: 0.35, green: 1.00, blue: 0.55).opacity(0.85)))
+                            }
+
+                            // ピークライン
+                            if peak.level > 0 {
+                                let peakY = barBottom - barHeight * peak.level
+                                let peakRect = CGRect(x: x + 1, y: peakY, width: chW - 2, height: 2)
+                                ctx.fill(Path(peakRect), with: .color(Color.mp4mPeak.opacity(0.5)))
+                            }
+
+                            ctx.opacity = 1.0
                         }
                     }
 
