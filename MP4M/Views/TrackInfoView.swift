@@ -38,10 +38,12 @@ struct TrackInfoView: View {
                 }
             Divider().background(Color.mp4mBorder)
 
-            // 曲名折り返し表示
+            // 曲名折り返し表示（ネオン調）
             Text(viewModel?.title.isEmpty ?? true ? "---" : viewModel?.title ?? "---")
                 .font(.mp4mText)
                 .foregroundColor(Color.mp4mBright)
+                .shadow(color: Color.mp4mBright.opacity(0.6), radius: 12)
+                .shadow(color: Color.mp4mBright.opacity(0.3), radius: 24)
                 .lineLimit(nil)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.horizontal, 8)
