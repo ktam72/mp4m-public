@@ -13,7 +13,13 @@ public:
         : m_clock(0), m_rate(0), m_intr_cb(nullptr), m_chip_clocks(0)
         , m_prev_l(0), m_prev_r(0)
     {
+        fprintf(stderr, "[NUKED] Constructor called\n");
         std::memset(&m_chip, 0, sizeof(m_chip));
+    }
+
+    ~OpmEngineNuked()
+    {
+        fprintf(stderr, "[NUKED] Destructor called\n");
     }
 
     bool Init(uint32_t clock, uint32_t rate, bool filter)
@@ -23,6 +29,31 @@ public:
         m_chip_clocks = 0;
         m_prev_l = m_prev_r = 0;
         OPM_Reset(&m_chip, opm_flags_none);
+        // Init 直後にテストトーンを仕込んで DAC が動作するか確認
+        // 任意のチャンネルに単純な音を設定して出力を見る
+        SetReg(0x28, 0x41);  // KC ch0 = 0x41 (note)
+        SetReg(0x30, 0x14);  // KF ch0 = 0x14
+        SetReg(0x38, 0x00);  // PMS/AMS ch0
+        SetReg(0x20, 0xc0);  // ALG/FB ch0 = 0, pan both
+        SetReg(0x40, 0x01);  // DT1/MUL op0
+        SetReg(0x60, 0x00);  // TL op0 = 0 (max vol)
+        SetReg(0x80, 0x1f);  // KS/AR op0
+        SetReg(0xa0, 0x00);  // AMS/DR op0
+        SetReg(0xc0, 0x00);  // DT2/SR op0
+        SetReg(0xe0, 0x0f);  // SL/RR op0
+        flush_writes();
+        int32_t _o[2] = {};
+        uint8_t _s1=0,_s2=0,_so=0;
+        for (int i = 0; i < 8000; i++)
+        {
+            OPM_Clock(&m_chip, _o, &_s1, &_s2, &_so);
+            if (_o[0] || _o[1])
+            {
+                fprintf(stderr, "[NUKED Init] DAC non-zero at slot %d: L=%d R=%d\n", i, _o[0], _o[1]);
+                break;
+            }
+        }
+        m_prev_l = m_prev_r = 0;
         return true;
     }
 
@@ -72,46 +103,25 @@ public:
         return OPM_Read(&m_chip, 1);
     }
 
+    // SetReg でバックツーバックで書き込まれたアドレス/データを
+    // OPM_Clock で処理する内部ヘルパ
+    void flush_writes()
+    {
+        if (m_chip.write_a || m_chip.write_d)
+        {
+            int32_t _o[2]={}; uint8_t _s1=0,_s2=0,_so=0;
+            OPM_Clock(&m_chip, _o, &_s1, &_s2, &_so);
+        }
+    }
+
     void Mix(int16_t* buffer, int nsamples)
     {
         if (!buffer || nsamples <= 0) return;
+        flush_writes();
 
-        // Nuked OPM generates one slot per OPM_Clock call.
-        // 32 slots = 1 full internal sample at clock/64/32 rate.
-        // We generate nsamples of output, maintaining phase continuity.
-        // Internal rate = m_clock / 64 / 32 ≈ 1953 Hz at 4 MHz clock.
-        // Output rate = m_rate (typically 62500 Hz inner rate).
-        // To bridge the rate gap, we run OPM_Clock in a sub-loop and
-        // interpolate between generated samples.
-
-        // OPM generates a complete sample every 32 clocks at the slot rate.
-        // For the FM synthesis: each internal sample feeds the downsampler,
-        // which expects `m_rate` samples per second.
-        //
-        // We generate `nsamples` at the internal OPM rate but the outer
-        // pipeline expects them at m_rate.  For 62500 inner rate and 1953
-        // OPM rate, the ratio is ~32.  We emit each OPM sample 32 times
-        // (zero-order-hold) which is adequate for the subsequent
-        // downsample filter.
-
-        static constexpr int SLOTS_PER_SAMPLE = 32;
-        int32_t output[2] = {};
-        uint8_t sh1 = 0, sh2 = 0, so = 0;
-        int hold = std::max(1, int(m_rate * SLOTS_PER_SAMPLE * 64 / m_clock));
-
+        // Mix はチップを進めず、前回 Count で生成された DAC 出力をそのまま読む。
         for (int i = 0; i < nsamples; i++)
         {
-            if (hold <= 0)
-            {
-                for (int s = 0; s < SLOTS_PER_SAMPLE; s++)
-                    OPM_Clock(&m_chip, output, &sh1, &sh2, &so);
-                m_prev_l = m_chip.dac_output[0];
-                m_prev_r = m_chip.dac_output[1];
-                hold = std::max(1, int(m_rate * SLOTS_PER_SAMPLE * 64 / m_clock));
-                m_chip_clocks += SLOTS_PER_SAMPLE;
-            }
-            hold--;
-
             int32_t l = m_prev_l * m_fmvolume / 16384;
             int32_t r = m_prev_r * m_fmvolume / 16384;
             buffer[i * 2]     = (int16_t)(l < -32768 ? -32768 : l > 32767 ? 32767 : l);
@@ -130,25 +140,28 @@ public:
     bool Count(int32_t us)
     {
         if (us <= 0) return false;
+        flush_writes();
 
-        // Advance the chip by `us` microseconds worth of OPM cycles.
-        // At m_clock Hz, one cycle = 1/m_clock seconds.
-        // Each OPM_Clock advances by one slot = 1 cycle at the slot rate.
-        // Slot rate = m_clock / 64, so each OPM_Clock = 64 chip cycles.
-        int64_t cycles = (int64_t)us * m_clock / 1000000LL;
+        // OPM_Clock は 1 スロット（= 64 チップサイクル）進める。
+        // us マイクロ秒あたりのスロット数 = us * m_clock / 1000000 / 64
+        int64_t slots = (int64_t)us * m_clock / 1000000LL / 64;
 
-        // We run OPM_Clock for the computed number of cycles.
-        // After each full sample (32 clocks), check for IRQ.
         uint8_t sh1 = 0, sh2 = 0, so = 0;
         int32_t output[2] = {};
-        while (cycles > 0)
+        for (int64_t i = 0; i < slots; i++)
         {
             OPM_Clock(&m_chip, output, &sh1, &sh2, &so);
-            m_chip_clocks++;
-            cycles--;
+            if (output[0] || output[1])
+            {
+                m_prev_l = output[0];
+                m_prev_r = output[1];
+                break;
+            }
         }
+        if (m_prev_l || m_prev_r)
+            fprintf(stderr, "[NUKED Count] first non-zero L=%d R=%d\n",
+                    m_prev_l, m_prev_r);
 
-        // Check for pending IRQ from timer
         if (OPM_ReadIRQ(&m_chip))
             Intr(true);
 

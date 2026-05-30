@@ -341,6 +341,27 @@ static void L_PAUSE_(
 
 /***************************************************************/
 
+// setOpmEngine から呼ばれるエンジン直接差し替え。
+// s_engine_mtx を獲得して旧エンジンを削除→新エンジンを生成する。
+MXDRVG_EXPORT
+void MXDRVG_ReplaceEngine(int type) {
+    std::lock_guard<std::mutex> lock(s_engine_mtx);
+    IOpmEngine* new_engine = nullptr;
+    if (type == 1)
+        new_engine = new OpmEngineFmgen();
+    else if (type == 2)
+        new_engine = new OpmEngineNuked();
+    else
+        new_engine = new OpmEngineYmfm();
+    new_engine->SetIntrCallback(engine_intr_callback);
+    new_engine->Init(4000000, 62500, false);
+    new_engine->SetVolume(-12);
+    delete g_engine;
+    g_engine = new_engine;
+}
+
+/***************************************************************/
+
 MXDRVG_EXPORT
 int MXDRVG_Start(
 	int samprate,
