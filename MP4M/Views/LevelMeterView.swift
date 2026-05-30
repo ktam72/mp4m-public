@@ -3,7 +3,7 @@ import SwiftUI
 /// レベルメーター: 16 チャンネル分 (FM8ch + PCM8ch) 固定幅
 struct LevelMeterView: View {
     let viewModel: PlayerViewModel?
-    private let maxChannels = 16
+    private let maxChannels = AudioConstants.channelCount
 
     var body: some View {
         VStack(spacing: 1) {
@@ -65,4 +65,17 @@ private struct ChannelMeterView: View {
     }
 
     private let maxBarHeight: CGFloat = 130
+}
+
+// MARK: - チャンネル色表示ロジック（View 固有、Model から分離）
+
+private extension ChannelDisplayState {
+    var displayPanColor: Color {
+        guard keyOn else { return .clear }
+        switch pan {
+        case 0: return Color.mp4mCyan.opacity(0.8)
+        case 2: return Color.mp4mAmber.opacity(0.8)
+        default: return Color.mp4mBright.opacity(0.8)
+        }
+    }
 }

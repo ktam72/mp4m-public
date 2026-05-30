@@ -25,8 +25,8 @@ final class PlayerViewModel {
         }
     }
 
-    var channels: [ChannelDisplayState] = Array(repeating: ChannelDisplayState(), count: 16)
-    var spectrumBars: [SpectrumBarState] = Array(repeating: SpectrumBarState(), count: 52)
+    var channels: [ChannelDisplayState] = Array(repeating: ChannelDisplayState(), count: AudioConstants.channelCount)
+    var spectrumBars: [SpectrumBarState] = Array(repeating: SpectrumBarState(), count: AudioConstants.spectrumBinCount)
     var mutedChannels: Set<Int> = [] {
         didSet { UserDefaults.standard.set(Array(mutedChannels), forKey: UserDefaultsKey.mutedChannels) }
     }
@@ -273,7 +273,7 @@ final class PlayerViewModel {
             lastSyncDate = Date()
         }
 
-        if frameCount > 0 && frameCount % 120 == 0 {
+        if frameCount > 0 && frameCount % AudioConstants.frameRate == 0 {
             Log.debug("[PlayerVM] updateDisplay - frame: \(frameCount), currentTimeMs: \(ms)")
         }
 
@@ -298,8 +298,8 @@ final class PlayerViewModel {
     // MARK: - 内部
 
     private func clearVisualState() {
-        channels = Array(repeating: ChannelDisplayState(), count: 16)
-        spectrumBars = Array(repeating: SpectrumBarState(), count: 52)
+        channels = Array(repeating: ChannelDisplayState(), count: AudioConstants.channelCount)
+        spectrumBars = Array(repeating: SpectrumBarState(), count: AudioConstants.spectrumBinCount)
     }
 }
 

@@ -20,7 +20,7 @@ final class DisplayUpdateManager {
             while !Task.isCancelled && shouldContinue() {
                 await update(frameCount)
                 frameCount += 1
-                try? await Task.sleep(for: .seconds(1.0 / 120.0))
+                try? await Task.sleep(for: .seconds(1.0 / Double(AudioConstants.frameRate)))
             }
         }
     }

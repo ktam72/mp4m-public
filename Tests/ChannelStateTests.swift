@@ -38,12 +38,12 @@ final class ChannelStateTests: XCTestCase {
         XCTAssertEqual(state.displayLevel, 0.0, accuracy: 0.01)
     }
 
-    func testIsActive() {
+    func testKeyOn() {
         var state = ChannelDisplayState()
         state.keyOn = true
-        XCTAssertTrue(state.isActive)
+        XCTAssertTrue(state.keyOn)
 
         state.keyOn = false
-        XCTAssertFalse(state.isActive)
+        XCTAssertFalse(state.keyOn)
     }
 }

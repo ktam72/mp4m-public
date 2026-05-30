@@ -74,7 +74,7 @@ struct KeyboardView: View {
 
             GeometryReader { geo in
                 let channels = viewModel?.channels ?? []
-                let keyH = (geo.size.height - 16) / 8
+                let keyH = (geo.size.height - 16) / CGFloat(AudioConstants.fmChannelCount)
                 let leftMargin: CGFloat = 50
                 let drawWidth = geo.size.width - leftMargin
                 let whiteKeyW = drawWidth / CGFloat(cachedWhiteKeys.count)
@@ -89,7 +89,7 @@ struct KeyboardView: View {
                     let blackKeys = cachedBlackKeys
 
                     // FM 8チャンネル分のキーボード行を描画
-                    for channelIndex in 0..<8 {
+                    for channelIndex in 0..<AudioConstants.fmChannelCount {
                         let rowY = CGFloat(channelIndex) * keyH + 2
 
                         // 現在のチャンネルが再生中のノートを取得（このチャンネルのみ）

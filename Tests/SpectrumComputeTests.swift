@@ -10,8 +10,8 @@ final class SpectrumComputeTests: XCTestCase {
     }
 
     func testComputeSpectrum_EmptyChannels() {
-        let channels = Array(repeating: ChannelDisplayState(), count: 16)
-        let currentBars = Array(repeating: SpectrumBarState(), count: 52)
+        let channels = Array(repeating: ChannelDisplayState(), count: AudioConstants.channelCount)
+        let currentBars = Array(repeating: SpectrumBarState(), count: AudioConstants.spectrumBinCount)
 
         let result = service?.computeSpectrum(for: channels, currentBars: currentBars)
 
@@ -25,12 +25,12 @@ final class SpectrumComputeTests: XCTestCase {
     }
 
     func testComputeSpectrum_ActiveChannel() {
-        var channels = Array(repeating: ChannelDisplayState(), count: 16)
+        var channels = Array(repeating: ChannelDisplayState(), count: AudioConstants.channelCount)
         channels[0].keyOn = true
         channels[0].keyCode = 60  // C4
         channels[0].velocity = 100
 
-        let currentBars = Array(repeating: SpectrumBarState(), count: 52)
+        let currentBars = Array(repeating: SpectrumBarState(), count: AudioConstants.spectrumBinCount)
 
         let result = service?.computeSpectrum(for: channels, currentBars: currentBars)
 

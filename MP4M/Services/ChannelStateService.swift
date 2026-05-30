@@ -7,7 +7,7 @@ import Foundation
 final class ChannelStateService {
     private let audioService: any AudioEngineService
     private var lastChannelStateUpdateMs: Int = 0
-    private var cachedChannels: [ChannelDisplayState] = Array(repeating: ChannelDisplayState(), count: 16)
+    private var cachedChannels: [ChannelDisplayState] = Array(repeating: ChannelDisplayState(), count: AudioConstants.channelCount)
     private let channelStateUpdateIntervalMs: Int = 200  // 200ms ごとにのみ取得
 
     init(audioService: any AudioEngineService) {
@@ -30,6 +30,6 @@ final class ChannelStateService {
     /// キャッシュをリセット
     func resetCache() {
         lastChannelStateUpdateMs = 0
-        cachedChannels = Array(repeating: ChannelDisplayState(), count: 16)
+        cachedChannels = Array(repeating: ChannelDisplayState(), count: AudioConstants.channelCount)
     }
 }

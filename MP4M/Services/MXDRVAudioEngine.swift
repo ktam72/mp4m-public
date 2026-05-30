@@ -88,10 +88,10 @@ final class MXDRVAudioEngine: AudioEngineService {
         os_unfair_lock_lock(&engineLock)
         defer { os_unfair_lock_unlock(&engineLock) }
 
-        var raw = [MP4MChannelState](repeating: MP4MChannelState(), count: 16)
+        var raw = [MP4MChannelState](repeating: MP4MChannelState(), count: AudioConstants.channelCount)
         MXDRVGBridge.getChannelStates(&raw)
 
-        return (0..<16).map { channelIndex in
+        return (0..<AudioConstants.channelCount).map { channelIndex in
             ChannelDisplayState(
                 keyCode: raw[channelIndex].keyCode,
                 velocity: raw[channelIndex].velocity,

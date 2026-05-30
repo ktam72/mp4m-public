@@ -49,8 +49,8 @@ final class MetalSpectrumCompute {
         }
 
         // バッファ確保（16チャンネル + 52ビン）
-        self.channelBuffer = device.makeBuffer(length: 16 * 8, options: .storageModeShared)
-        self.speaBuffer = device.makeBuffer(length: 52 * MemoryLayout<Float>.size, options: .storageModeShared)
+        self.channelBuffer = device.makeBuffer(length: AudioConstants.channelCount * 8, options: .storageModeShared)
+        self.speaBuffer = device.makeBuffer(length: AudioConstants.spectrumBinCount * MemoryLayout<Float>.size, options: .storageModeShared)
 
         print("[Metal] GPU compute initialized successfully")
     }
@@ -61,13 +61,13 @@ final class MetalSpectrumCompute {
               let pipelineState = pipelineState,
               let channelBuffer = channelBuffer,
               let speaBuffer = speaBuffer else {
-            return [Float](repeating: 0, count: 52)
+            return [Float](repeating: 0, count: AudioConstants.spectrumBinCount)
         }
 
         // チャンネルデータを GPU バッファに転送
         let contents = channelBuffer.contents()
-        var channelData = [UInt8](repeating: 0, count: 16 * 8)
-        for channelIndex in 0..<min(16, channels.count) {
+        var channelData = [UInt8](repeating: 0, count: AudioConstants.channelCount * 8)
+        for channelIndex in 0..<min(AudioConstants.channelCount, channels.count) {
             let ch = channels[channelIndex]
             channelData[channelIndex * 8 + 0] = ch.keyCode
             channelData[channelIndex * 8 + 1] = ch.keyOffset
@@ -77,15 +77,15 @@ final class MetalSpectrumCompute {
         memcpy(contents, &channelData, channelData.count)
 
         // speaBuf を 0 でクリア
-        memset(speaBuffer.contents(), 0, 52 * MemoryLayout<Float>.size)
+        memset(speaBuffer.contents(), 0, AudioConstants.spectrumBinCount * MemoryLayout<Float>.size)
 
         // コマンドバッファ作成
         guard let commandBuffer = commandQueue.makeCommandBuffer() else {
-            return [Float](repeating: 0, count: 52)
+            return [Float](repeating: 0, count: AudioConstants.spectrumBinCount)
         }
 
         guard let computeEncoder = commandBuffer.makeComputeCommandEncoder() else {
-            return [Float](repeating: 0, count: 52)
+            return [Float](repeating: 0, count: AudioConstants.spectrumBinCount)
         }
 
         computeEncoder.setComputePipelineState(pipelineState)
@@ -93,8 +93,8 @@ final class MetalSpectrumCompute {
         computeEncoder.setBuffer(speaBuffer, offset: 0, index: 1)
 
         // スレッドグループサイズ（最大 16 チャンネル）
-        let threadGroupSize = MTLSize(width: 16, height: 1, depth: 1)
-        let gridSize = MTLSize(width: 16, height: 1, depth: 1)
+        let threadGroupSize = MTLSize(width: AudioConstants.channelCount, height: 1, depth: 1)
+        let gridSize = MTLSize(width: AudioConstants.channelCount, height: 1, depth: 1)
 
         computeEncoder.dispatchThreads(gridSize, threadsPerThreadgroup: threadGroupSize)
         computeEncoder.endEncoding()
@@ -104,8 +104,8 @@ final class MetalSpectrumCompute {
 
         // 結果を読み込み
         let speaBufPtr = speaBuffer.contents().assumingMemoryBound(to: Float.self)
-        var result = [Float](repeating: 0, count: 52)
-        for barIndex in 0..<52 {
+        var result = [Float](repeating: 0, count: AudioConstants.spectrumBinCount)
+        for barIndex in 0..<AudioConstants.spectrumBinCount {
             result[barIndex] = speaBufPtr[barIndex]
         }
 

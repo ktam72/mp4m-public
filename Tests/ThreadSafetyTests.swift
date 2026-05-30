@@ -26,8 +26,8 @@ final class ThreadSafetyTests: XCTestCase {
             return
         }
 
-        XCTAssertEqual(vm.channels.count, 16)
-        XCTAssertEqual(vm.spectrumBars.count, 52)
+        XCTAssertEqual(vm.channels.count, AudioConstants.channelCount)
+        XCTAssertEqual(vm.spectrumBars.count, AudioConstants.spectrumBinCount)
         XCTAssertEqual(vm.status, .stopped)
     }
 }

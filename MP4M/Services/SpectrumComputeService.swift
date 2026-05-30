@@ -33,7 +33,7 @@ final class SpectrumComputeService {
         // バー状態更新
         var newBars = currentBars
         let maxBars = Float(routeTable.count - 1)
-        for barIndex in 0..<32 {
+        for barIndex in 0..<AudioConstants.displayBarCount {
             var bar = newBars[barIndex]
             let raw = speaBuf[barIndex + 5]
             var targetBar: Float = 0
@@ -69,7 +69,7 @@ final class SpectrumComputeService {
     /// CPU版スペクトラム計算（ビンマッピング + 拡散）
     /// Metal が利用不可時のフォールバック用
     private func computeSpectrumCPU(channels: [ChannelDisplayState]) -> [Float] {
-        var bins = [Float](repeating: 0, count: 52)
+        var bins = [Float](repeating: 0, count: AudioConstants.spectrumBinCount)
 
         for channel in channels {
             guard channel.keyOn else { continue }
