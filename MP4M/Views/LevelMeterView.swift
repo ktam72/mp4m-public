@@ -4,18 +4,6 @@ import SwiftUI
 struct LevelMeterView: View {
     let viewModel: PlayerViewModel?
     @State private var keyboardHovered: Int? = nil
-    @State private var peakTracker = PeakTracker()
-
-    private struct ChannelPeak {
-        var level: CGFloat = 0
-        var timer: Int = 0
-    }
-
-    private final class PeakTracker {
-        var peaks: [ChannelPeak] = Array(
-            repeating: ChannelPeak(), count: AudioConstants.channelCount
-        )
-    }
 
     var body: some View {
         VStack(spacing: 1) {
@@ -66,18 +54,6 @@ struct LevelMeterView: View {
                             // 現在のレベル
                             let currentLevel: CGFloat = state.keyOn ? state.displayLevel : 0
 
-                            // ピーク値の更新（減衰付き）
-                            var peak = peakTracker.peaks[ch]
-                            if currentLevel > peak.level {
-                                peak.level = currentLevel
-                                peak.timer = 10
-                            } else if peak.timer > 0 {
-                                peak.timer -= 1
-                            } else if peak.level > 0 {
-                                peak.level = max(0, peak.level - 0.02)
-                            }
-                            peakTracker.peaks[ch] = peak
-
                             ctx.opacity = mutedOpacity
 
                             // レベルバー背景
@@ -88,14 +64,18 @@ struct LevelMeterView: View {
                             if currentLevel > 0 {
                                 let fillH = barHeight * currentLevel
                                 let fillRect = CGRect(x: x + 1, y: barBottom - fillH, width: chW - 2, height: fillH)
-                                ctx.fill(Path(fillRect), with: .color(Color.mp4mBright))
-                            }
-
-                            // ピークライン
-                            if peak.level > 0 {
-                                let peakY = barBottom - barHeight * peak.level
-                                let peakRect = CGRect(x: x + 1, y: peakY, width: chW - 2, height: 2)
-                                ctx.fill(Path(peakRect), with: .color(Color.mp4mPeak.opacity(0.5)))
+                                let gradient = Gradient(colors: [
+                                    Color.mp4mBright.opacity(0.7),
+                                    Color.mp4mBright
+                                ])
+                                ctx.fill(
+                                    Path(fillRect),
+                                    with: .linearGradient(
+                                        gradient,
+                                        startPoint: CGPoint(x: x, y: barBottom),
+                                        endPoint: CGPoint(x: x, y: barBottom - fillH)
+                                    )
+                                )
                             }
 
                             ctx.opacity = 1.0

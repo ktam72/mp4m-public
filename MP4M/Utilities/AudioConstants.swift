@@ -15,5 +15,5 @@ enum AudioConstants {
     static let displayBarCount = 32
 
     /// 表示更新フレームレート（fps）
-    static let frameRate = 120
+    static let frameRate = 60
 }

@@ -296,8 +296,8 @@ final class PlayerViewModel {
         // チャンネル状態の取得（キーボード・レベルメーター: 毎フレーム 120fps）
         let fmChannels = channelService.getChannels(currentTimeMs: ms)
 
-        // スペアナ計算は 60fps（2フレームごと）
-        let shouldUpdateSpectrum = (frameCount % 2) == 0
+        // スペアナ計算（メインループと同じ60fps）
+        let shouldUpdateSpectrum = true
         if shouldUpdateSpectrum {
             let newBars = spectrumService.computeSpectrum(for: fmChannels, currentBars: spectrumBars)
             currentTimeMs = ms
