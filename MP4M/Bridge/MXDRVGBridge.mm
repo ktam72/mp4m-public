@@ -4,8 +4,8 @@
 //
 
 #import "MXDRVGBridge.h"
+#import "MDXFileLoader.h"
 #include "../Vendor/gamdx/jni/mxdrvg/mxdrvg.h"
-#include "../Vendor/lzx/lzx.h"
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
@@ -37,109 +37,6 @@ static uint8_t g_pcmMutedVol[8] = {0};  // PCM 各チャンネルのミュート
 static int g_fmMuteState[8] = {0};  // FM ミュート状態（0=非ミュート、1=ミュート中）
 static int g_pcmMuteState[8] = {0};  // PCM ミュート状態
 
-// LZX 展開
-static NSData* decompressIfLZX(NSData* data) {
-    if (!data) return nil;
-    
-    const unsigned char* ptr = (const unsigned char*)data.bytes;
-    int lzxlen = lzx::check(ptr, data.length);
-    
-    if (lzxlen <= 0) {
-        // LZX 圧縮されていない
-        return data;
-    }
-    
-    unsigned char* lzxbuf = (unsigned char*)malloc(lzxlen);
-    unsigned int retval = lzx::decompress(lzxbuf, lzxlen, ptr, data.length);
-    
-    if (retval == 0) {
-        free(lzxbuf);
-        return nil;  // デコード失敗
-    }
-    
-    NSData* result = [NSData dataWithBytes:lzxbuf length:retval];
-    free(lzxbuf);
-    return result;
-}
-
-// MDX ヘッダー付与
-static NSData* wrapMDX(NSData* body, NSData* pdx) {
-    unsigned char mdxData[10];
-    mdxData[0] = 0x00;
-    mdxData[1] = 0x00;
-    mdxData[2] = (unsigned char)(pdx ? 0 : 0xff);
-    mdxData[3] = (unsigned char)(pdx ? 0 : 0xff);
-    mdxData[4] = 0x00;
-    mdxData[5] = 0x0a;
-    mdxData[6] = 0x00;
-    mdxData[7] = 0x08;
-    mdxData[8] = 0x00;
-    mdxData[9] = 0x00;
-    
-    NSMutableData* out = [NSMutableData dataWithBytes:mdxData length:10];
-    [out appendData:body];
-    return out;
-}
-
-// PDX ヘッダー付与
-static NSData* wrapPDX(NSData* body) {
-    unsigned char pdxData[10];
-    pdxData[0] = 0x00;
-    pdxData[1] = 0x00;
-    pdxData[2] = 0x00;
-    pdxData[3] = 0x00;
-    pdxData[4] = 0x00;
-    pdxData[5] = 0x0a;
-    pdxData[6] = 0x00;
-    pdxData[7] = 0x02;
-    pdxData[8] = 0x00;
-    pdxData[9] = 0x00;
-    
-    NSMutableData* out = [NSMutableData dataWithBytes:pdxData length:10];
-    [out appendData:body];
-    return out;
-}
-
-// Shift-JIS → UTF-8 簡易変換
-static NSString* getTitleFromData(NSData* data) {
-    if (!data) return nil;
-    
-    const unsigned char* ptr = (const unsigned char*)data.bytes;
-    
-    // タイトル終端を探す (CR+LF)
-    int pos;
-    for (pos = 0; pos < (int)data.length; pos++) {
-        if (ptr[pos] == 0x0d && ptr[pos + 1] == 0x0a) break;
-    }
-    
-    if (pos >= (int)data.length) return nil;
-    
-    NSData* titleData = [data subdataWithRange:NSMakeRange(0, pos)];
-    
-    // 複数のエンコーディングで試す
-    NSString* title = [[NSString alloc] initWithData:titleData encoding:NSShiftJISStringEncoding];
-    if (!title) title = [[NSString alloc] initWithData:titleData encoding:NSUTF8StringEncoding];
-    
-    return title ? title : @"(no title)";
-}
-
-// PDXファイル名のセキュリティチェック（パストラバーサル対策）
-static BOOL isValidPDXFileName(NSString* fileName) {
-    if (!fileName || fileName.length == 0) return NO;
-
-    // パスセパレータを含まないか確認
-    if ([fileName rangeOfString:@"/"].location != NSNotFound) return NO;
-    if ([fileName rangeOfString:@"\\"].location != NSNotFound) return NO;
-
-    // .. （ディレクトリトラバーサル）を含まないか確認
-    if ([fileName rangeOfString:@".."].location != NSNotFound) return NO;
-
-    // null 文字を含まないか確認
-    if ([fileName rangeOfString:@"\0"].location != NSNotFound) return NO;
-
-    return YES;
-}
-
 // MXDRVG エンジンをリセット（初期化・開始）
 static void resetMXDRVGEngine(int sampleRate) {
     // UserDefaults からエンジン種別を復元（初回起動時はデフォルト=ymfm）
@@ -155,41 +52,6 @@ static void resetMXDRVGEngine(int sampleRate) {
         // MXDRVG_ForceYmfmRelease();
         // fprintf(stderr, "[resetMXDRVGEngine] ForceReleaseAllChannels executed at engine start (ymfm)\n");
     }
-}
-
-// 大文字小文字を区別せずにPDXファイルを検索
-static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
-    if (!pdxFileName || !directory) return nil;
-
-    // 拡張子がない場合は .pdx を補完
-    NSString* baseName = pdxFileName;
-    if (![pdxFileName.lowercaseString hasSuffix:@".pdx"]) {
-        baseName = [pdxFileName stringByAppendingString:@".pdx"];
-        #ifdef DEBUG
-        fprintf(stderr, "[PDX] Extension completed: %s -> %s\n", [pdxFileName UTF8String], [baseName UTF8String]);
-        #endif
-    }
-
-    // ディレクトリ内のファイルを列挙して大文字小文字を区別せずに比較
-    NSString* targetLower = baseName.lowercaseString;
-    NSError* error = nil;
-    NSArray<NSString*>* contents = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:directory error:&error];
-
-    if (!error && contents) {
-        for (NSString* file in contents) {
-            if ([file.lowercaseString isEqualToString:targetLower]) {
-                #ifdef DEBUG
-                fprintf(stderr, "[PDX] Found file: %s\n", [file UTF8String]);
-                #endif
-                return [directory stringByAppendingPathComponent:file];
-            }
-        }
-    }
-
-    #ifdef DEBUG
-    fprintf(stderr, "[PDX] File not found: %s (searched in %s)\n", [baseName UTF8String], [directory UTF8String]);
-    #endif
-    return nil; // 見つからない
 }
 
 @implementation MXDRVGBridge
@@ -336,7 +198,7 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
                     #endif
 
                     // セキュリティチェック：パストラバーサル対策
-                    if (!isValidPDXFileName(pdxFileName)) {
+                    if (![MDXFileLoader isValidPDXFileName:pdxFileName]) {
                         #ifdef DEBUG
                         fprintf(stderr, "[PDX] SECURITY ERROR: PDX filename contains invalid characters (path separators or directory traversal): %s\n", [pdxFileName UTF8String]);
                         #endif
@@ -344,7 +206,7 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
                         g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
                     } else {
                         // 大文字小文字を区別せずにPDXファイルを検索
-                        NSString* pdxPath = findPDXFile(pdxFileName, mdxDir);
+                        NSString* pdxPath = [MDXFileLoader findPDXFile:pdxFileName inDirectory:mdxDir];
                         if (pdxPath) {
                             #ifdef DEBUG
                             fprintf(stderr, "[PDX] Trying to load PDX from: %s\n", [pdxPath UTF8String]);
@@ -420,7 +282,7 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
     
     // MDX 本体を LZX 展開
     NSData* mdxBody = [mdxData subdataWithRange:NSMakeRange(mdxBodyStartPos, mdxData.length - mdxBodyStartPos)];
-    NSData* decompressed = decompressIfLZX(mdxBody);
+    NSData* decompressed = [MDXFileLoader decompressIfLZX:mdxBody];
     if (!decompressed) return nil;
     
     // PDX 処理（PDX ロード失敗時のエラー検出）
@@ -430,7 +292,7 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
 #ifdef DEBUG
         fprintf(stderr, "[PDX] Loading PDX data, original size: %lu bytes\n", (unsigned long)pdxData.length);
 #endif
-        pdxDecompressed = decompressIfLZX(pdxData);
+        pdxDecompressed = [MDXFileLoader decompressIfLZX:pdxData];
         if (pdxDecompressed) {
 #ifdef DEBUG
             fprintf(stderr, "[PDX] PDX decompressed successfully, size: %lu bytes\n", (unsigned long)pdxDecompressed.length);
@@ -456,8 +318,8 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
     }
 
     // ヘッダー付与
-    NSData* mdxWrapped = wrapMDX(decompressed, pdxDecompressed);
-    NSData* pdxWrapped = pdxDecompressed ? wrapPDX(pdxDecompressed) : nil;
+    NSData* mdxWrapped = [MDXFileLoader wrapMDX:decompressed pdxData:pdxDecompressed];
+    NSData* pdxWrapped = pdxDecompressed ? [MDXFileLoader wrapPDX:pdxDecompressed] : nil;
 
     // グローバル変数に保存（ARC が自動管理）
     g_mdxData = mdxWrapped;
@@ -479,7 +341,7 @@ static NSString* findPDXFile(NSString* pdxFileName, NSString* directory) {
     );
 
     // タイトル抽出
-    NSString* title = getTitleFromData(mdxData);
+    NSString* title = [MDXFileLoader titleFromData:mdxData];
     return title;
 }
 

@@ -53,27 +53,35 @@ targets:
           - "*.swift"
       - path: MP4M/Bridge
         includes:
-          - "MXDRVGBridge.mm"
+          - "*.mm"
+          - "*.h"
+          - "*.modulemap"
       - path: Vendor/gamdx/jni/mxdrvg
         includes:
-          - "so.cpp"
+          - "*.cpp"
+          - "*.h"
       - path: Vendor/gamdx/jni/pcm8
         includes:
           - "*.cpp"
+          - "*.h"
       - path: Vendor/gamdx/jni/downsample
         includes:
-          - "downsample.cpp"
+          - "*.cpp"
+          - "*.h"
       - path: Vendor/lzx
         includes:
-          - "lzx.cpp"
+          - "*.cpp"
+          - "*.h"
       - path: Vendor/ymfm
         includes:
           - "*.cpp"
+          - "*.h"
+          - "*.ipp"
       - path: Vendor/gamdx/jni/fmgen
         includes:
-          - "fmgen.cpp"
-          - "opm.cpp"
-          - "fmtimer.cpp"
+          - "*.cpp"
+          - "*.h"
+          - "fmgeninl.h"
 
     settings:
       BRIDGING_HEADER: MP4M/Bridge/MP4M-Bridging-Header.h
