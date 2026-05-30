@@ -492,7 +492,7 @@ int MXDRVG_GetPCM(
 		if (innerbuf) {
 			memset(innerbuf, 0, create_len2*sizeof(Sample)*2);
 			g_engine->Mix(innerbuf, create_len2);
-			PCM8.Mix(innerbuf, create_len2);
+			if (G.L002231) PCM8.Mix(innerbuf, create_len2);
 			if (TotalVolume != 256) {
 				for (ULONG j=0; j<create_len2; j++) {
 					int v0 = (innerbuf[j*2+0] * TotalVolume) >> 8;
