@@ -21,7 +21,8 @@ typedef struct {
     uint8_t active;     // 追加：opm::ChannelState と一致
 } MP4MChannelState;
 
-// ObjC インターフェース (MXDRVGBridge.h で定義)
+// ObjC インターフェース
 #import "MXDRVGBridge.h"
+#import "MDXFileLoader.h"
 
 #endif // MP4M_BRIDGING_HEADER_H

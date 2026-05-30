@@ -33,7 +33,8 @@ struct FileItem: Identifiable, Hashable {
                 var item = FileItem(url: url, name: url.lastPathComponent, isDirectory: false)
                 // MDX タイトルを抽出（ファイル先頭から 0x0D 0x0A まで）
                 if let data = try? Data(contentsOf: url, options: .alwaysMapped),
-                   let title = extractMDXTitle(from: data) {
+                   let title = MDXFileLoader.title(from: data) as String?,
+                   !title.isEmpty, title != "(no title)" {
                     item.title = title
                 }
                 files.append(item)
@@ -49,27 +50,5 @@ struct FileItem: Identifiable, Hashable {
         return result + dirs + files
     }
 
-    /// MDX ファイルデータからタイトルを抽出（Shift-JIS形式）
-    private static func extractMDXTitle(from data: Data) -> String? {
-        let bytes = [UInt8](data)
-        // 0x0D 0x0A (CR+LF) を探す
-        var pos = 0
-        while pos < bytes.count - 1 {
-            if bytes[pos] == 0x0D && bytes[pos + 1] == 0x0A {
-                break
-            }
-            pos += 1
-        }
-        guard pos < bytes.count - 1 else { return nil }
-        let titleData = data.prefix(pos)
-        // Shift-JIS デコードを試す
-        if let title = String(data: titleData, encoding: .shiftJIS) {
-            return title.isEmpty ? nil : title
-        }
-        // UTF-8 デコードを試す
-        if let title = String(data: titleData, encoding: .utf8) {
-            return title.isEmpty ? nil : title
-        }
-        return nil
-    }
+
 }
