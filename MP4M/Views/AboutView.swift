@@ -86,7 +86,7 @@ struct AboutView: View {
                     .font(.mp4mTiny)
                     .foregroundColor(.mp4mText.opacity(0.9))
                     .lineLimit(nil)
-                Text("We do not distribute through App Store to preserve their original intent.")
+                Text("I do not distribute through App Store to preserve their original intent.")
                     .font(.mp4mTiny)
                     .foregroundColor(.mp4mText.opacity(0.9))
                     .lineLimit(nil)

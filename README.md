@@ -212,13 +212,14 @@ iOS向けのものはasadayさんというかたがMDXプレイヤー（ https:/
 
 | バージョン | 日付 | 主な変更 |
 |-----------|------|---------|
+| **v2.1.0** | 2026-05-30 | ymfm 初回再生時の音色不良を内部エンベロープ直接リセット（A-2）で改善 |
 | **v2.0.0** | 2026-05-26 | OPM エンジン（ymfm/fmgen）を実行時切り替え可能に |
 | **v1.3.0** | 2026-05-26 | fmgen を ymfm (BSD 3-Clause) に置き換え。商用利用制限を解消 |
 | **v1.1.0** | 2026-05-10 | 単一インスタンス制御（flock+DistributedNotification）、IPC転送、`playAsync()` 非ブロッキング再生 |
 | **v1.0.0** | 2026-05-10 | 初版リリース。MDX/PDX 再生、スペアナ・レベルメーター・キーボード表示 |
 
-**Last Updated**: 2026-05-26  
-**Version**: 2.0.0  
+**Last Updated**: 2026-05-30  
+**Version**: 2.1.0  
 **macOS Requirement**: 14.0 Sonoma+  
 **Build Tool**: Xcode 15.0+, xcodegen
 
