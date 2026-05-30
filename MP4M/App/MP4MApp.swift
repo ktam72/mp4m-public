@@ -90,8 +90,8 @@ struct MP4MApp: App {
             ContentView()
         }
         .windowStyle(.hiddenTitleBar)
-        .defaultSize(width: 900, height: 640)
-        .windowResizability(.contentSize)
+        .defaultSize(width: 880, height: 880)
+        .windowResizability(.contentMinSize)
         .commands {
             CommandGroup(replacing: .newItem) {}
         }
