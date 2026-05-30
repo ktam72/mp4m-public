@@ -3,6 +3,7 @@ import SwiftUI
 struct AboutView: View {
     @Binding var isPresented: Bool
     @AppStorage(UserDefaultsKey.opmEngine) private var opmEngineType: Int = 1
+    var onEngineSwitch: ((Int) -> Void)?
 
     var body: some View {
         VStack(spacing: 16) {
@@ -129,7 +130,7 @@ struct AboutView: View {
     private func engineButton(_ label: String, type: Int) -> some View {
         Button {
             opmEngineType = type
-            MXDRVGBridge.setOpmEngine(Int32(type))
+            onEngineSwitch?(type)
         } label: {
             Text(label)
                 .font(.mp4mTiny)

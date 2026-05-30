@@ -102,7 +102,9 @@ struct ContentView: View {
                 Color.black.opacity(0.55)
                     .ignoresSafeArea()
                     .onTapGesture { showAbout = false }
-                AboutView(isPresented: $showAbout)
+                AboutView(isPresented: $showAbout, onEngineSwitch: { [playerVM] type in
+                    playerVM?.setOpmEngine(type)
+                })
             }
         }
     }

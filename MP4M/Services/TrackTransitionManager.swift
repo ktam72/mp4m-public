@@ -42,7 +42,7 @@ final class TrackTransitionManager {
         fadeOutTask = Task { @MainActor [weak self] in
             guard let self else { return }
 
-            for step in 0..<fadeOutSteps {
+            for _ in 0..<fadeOutSteps {
                 guard !Task.isCancelled else { break }
                 try? await Task.sleep(nanoseconds: 50_000_000)
                 fadeOutVolume = max(0.0, fadeOutVolume - decrement)

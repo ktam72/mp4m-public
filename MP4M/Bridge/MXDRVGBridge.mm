@@ -163,7 +163,6 @@ static void resetMXDRVGEngine(int sampleRate) {
             // PDX ファイル名を抽出（最大 255 バイト）
             #define MAX_PDX_NAME_LEN 255
             size_t pdxNameEnd = mdxBodyStartPos;
-            size_t pdxNameMaxLen = fileData.length - mdxBodyStartPos;
             while (pdxNameEnd < fileData.length && ptr[pdxNameEnd] != 0 &&
                    (pdxNameEnd - mdxBodyStartPos) < MAX_PDX_NAME_LEN) {
                 pdxNameEnd++;
@@ -267,7 +266,6 @@ static void resetMXDRVGEngine(int sampleRate) {
     mdxBodyStartPos++;  // 0x1A をスキップ
     
     // PDX ファイル名をスキップ
-    int pdxNameStart = mdxBodyStartPos;
     while (mdxBodyStartPos < (int)mdxData.length && ptr[mdxBodyStartPos] != 0) {
         mdxBodyStartPos++;
     }
@@ -328,9 +326,9 @@ static void resetMXDRVGEngine(int sampleRate) {
 
     // MDX/PDX データをエンジンに登録
     MXDRVG_SetData(
-        (void*)g_state.mdxData.bytes, (unsigned long)g_state.mdxData.length,
+        (void*)g_state.mdxData.bytes, (ULONG)g_state.mdxData.length,
         g_state.pdxData ? (void*)g_state.pdxData.bytes : NULL,
-        g_state.pdxData ? (unsigned long)g_state.pdxData.length : 0
+        g_state.pdxData ? (ULONG)g_state.pdxData.length : 0
     );
 
     // タイトル抽出
@@ -354,9 +352,9 @@ static void resetMXDRVGEngine(int sampleRate) {
 
     // MeasurePlayTime でシーケンスが終端まで進んだため SetData で冒頭へリセット
     MXDRVG_SetData(
-        (void*)g_state.mdxData.bytes, (unsigned long)g_state.mdxData.length,
+        (void*)g_state.mdxData.bytes, (ULONG)g_state.mdxData.length,
         g_state.pdxData ? (void*)g_state.pdxData.bytes : NULL,
-        g_state.pdxData ? (unsigned long)g_state.pdxData.length : 0
+        g_state.pdxData ? (ULONG)g_state.pdxData.length : 0
     );
 
     // 【一時停止中】A-2 強制リセット（KNA03.MDX 等で一部パートが発音されなくなる副作用確認のため）

@@ -27,7 +27,6 @@ int MXDRVG_GetPCM8ChannelMode(int ch);
         memset(opmStates, 0, sizeof(opmStates));
 
         // Get PCM8 channel states (channels 8-15) from MXDRVG work area
-        MXDRVG_WORK_CH* fmCh = (MXDRVG_WORK_CH*)MXDRVG_GetWork(MXDRVG_WORKADR_FM);
         MXDRVG_WORK_CH* pcmCh = (MXDRVG_WORK_CH*)MXDRVG_GetWork(MXDRVG_WORKADR_PCM);
         MXDRVG_WORK_GLOBAL* globalWork = (MXDRVG_WORK_GLOBAL*)MXDRVG_GetWork(MXDRVG_WORKADR_GLOBAL);
 
@@ -79,13 +78,7 @@ int MXDRVG_GetPCM8ChannelMode(int ch);
             // チャンネルマスクでこの PCM チャンネルが有効か確認
             int isChannelEnabled = (channelMask & (1 << pcmBit)) ? 1 : 0;
 
-            uint8_t flags = pcmCh[i].S0016;
-            uint8_t keyOn = (flags >> 3) & 1;  // bit3 = keyon
-
-            // PCM チャンネルが使用可能か判定
             UBYTE volatile* S0000 = pcmCh[i].S0000;  // Ptr フィールド
-            uint8_t vol = pcmCh[i].S0022;  // volume
-            uint8_t len = pcmCh[i].S001a;  // len
 
             // 実際に割り当て済みか判定：S0000 ポインタが有効（非ゼロ）
             // S0000 はサンプルデータへのポインタ。ゼロなら割り当てなし

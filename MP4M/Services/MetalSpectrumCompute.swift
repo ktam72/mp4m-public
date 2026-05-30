@@ -56,7 +56,7 @@ final class MetalSpectrumCompute {
     }
 
     func computeSpectrum(channels: [ChannelDisplayState]) -> [Float] {
-        guard let device = device,
+        guard device != nil,
               let commandQueue = commandQueue,
               let pipelineState = pipelineState,
               let channelBuffer = channelBuffer,

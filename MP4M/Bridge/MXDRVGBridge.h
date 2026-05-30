@@ -6,6 +6,8 @@
 #import <Foundation/Foundation.h>
 #include "MP4M-Bridging-Header.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @interface MXDRVGBridge : NSObject
 
 + (void)startWithSampleRate:(int)sampleRate;
@@ -30,3 +32,5 @@
 + (NSString *)opmEngineName;
 
 @end
+
+NS_ASSUME_NONNULL_END

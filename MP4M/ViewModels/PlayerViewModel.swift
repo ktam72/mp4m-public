@@ -202,6 +202,22 @@ final class PlayerViewModel {
         autoMode = mode
     }
 
+    /// OPM エンジンを切り替え（AboutView からの呼び出し用）
+    /// 再生時間計測（MeasurePlayTime）はバックグラウンドで実行しメインスレッドをブロックしない
+    func setOpmEngine(_ type: Int) {
+        Task.detached(priority: .userInitiated) {
+            MXDRVGBridge.setOpmEngine(Int32(type))
+
+            await MainActor.run {
+                self.totalTimeMs = Int(MXDRVGBridge.totalPlayTimeMs())
+                self.playStartTimeMs = 0
+                self.playStartDate = Date()
+                self.lastSyncTimeMs = 0
+                self.lastSyncDate = Date()
+            }
+        }
+    }
+
     /// チャンネルのミュートをトグル切り替え
     func toggleChannel(_ channelIndex: Int) {
         let isMuted = mutedChannels.contains(channelIndex)
@@ -255,7 +271,7 @@ final class PlayerViewModel {
                 return status == .playing || transitionManager.isFadingOut
             },
             update: { [weak self] frameCount in
-                await self?.updateDisplay(frameCount: frameCount)
+                self?.updateDisplay(frameCount: frameCount)
             }
         )
         Log.debug("[PlayerVM] status set to .playing, display timer started")
