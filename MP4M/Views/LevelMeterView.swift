@@ -4,13 +4,17 @@ import SwiftUI
 struct LevelMeterView: View {
     let viewModel: PlayerViewModel?
     @State private var keyboardHovered: Int? = nil
-    @State private var channelPeaks: [ChannelPeak] = Array(
-        repeating: ChannelPeak(), count: AudioConstants.channelCount
-    )
+    @State private var peakTracker = PeakTracker()
 
     private struct ChannelPeak {
         var level: CGFloat = 0
         var timer: Int = 0
+    }
+
+    private final class PeakTracker {
+        var peaks: [ChannelPeak] = Array(
+            repeating: ChannelPeak(), count: AudioConstants.channelCount
+        )
     }
 
     var body: some View {
@@ -63,7 +67,7 @@ struct LevelMeterView: View {
                             let currentLevel: CGFloat = state.keyOn ? state.displayLevel : 0
 
                             // ピーク値の更新（減衰付き）
-                            var peak = channelPeaks[ch]
+                            var peak = peakTracker.peaks[ch]
                             if currentLevel > peak.level {
                                 peak.level = currentLevel
                                 peak.timer = 10
@@ -72,7 +76,7 @@ struct LevelMeterView: View {
                             } else if peak.level > 0 {
                                 peak.level = max(0, peak.level - 0.04)
                             }
-                            channelPeaks[ch] = peak
+                            peakTracker.peaks[ch] = peak
 
                             ctx.opacity = mutedOpacity
 
