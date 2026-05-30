@@ -19,7 +19,9 @@ MXDRVGState *g_state = nil;
 
 // MXDRVG エンジンをリセット（初期化・開始）
 static void resetMXDRVGEngine(int sampleRate) {
-    // UserDefaults からエンジン種別を復元（初回起動時はデフォルト=ymfm）
+    // UserDefaults の初回デフォルト値を登録（@AppStorage と同期）
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{@"mp4m_opmEngine": @1}];
+    // UserDefaults からエンジン種別を復元
     NSInteger engineType = [[NSUserDefaults standardUserDefaults] integerForKey:@"mp4m_opmEngine"];
 
     // 例外安全対策：初期化中に例外が起きてもアプリを落とさない
