@@ -123,12 +123,15 @@ final class MXDRVAudioEngine: AudioEngineService {
     }
 
     private func setupAudioEngine() {
-        let format = AVAudioFormat(
+        guard let format = AVAudioFormat(
             commonFormat: .pcmFormatFloat32,
             sampleRate: Double(sampleRate),
             channels: 2,
             interleaved: false
-        )!
+        ) else {
+            print("[MXDRVAudioEngine] ERROR: Failed to create audio format")
+            return
+        }
 
         let source = AVAudioSourceNode(format: format) { [weak self] _, _, frameCount, audioBufferList in
             self?.renderAudioCallback(frameCount: Int(frameCount), audioBufferList: audioBufferList)
