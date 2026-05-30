@@ -237,6 +237,11 @@ const char* MXDRVG_GetOpmEngineName(
 	void
 );
 
+MXDRVG_EXPORT
+void MXDRVG_ForceYmfmRelease(
+	void
+);
+
 #endif // __MXDRVG_LOADMODULE
 
 #ifdef __cplusplus

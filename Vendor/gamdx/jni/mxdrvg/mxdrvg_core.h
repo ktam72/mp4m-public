@@ -607,6 +607,20 @@ const char* MXDRVG_GetOpmEngineName(
 
 /***************************************************************/
 
+// 初回再生音色不良対策 (A-2) 用。
+// ymfm 使用時のみ OpmWrapper::ForceReleaseAllChannels() を呼び出す。
+// fmgen 使用時は何もしない。
+MXDRVG_EXPORT
+void MXDRVG_ForceYmfmRelease(
+	void
+) {
+	if (g_engine && g_opm_engine_type == 0) {  // 0 = ymfm
+		g_engine->ForceReleaseAllChannels();
+	}
+}
+
+/***************************************************************/
+
 MXDRVG_EXPORT
 void MXDRVG_SetData(
 	void *mdx,

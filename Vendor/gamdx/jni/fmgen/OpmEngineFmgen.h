@@ -82,6 +82,11 @@ public:
         return "fmgen";
     }
 
+    void ForceReleaseAllChannels() override
+    {
+        // fmgen では不要（A-2 は ymfm 専用対策）
+    }
+
 protected:
     void Intr(bool irq) override
     {

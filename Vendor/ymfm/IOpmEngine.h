@@ -30,6 +30,10 @@ public:
     virtual void SetIntrCallback(IntrCallback cb) = 0;
 
     virtual const char* GetEngineName() const = 0;
+
+    // ymfm 初回再生音色不良対策 (A-2) で使用。
+    // fmgen では no-op、ymfm でのみ内部エンベロープを強制リセットする。
+    virtual void ForceReleaseAllChannels() {}
 };
 
 #endif

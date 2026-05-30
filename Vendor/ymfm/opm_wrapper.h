@@ -27,6 +27,9 @@ public:
     int32 GetNextEvent();
     bool Count(int32 us);
 
+    // 初回再生音色不良対策 (A-2): ymfm 内部エンベロープ状態を強制リセット
+    void ForceReleaseAllChannels();
+
     // fmgen 互換タイマーモード切替 (default: true)
     // true  = fmgen 準拠の 64x 高速タイマー (MXDRV 互換)
     // false = ymfm 正規の YM2151 実機相当タイマー

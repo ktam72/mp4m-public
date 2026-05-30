@@ -79,6 +79,11 @@ public:
         return "ymfm";
     }
 
+    void ForceReleaseAllChannels() override
+    {
+        OpmWrapper::ForceReleaseAllChannels();
+    }
+
 protected:
     void Intr(bool irq) override
     {
