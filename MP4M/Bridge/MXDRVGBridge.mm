@@ -26,6 +26,7 @@ static void resetMXDRVGEngine(int sampleRate, int engineType) {
     try {
         MXDRVG_End();
         MXDRVG_SetOpmEngine(engineType);
+        fprintf(stderr, "[resetMXDRVGEngine] after SetOpmEngine: type=%d\n", MXDRVG_GetOpmEngine());
         MXDRVG_Start(sampleRate, 0, 64 * 1024, 1024 * 1024);
         MXDRVG_TotalVolume(128);
     } catch (...) {
