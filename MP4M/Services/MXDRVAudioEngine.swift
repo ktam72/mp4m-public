@@ -15,7 +15,6 @@ final class MXDRVAudioEngine: AudioEngineService {
     private static let maxFrameCount = 1024
     private static let pcmBufferSize = maxFrameCount * 2
     nonisolated(unsafe) private var pcmBuffer: [Int16] = [Int16](repeating: 0, count: pcmBufferSize)
-    nonisolated(unsafe) private var mutedChannels: Set<Int> = []
 
     init() {
         print("[MXDRVAudioEngine] init - START")
