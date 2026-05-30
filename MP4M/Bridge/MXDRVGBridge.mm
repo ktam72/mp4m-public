@@ -5,6 +5,7 @@
 
 #import "MXDRVGBridge.h"
 #import "MDXFileLoader.h"
+#import "MXDRVGState.h"
 #include "../Vendor/gamdx/jni/mxdrvg/mxdrvg.h"
 #include <stdlib.h>
 #include <string.h>
@@ -15,27 +16,8 @@ void OPM_GetChannelStates(MP4MChannelState* states, int max_channels);
 int MXDRVG_GetPCM8ChannelMode(int ch);
 }
 
-// グローバル状態
-static NSData* g_mdxData = nil;
-static NSData* g_pdxData = nil;
-static char g_lastTitle[512] = {0};
-static char g_lastPDXFileName[256] = {0};
-static int g_totalPlayTimeMs = 0;
-static int g_hasPDX = 0;  // PDX が存在するかどうか
-static char g_pdxLoadError[256] = {0};  // PDX ロード失敗時のエラーメッセージ（空=エラーなし）
-
-// エンジン切り替え比較用：最後にロードしたファイルパスを保持
-static NSString *g_lastLoadedMDXPath = nil;
-
-// ymfmデバッグログ用（MP4M_YMFM_DEBUG=1 で有効化）
-static BOOL g_ymfmDebugEnabled = NO;
-static int g_ymfmDebugFrameCount = 0;
-static int g_ymfmDebugHighResInterval = 60;  // 60=通常(約1s), 6=HIGHRES(約50ms)
-// チャンネルミュート用：元の出力レベルを保存
-static uint8_t g_fmMutedTL[8] = {0};  // FM 各チャンネルのミュート時の元 TL 値
-static uint8_t g_pcmMutedVol[8] = {0};  // PCM 各チャンネルのミュート時の元 volume 値
-static int g_fmMuteState[8] = {0};  // FM ミュート状態（0=非ミュート、1=ミュート中）
-static int g_pcmMuteState[8] = {0};  // PCM ミュート状態
+// グローバル状態（MXDRVGState に集約）
+static MXDRVGState *g_state = nil;
 
 // MXDRVG エンジンをリセット（初期化・開始）
 static void resetMXDRVGEngine(int sampleRate) {
@@ -60,18 +42,23 @@ static void resetMXDRVGEngine(int sampleRate) {
     #ifdef DEBUG
     fprintf(stderr, "[MXDRVGBridge] startWithSampleRate: %d\n", sampleRate);
     #endif
+
+    if (!g_state) {
+        g_state = [[MXDRVGState alloc] init];
+    }
+
     resetMXDRVGEngine(sampleRate);
 
     // ymfm詳細デバッグログの有効化（MP4M_YMFM_DEBUG=1）
     const char* env = getenv("MP4M_YMFM_DEBUG");
-    g_ymfmDebugEnabled = (env && atoi(env) != 0);
-    if (g_ymfmDebugEnabled) {
+    g_state.ymfmDebugEnabled = (env && atoi(env) != 0);
+    if (g_state.ymfmDebugEnabled) {
         // HIGHRES が指定されていれば高頻度（約50ms間隔）に切り替え
         const char* highResEnv = getenv("MP4M_YMFM_HIGHRES");
-        g_ymfmDebugHighResInterval = (highResEnv && atoi(highResEnv) != 0) ? 6 : 60;
+        g_state.ymfmDebugHighResInterval = (highResEnv && atoi(highResEnv) != 0) ? 6 : 60;
 
         fprintf(stderr, "[OPM_DEBUG] OPM詳細ログを有効化 (MP4M_YMFM_DEBUG=1, interval=%d frames)\n",
-                g_ymfmDebugHighResInterval);
+                g_state.ymfmDebugHighResInterval);
     }
 
     #ifdef DEBUG
@@ -81,14 +68,14 @@ static void resetMXDRVGEngine(int sampleRate) {
 
 + (void)end {
     MXDRVG_End();
-    g_mdxData = nil;
-    g_pdxData = nil;
-    memset(g_lastPDXFileName, 0, sizeof(g_lastPDXFileName));
+    g_state.mdxData = nil;
+    g_state.pdxData = nil;
+    memset(g_state->lastPDXFileName, 0, sizeof(g_state->lastPDXFileName));
 }
 
 + (nullable NSString *)pdxFileName {
-    if (g_lastPDXFileName[0] == '\0') return nil;
-    NSString *name = [NSString stringWithUTF8String:g_lastPDXFileName];
+    if (g_state->lastPDXFileName[0] == '\0') return nil;
+    NSString *name = [NSString stringWithUTF8String:g_state->lastPDXFileName];
     // "No PDX" の変種（例: (No PDX)、(No PDX).pdx など）を検出して統一
     if ([name.lowercaseString containsString:@"no pdx"]) {
         return @"No PDX";
@@ -97,17 +84,17 @@ static void resetMXDRVGEngine(int sampleRate) {
 }
 
 + (nullable NSString *)pdxLoadError {
-    if (g_pdxLoadError[0] == '\0') return nil;
-    return [NSString stringWithUTF8String:g_pdxLoadError];
+    if (g_state->pdxLoadError[0] == '\0') return nil;
+    return [NSString stringWithUTF8String:g_state->pdxLoadError];
 }
 
 + (nullable NSString *)loadMDXFile:(NSString *)mdxPath {
     // エンジン切り替え比較用に最後にロードしたパスを保持
-    g_lastLoadedMDXPath = [mdxPath copy];
+    g_state.lastLoadedMDXPath = [mdxPath copy];
 
     // 最初に "No PDX" を設定（PDX未指定や読み込み失敗時に使用）
-    strncpy(g_lastPDXFileName, "No PDX", sizeof(g_lastPDXFileName) - 1);
-    g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
+    strncpy(g_state->lastPDXFileName, "No PDX", sizeof(g_state->lastPDXFileName) - 1);
+    g_state->lastPDXFileName[sizeof(g_state->lastPDXFileName) - 1] = '\0';
     #ifdef DEBUG
     fprintf(stderr, "[loadMDXFile] Loading: %s\n", [mdxPath UTF8String]);
     #endif
@@ -202,8 +189,8 @@ static void resetMXDRVGEngine(int sampleRate) {
                         #ifdef DEBUG
                         fprintf(stderr, "[PDX] SECURITY ERROR: PDX filename contains invalid characters (path separators or directory traversal): %s\n", [pdxFileName UTF8String]);
                         #endif
-                        strncpy(g_lastPDXFileName, "No PDX", sizeof(g_lastPDXFileName) - 1);
-                        g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
+                        strncpy(g_state->lastPDXFileName, "No PDX", sizeof(g_state->lastPDXFileName) - 1);
+                        g_state->lastPDXFileName[sizeof(g_state->lastPDXFileName) - 1] = '\0';
                     } else {
                         // 大文字小文字を区別せずにPDXファイルを検索
                         NSString* pdxPath = [MDXFileLoader findPDXFile:pdxFileName inDirectory:mdxDir];
@@ -217,29 +204,29 @@ static void resetMXDRVGEngine(int sampleRate) {
                                 fprintf(stderr, "[PDX] Successfully loaded PDX file, size: %lu\n", (unsigned long)pdxData.length);
                                 #endif
                                 // 成功：グローバル変数に PDX ファイル名を保存
-                                strncpy(g_lastPDXFileName, [pdxFileName UTF8String], sizeof(g_lastPDXFileName) - 1);
-                                g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
+                                strncpy(g_state->lastPDXFileName, [pdxFileName UTF8String], sizeof(g_state->lastPDXFileName) - 1);
+                                g_state->lastPDXFileName[sizeof(g_state->lastPDXFileName) - 1] = '\0';
                             } else {
                                 #ifdef DEBUG
                                 fprintf(stderr, "[PDX] Failed to load PDX file\n");
                                 #endif
                                 // 失敗："No PDX" を設定
-                                strncpy(g_lastPDXFileName, "No PDX", sizeof(g_lastPDXFileName) - 1);
-                                g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
+                                strncpy(g_state->lastPDXFileName, "No PDX", sizeof(g_state->lastPDXFileName) - 1);
+                                g_state->lastPDXFileName[sizeof(g_state->lastPDXFileName) - 1] = '\0';
                             }
                         } else {
                             #ifdef DEBUG
                             fprintf(stderr, "[PDX] PDX file not found (case-insensitive search)\n");
                             #endif
                             // 失敗："No PDX" を設定
-                            strncpy(g_lastPDXFileName, "No PDX", sizeof(g_lastPDXFileName) - 1);
-                            g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
+                            strncpy(g_state->lastPDXFileName, "No PDX", sizeof(g_state->lastPDXFileName) - 1);
+                            g_state->lastPDXFileName[sizeof(g_state->lastPDXFileName) - 1] = '\0';
                         }
                     }
                 } else {
                     // PDX 指定がない場合は "No PDX" を設定
-                    strncpy(g_lastPDXFileName, "No PDX", sizeof(g_lastPDXFileName) - 1);
-                    g_lastPDXFileName[sizeof(g_lastPDXFileName) - 1] = '\0';
+                    strncpy(g_state->lastPDXFileName, "No PDX", sizeof(g_state->lastPDXFileName) - 1);
+                    g_state->lastPDXFileName[sizeof(g_state->lastPDXFileName) - 1] = '\0';
                     fprintf(stderr, "[PDX] No PDX specified in MDX header\n");
                 }
             }
@@ -253,7 +240,7 @@ static void resetMXDRVGEngine(int sampleRate) {
     if (!mdxData) return nil;
 
     // エラーフラグをリセット
-    memset(g_pdxLoadError, 0, sizeof(g_pdxLoadError));
+    memset(g_state->pdxLoadError, 0, sizeof(g_state->pdxLoadError));
 
     const unsigned char* ptr = (const unsigned char*)mdxData.bytes;
 
@@ -298,23 +285,23 @@ static void resetMXDRVGEngine(int sampleRate) {
             fprintf(stderr, "[PDX] PDX decompressed successfully, size: %lu bytes\n", (unsigned long)pdxDecompressed.length);
 #endif
             // PDX デコンプレス成功
-            g_hasPDX = 1;
+            g_state.hasPDX = 1;
         } else {
 #ifdef DEBUG
             fprintf(stderr, "[PDX] PDX decompression failed, marking as error\n");
 #endif
             // PDX デコンプレス失敗 → エラーメッセージを設定
-            strncpy(g_pdxLoadError, "PDX decompression failed: file is corrupt", sizeof(g_pdxLoadError) - 1);
-            g_pdxLoadError[sizeof(g_pdxLoadError) - 1] = '\0';
+            strncpy(g_state->pdxLoadError, "PDX decompression failed: file is corrupt", sizeof(g_state->pdxLoadError) - 1);
+            g_state->pdxLoadError[sizeof(g_state->pdxLoadError) - 1] = '\0';
             pdxData = nil;
-            g_hasPDX = 0;
+            g_state.hasPDX = 0;
             pdxLoadFailed = YES;
         }
     } else {
 #ifdef DEBUG
         fprintf(stderr, "[PDX] No PDX data provided\n");
 #endif
-        g_hasPDX = 0;
+        g_state.hasPDX = 0;
     }
 
     // ヘッダー付与
@@ -322,8 +309,8 @@ static void resetMXDRVGEngine(int sampleRate) {
     NSData* pdxWrapped = pdxDecompressed ? [MDXFileLoader wrapPDX:pdxDecompressed] : nil;
 
     // グローバル変数に保存（ARC が自動管理）
-    g_mdxData = mdxWrapped;
-    g_pdxData = pdxWrapped;
+    g_state.mdxData = mdxWrapped;
+    g_state.pdxData = pdxWrapped;
 
     // PDX ロード失敗時は、MXDRVG エンジンをリセットして MDX のみ登録
     if (pdxLoadFailed) {
@@ -335,9 +322,9 @@ static void resetMXDRVGEngine(int sampleRate) {
 
     // MDX/PDX データをエンジンに登録
     MXDRVG_SetData(
-        (void*)g_mdxData.bytes, (unsigned long)g_mdxData.length,
-        g_pdxData ? (void*)g_pdxData.bytes : NULL,
-        g_pdxData ? (unsigned long)g_pdxData.length : 0
+        (void*)g_state.mdxData.bytes, (unsigned long)g_state.mdxData.length,
+        g_state.pdxData ? (void*)g_state.pdxData.bytes : NULL,
+        g_state.pdxData ? (unsigned long)g_state.pdxData.length : 0
     );
 
     // タイトル抽出
@@ -346,10 +333,10 @@ static void resetMXDRVGEngine(int sampleRate) {
 }
 
 + (void)playWithLoopCount:(int)loopCount {
-    if (!g_mdxData) return;
+    if (!g_state.mdxData) return;
 
     // PDX ロード失敗時は再生を実行しない
-    if (g_pdxLoadError[0] != '\0') {
+    if (g_state->pdxLoadError[0] != '\0') {
 #ifdef DEBUG
         fprintf(stderr, "[playWithLoopCount] PDX load error detected, aborting playback\n");
 #endif
@@ -357,13 +344,13 @@ static void resetMXDRVGEngine(int sampleRate) {
     }
 
     // 総再生時間計測（内部状態を曲終端まで進めるため、直後に SetData で再初期化が必要）
-    g_totalPlayTimeMs = MXDRVG_MeasurePlayTime(loopCount, 0);
+    g_state.totalPlayTimeMs = MXDRVG_MeasurePlayTime(loopCount, 0);
 
     // MeasurePlayTime でシーケンスが終端まで進んだため SetData で冒頭へリセット
     MXDRVG_SetData(
-        (void*)g_mdxData.bytes, (unsigned long)g_mdxData.length,
-        g_pdxData ? (void*)g_pdxData.bytes : NULL,
-        g_pdxData ? (unsigned long)g_pdxData.length : 0
+        (void*)g_state.mdxData.bytes, (unsigned long)g_state.mdxData.length,
+        g_state.pdxData ? (void*)g_state.pdxData.bytes : NULL,
+        g_state.pdxData ? (unsigned long)g_state.pdxData.length : 0
     );
 
     // 【一時停止中】A-2 強制リセット（KNA03.MDX 等で一部パートが発音されなくなる副作用確認のため）
@@ -377,7 +364,7 @@ static void resetMXDRVGEngine(int sampleRate) {
 
         // デバッグ用：SetData直後の初期状態を高密度でダンプ（KNA03などの曲頭パーカッション問題調査用）
         // ymfm / fmgen 両方で同じ条件で出力して比較できるようにする
-        if (g_ymfmDebugEnabled) {
+        if (g_state.ymfmDebugEnabled) {
             const char* initTag = (currentEngine == 0) ? "YMFM_CH_INIT" : "FMGEN_CH_INIT";
             const char* engineName = (currentEngine == 0) ? "ymfm" : "fmgen";
             fprintf(stderr, "[%s] === Initial state burst right after SetData (%s) ===\n", initTag, engineName);
@@ -424,12 +411,12 @@ static void resetMXDRVGEngine(int sampleRate) {
 }
 
 + (int)totalPlayTimeMs {
-    return g_totalPlayTimeMs;
+    return g_state.totalPlayTimeMs;
 }
 
 + (int)getPCM:(int16_t *)buf frameCount:(int)frameCount {
     // PDX ロード失敗時はサイレンスを返す
-    if (g_pdxLoadError[0] != '\0') {
+    if (g_state->pdxLoadError[0] != '\0') {
         memset(buf, 0, frameCount * sizeof(int16_t));
         return frameCount;
     }
@@ -456,9 +443,9 @@ static void resetMXDRVGEngine(int sampleRate) {
 
     // OPMチャンネル状態の詳細ログ出力（MP4M_YMFM_DEBUG=1時のみ）
     // ymfm / fmgen 両方で同じフォーマットで出力して比較しやすくする
-    if (g_ymfmDebugEnabled) {
-        g_ymfmDebugFrameCount++;
-        if (g_ymfmDebugFrameCount % g_ymfmDebugHighResInterval == 0) {
+    if (g_state.ymfmDebugEnabled) {
+        g_state.ymfmDebugFrameCount++;
+        if (g_state.ymfmDebugFrameCount % g_state.ymfmDebugHighResInterval == 0) {
             NSInteger engineType = [[NSUserDefaults standardUserDefaults] integerForKey:@"mp4m_opmEngine"];
             const char* tag = (engineType == 0) ? "[YMFM_CH]" : "[FMGEN_CH]";
             fprintf(stderr, "%s ", tag);
@@ -512,7 +499,7 @@ static void resetMXDRVGEngine(int sampleRate) {
             // S0000 はサンプルデータへのポインタ。ゼロなら割り当てなし
             uint8_t isPlaying = (S0000 != NULL && S0000 != 0) ? 1 : 0;
 
-            if (!isChannelEnabled || !g_hasPDX) {
+            if (!isChannelEnabled || !g_state.hasPDX) {
                 // このチャンネルはマスクで無効化されている、または PDX がない
                 states[chIdx].keyOn = 0;
                 states[chIdx].active = 0;
@@ -574,9 +561,9 @@ static void resetMXDRVGEngine(int sampleRate) {
     fprintf(stderr, "[ENGINE SWITCH] Engine switched successfully. New engine: %s\n", [[self opmEngineName] UTF8String]);
 
     // 比較用途のため、同じ曲を自動で最初からロードし直す（位置0から）
-    if (g_lastLoadedMDXPath) {
-        fprintf(stderr, "[ENGINE SWITCH] Auto-reloading same file for comparison: %s\n", [g_lastLoadedMDXPath UTF8String]);
-        [self loadMDXFile:g_lastLoadedMDXPath];
+    if (g_state.lastLoadedMDXPath) {
+        fprintf(stderr, "[ENGINE SWITCH] Auto-reloading same file for comparison: %s\n", [g_state.lastLoadedMDXPath UTF8String]);
+        [self loadMDXFile:g_state.lastLoadedMDXPath];
         // 自動で再生開始（loopCount=2固定で比較しやすくする）
         [self playWithLoopCount:2];
         fprintf(stderr, "[ENGINE SWITCH] Auto playback started after engine switch.\n");
@@ -603,19 +590,19 @@ static void resetMXDRVGEngine(int sampleRate) {
         if (!fmCh) return;
 
         if (isMuted) {
-            if (!g_fmMuteState[ch]) {
+            if (!g_state->fmMuteState[ch]) {
                 // ミュート開始：元の TL 値を保存して TL=127 に設定
                 // FM ワークエリアの S001f (TL) フィールド
                 uint8_t currentTL = fmCh[ch].S001f;
-                g_fmMutedTL[ch] = currentTL;
-                g_fmMuteState[ch] = 1;
+                g_state->fmMutedTL[ch] = currentTL;
+                g_state->fmMuteState[ch] = 1;
                 fmCh[ch].S001f = 127;  // 無音（最大減衰）
             }
         } else {
-            if (g_fmMuteState[ch]) {
+            if (g_state->fmMuteState[ch]) {
                 // ミュート解除：保存した TL 値に復元
-                fmCh[ch].S001f = g_fmMutedTL[ch];
-                g_fmMuteState[ch] = 0;
+                fmCh[ch].S001f = g_state->fmMutedTL[ch];
+                g_state->fmMuteState[ch] = 0;
             }
         }
     } else {
@@ -627,18 +614,18 @@ static void resetMXDRVGEngine(int sampleRate) {
         if (pcmIdx < 0 || pcmIdx >= 8) return;
 
         if (isMuted) {
-            if (!g_pcmMuteState[pcmIdx]) {
+            if (!g_state->pcmMuteState[pcmIdx]) {
                 // ミュート開始：元の volume を保存して 0 に設定
                 uint8_t currentVol = pcmCh[pcmIdx].S0022;
-                g_pcmMutedVol[pcmIdx] = currentVol;
-                g_pcmMuteState[pcmIdx] = 1;
+                g_state->pcmMutedVol[pcmIdx] = currentVol;
+                g_state->pcmMuteState[pcmIdx] = 1;
                 pcmCh[pcmIdx].S0022 = 0;  // 無音
             }
         } else {
-            if (g_pcmMuteState[pcmIdx]) {
+            if (g_state->pcmMuteState[pcmIdx]) {
                 // ミュート解除：保存した volume に復元
-                pcmCh[pcmIdx].S0022 = g_pcmMutedVol[pcmIdx];
-                g_pcmMuteState[pcmIdx] = 0;
+                pcmCh[pcmIdx].S0022 = g_state->pcmMutedVol[pcmIdx];
+                g_state->pcmMuteState[pcmIdx] = 0;
             }
         }
     }
