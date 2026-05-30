@@ -85,6 +85,9 @@ final class MXDRVAudioEngine: AudioEngineService {
     }
 
     func getChannelStates() -> [ChannelDisplayState] {
+        os_unfair_lock_lock(&engineLock)
+        defer { os_unfair_lock_unlock(&engineLock) }
+
         var raw = [MP4MChannelState](repeating: MP4MChannelState(), count: AudioConstants.channelCount)
         MXDRVGBridge.getChannelStates(&raw)
 
