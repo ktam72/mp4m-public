@@ -18,31 +18,28 @@ extern "C" void OPM_GetChannelStates(MP4MChannelState* states, int max_channels)
 MXDRVGState *g_state = nil;
 
 // MXDRVG エンジンをリセット（初期化・開始）
-static void resetMXDRVGEngine(int sampleRate) {
-    // UserDefaults の初回デフォルト値を登録（@AppStorage と同期）
-    [[NSUserDefaults standardUserDefaults] registerDefaults:@{@"mp4m_opmEngine": @1}];
-    // UserDefaults からエンジン種別を復元
-    NSInteger engineType = [[NSUserDefaults standardUserDefaults] integerForKey:@"mp4m_opmEngine"];
-    fprintf(stderr, "[resetMXDRVGEngine] engineType from UD: %ld\n", (long)engineType);
+// 指定された engineType でエンジンを完全再初期化（G/KEY もクリア）
+static void resetMXDRVGEngine(int sampleRate, int engineType) {
+    fprintf(stderr, "[resetMXDRVGEngine] engineType=%d\n", engineType);
 
     // 例外安全対策：初期化中に例外が起きてもアプリを落とさない
     try {
         MXDRVG_End();
-        MXDRVG_SetOpmEngine((int)engineType);
+        MXDRVG_SetOpmEngine(engineType);
         MXDRVG_Start(sampleRate, 0, 64 * 1024, 1024 * 1024);
         MXDRVG_TotalVolume(128);
-
-        // 【一時停止中】A-2 強制リセット（KNA03.MDX 等で一部パートが発音されなくなる副作用確認のため）
-        // 初回音色不良対策として有効だったが、他の曲に悪影響が出るため一旦無効化。
-        if (engineType == 0) {
-            // MXDRVG_ForceYmfmRelease();
-            // fprintf(stderr, "[resetMXDRVGEngine] ForceReleaseAllChannels executed at engine start (ymfm)\n");
-        }
     } catch (...) {
         #ifdef DEBUG
         fprintf(stderr, "[MXDRVGBridge] EXCEPTION in resetMXDRVGEngine! Engine may be in unstable state.\n");
         #endif
     }
+}
+
+// UserDefaults から engineType を読み取るバージョン（起動時用）
+static void resetMXDRVGEngineFromUD(int sampleRate) {
+    [[NSUserDefaults standardUserDefaults] registerDefaults:@{@"mp4m_opmEngine": @1}];
+    NSInteger engineType = [[NSUserDefaults standardUserDefaults] integerForKey:@"mp4m_opmEngine"];
+    resetMXDRVGEngine(sampleRate, (int)engineType);
 }
 
 @implementation MXDRVGBridge
@@ -56,7 +53,7 @@ static void resetMXDRVGEngine(int sampleRate) {
         g_state = [[MXDRVGState alloc] init];
     }
 
-    resetMXDRVGEngine(sampleRate);
+    resetMXDRVGEngineFromUD(sampleRate);
 
     // ymfm詳細デバッグログの有効化（MP4M_YMFM_DEBUG=1）
     const char* env = getenv("MP4M_YMFM_DEBUG");
@@ -324,7 +321,7 @@ static void resetMXDRVGEngine(int sampleRate) {
 #ifdef DEBUG
         fprintf(stderr, "[PDX] PDX load failed: resetting MXDRVG engine and reloading MDX only\n");
 #endif
-        resetMXDRVGEngine(44100);
+        resetMXDRVGEngineFromUD(44100);
     }
 
     // MDX/PDX データをエンジンに登録
@@ -466,10 +463,8 @@ static void resetMXDRVGEngine(int sampleRate) {
     // 再生停止
     MXDRVG_Stop();
 
-    // エンジン種別を設定し、実インスタンスを直接差し替える
-    MXDRVG_SetOpmEngine(type);
-    MXDRVG_ReplaceEngine(type);
-    MXDRVG_TotalVolume(128);
+    // エンジン種別を設定し、G/KEY を含めて完全再初期化
+    resetMXDRVGEngine(44100, type);
 
     fprintf(stderr, "[ENGINE SWITCH] Engine switched successfully. New engine: %s\n", [[self opmEngineName] UTF8String]);
 
