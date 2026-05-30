@@ -285,14 +285,18 @@ final class PlayerViewModel {
         if shouldUpdateSpectrum {
             let newBars = spectrumService.computeSpectrum(for: fmChannels, currentBars: spectrumBars)
             currentTimeMs = ms
-            spectrumBars = newBars
+            if newBars != spectrumBars {
+                spectrumBars = newBars
+            }
 
             if totalTimeMs > 0 && currentTimeMs >= totalTimeMs {
                 transitionManager.handleTrackEnd()
             }
         }
 
-        channels = fmChannels
+        if fmChannels != channels {
+            channels = fmChannels
+        }
     }
 
     // MARK: - 内部

@@ -26,7 +26,7 @@ enum AutoMode: String, CaseIterable {
 
 /// FM/PCM チャンネルの表示用状態
 /// MXDRVG エンジンから取得した生データを UI 表示用にラップした構造体
-struct ChannelDisplayState {
+struct ChannelDisplayState: Equatable {
     /// YM2151 KC レジスタ値（キーコード、上位3ビット=オクターブ、下位4ビット=ノート）
     var keyCode: UInt8 = 0
     /// ベロシティ（鍵盤の押し込み強さ、0-127）
@@ -69,7 +69,7 @@ extension ChannelDisplayState {
 
 /// スペアナの各バー（周波数ビン）の状態
 /// メーターの現在値・ピーク値・ピーク保持タイマーを保持
-struct SpectrumBarState {
+struct SpectrumBarState: Equatable {
     /// 現在のバー高さ（0.0〜28.0、routeTableのインデックス）
     var current: Float = 0
     /// ピーク値（現在値の最大値、0.0〜28.0）
