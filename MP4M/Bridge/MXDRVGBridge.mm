@@ -23,16 +23,24 @@ static MXDRVGState *g_state = nil;
 static void resetMXDRVGEngine(int sampleRate) {
     // UserDefaults からエンジン種別を復元（初回起動時はデフォルト=ymfm）
     NSInteger engineType = [[NSUserDefaults standardUserDefaults] integerForKey:@"mp4m_opmEngine"];
-    MXDRVG_End();
-    MXDRVG_SetOpmEngine((int)engineType);
-    MXDRVG_Start(sampleRate, 0, 64 * 1024, 1024 * 1024);
-    MXDRVG_TotalVolume(128);
 
-    // 【一時停止中】A-2 強制リセット（KNA03.MDX 等で一部パートが発音されなくなる副作用確認のため）
-    // 初回音色不良対策として有効だったが、他の曲に悪影響が出るため一旦無効化。
-    if (engineType == 0) {
-        // MXDRVG_ForceYmfmRelease();
-        // fprintf(stderr, "[resetMXDRVGEngine] ForceReleaseAllChannels executed at engine start (ymfm)\n");
+    // 例外安全対策：初期化中に例外が起きてもアプリを落とさない
+    try {
+        MXDRVG_End();
+        MXDRVG_SetOpmEngine((int)engineType);
+        MXDRVG_Start(sampleRate, 0, 64 * 1024, 1024 * 1024);
+        MXDRVG_TotalVolume(128);
+
+        // 【一時停止中】A-2 強制リセット（KNA03.MDX 等で一部パートが発音されなくなる副作用確認のため）
+        // 初回音色不良対策として有効だったが、他の曲に悪影響が出るため一旦無効化。
+        if (engineType == 0) {
+            // MXDRVG_ForceYmfmRelease();
+            // fprintf(stderr, "[resetMXDRVGEngine] ForceReleaseAllChannels executed at engine start (ymfm)\n");
+        }
+    } catch (...) {
+        #ifdef DEBUG
+        fprintf(stderr, "[MXDRVGBridge] EXCEPTION in resetMXDRVGEngine! Engine may be in unstable state.\n");
+        #endif
     }
 }
 
@@ -422,24 +430,35 @@ static void resetMXDRVGEngine(int sampleRate) {
     }
 
     if (frameCount > 1024) frameCount = 1024;
-    return MXDRVG_GetPCM(buf, frameCount);
+
+    // 例外安全対策：C++ 側で例外が投げられてもオーディオスレッドを落とさない
+    try {
+        return MXDRVG_GetPCM(buf, frameCount);
+    } catch (...) {
+        #ifdef DEBUG
+        fprintf(stderr, "[MXDRVGBridge] EXCEPTION in MXDRVG_GetPCM! Returning silence.\n");
+        #endif
+        memset(buf, 0, frameCount * sizeof(int16_t));
+        return frameCount;
+    }
 }
 
 + (void)getChannelStates:(MP4MChannelState *)states {
     if (!states) return;
     memset(states, 0, sizeof(MP4MChannelState) * 16);
 
-    // Get OPM channel states (FM 8ch)
-    MP4MChannelState opmStates[8];
-    memset(opmStates, 0, sizeof(opmStates));
+    // 例外安全対策：C++ 側（特に OPM_GetChannelStates / GetWork）で例外が起きてもクラッシュさせない
+    try {
+        // Get OPM channel states (FM 8ch)
+        MP4MChannelState opmStates[8];
+        memset(opmStates, 0, sizeof(opmStates));
 
-    // Get PCM8 channel states (channels 8-15) from MXDRVG work area
-    // MXDRVG_WORK_CH: S0016 (flags, bit3=keyon), S0012 (note+D, UWORD), S0018 (ch, bits 0-2 for ch number)
-    MXDRVG_WORK_CH* fmCh = (MXDRVG_WORK_CH*)MXDRVG_GetWork(MXDRVG_WORKADR_FM);
-    MXDRVG_WORK_CH* pcmCh = (MXDRVG_WORK_CH*)MXDRVG_GetWork(MXDRVG_WORKADR_PCM);
-    MXDRVG_WORK_GLOBAL* globalWork = (MXDRVG_WORK_GLOBAL*)MXDRVG_GetWork(MXDRVG_WORKADR_GLOBAL);
+        // Get PCM8 channel states (channels 8-15) from MXDRVG work area
+        MXDRVG_WORK_CH* fmCh = (MXDRVG_WORK_CH*)MXDRVG_GetWork(MXDRVG_WORKADR_FM);
+        MXDRVG_WORK_CH* pcmCh = (MXDRVG_WORK_CH*)MXDRVG_GetWork(MXDRVG_WORKADR_PCM);
+        MXDRVG_WORK_GLOBAL* globalWork = (MXDRVG_WORK_GLOBAL*)MXDRVG_GetWork(MXDRVG_WORKADR_GLOBAL);
 
-    OPM_GetChannelStates(opmStates, 8);
+        OPM_GetChannelStates(opmStates, 8);
 
     // OPMチャンネル状態の詳細ログ出力（MP4M_YMFM_DEBUG=1時のみ）
     // ymfm / fmgen 両方で同じフォーマットで出力して比較しやすくする
@@ -537,6 +556,12 @@ static void resetMXDRVGEngine(int sampleRate) {
             states[chIdx].velocity = isPlaying ? 100 : 0;
         }
     }
+    } catch (...) {
+        #ifdef DEBUG
+        fprintf(stderr, "[MXDRVGBridge] EXCEPTION in getChannelStates! Returning empty state.\n");
+        #endif
+        // すでに memset でゼロクリア済みなので何もしない
+    }
 }
 
 + (void)setOpmEngine:(int)type {
@@ -553,9 +578,18 @@ static void resetMXDRVGEngine(int sampleRate) {
     fprintf(stderr, "[ENGINE SWITCH] At currentTimeMs: %d\n", currentTime);
     fprintf(stderr, "[ENGINE SWITCH] ====================================\n\n");
 
-    // 再生中にエンジンを切り替えるとスレッド競合のリスクがあるため停止する
-    MXDRVG_Stop();
-    MXDRVG_SetOpmEngine(type);
+    // 例外安全対策付きエンジン切り替え
+    try {
+        // 再生中にエンジンを切り替えるとスレッド競合のリスクがあるため停止する
+        MXDRVG_Stop();
+        MXDRVG_SetOpmEngine(type);
+    } catch (...) {
+        #ifdef DEBUG
+        fprintf(stderr, "[MXDRVGBridge] EXCEPTION during engine switch! Attempting recovery.\n");
+        #endif
+        // 最低限エンジンを停止状態にしておく
+        MXDRVG_Stop();
+    }
 
     // 切り替え完了ログ
     fprintf(stderr, "[ENGINE SWITCH] Engine switched successfully. New engine: %s\n", [[self opmEngineName] UTF8String]);

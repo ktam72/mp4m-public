@@ -437,8 +437,11 @@ void MXDRVG_End(
 	memset((void*)MXDRVG_WORK_CHBUF_PCM, 0, sizeof(MXDRVG_WORK_CHBUF_PCM));
 	memset((void*)&OPMBUF, 0, sizeof(OPMBUF));
 
-	delete g_engine;
-	g_engine = nullptr;
+	{
+		std::lock_guard<std::mutex> lock(s_engine_mtx);
+		delete g_engine;
+		g_engine = nullptr;
+	}
 	memset(g_opm_regs, 0, sizeof(g_opm_regs));
 }
 
@@ -731,7 +734,10 @@ ULONG MXDRVG_MeasurePlayTime(
 
 	while ( !TerminatePlay )
 	{
-		g_engine->Count(1000);
+		{
+			std::lock_guard<std::mutex> lock(s_engine_mtx);
+			g_engine->Count(1000);
+		}
 	}
 
 	ULONG result = ( (ULONG)(G.PLAYTIME*(LONGLONG)1024/4000+(1-DBL_EPSILON))+2000 );
@@ -772,7 +778,10 @@ void MXDRVG_PlayAt(
 	while ( G.PLAYTIME < playat )
 	{
 		if ( TerminatePlay ) break;
-		g_engine->Count(1000);
+		{
+			std::lock_guard<std::mutex> lock(s_engine_mtx);
+			g_engine->Count(1000);
+		}
 	}
 
 	G.L001e1c = chmaskback;
@@ -3089,7 +3098,10 @@ static void L_PLAY(
 #endif
 	G.L001e1c = CLR;
 	L0007c0();
-	if (g_engine) g_engine->ResetSound();
+	if (g_engine) {
+		std::lock_guard<std::mutex> lock(s_engine_mtx);
+		g_engine->ResetSound();
+	}
 	return;
 }
 
