@@ -610,6 +610,23 @@ const char* MXDRVG_GetOpmEngineName(
 
 /***************************************************************/
 
+// REQ-006: 初回再生音色不良対策。
+// MeasurePlayTime の Count ループ後に ymfm の内部オペレーター状態
+// (m_env_state, m_env_attenuation, m_phase, m_key_state 等) を
+// クリアする。Reset() と異なりレジスタ値を保持するため、
+// L_PLAY / L0007c0 で設定済みの音色パラメータが消去されない。
+// Count ループ以外での呼び出しは想定外部。
+MXDRVG_EXPORT
+void MXDRVG_ResetEngine(
+	void
+) {
+	if (g_engine) {
+		g_engine->ResetRuntimeState();
+	}
+}
+
+/***************************************************************/
+
 // 初回再生音色不良対策 (A-2) 用。
 // ymfm 使用時のみ OpmWrapper::ForceReleaseAllChannels() を呼び出す。
 // fmgen 使用時は何もしない。

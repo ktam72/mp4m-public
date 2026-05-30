@@ -43,6 +43,27 @@ void OpmWrapper::Reset()
     memset(m_kc, 0, sizeof(m_kc));
 }
 
+void OpmWrapper::ResetRuntimeState()
+{
+    using fm_t = std::remove_reference<decltype(m_ymfm.debug_get_fm_engine())>::type;
+
+    auto& fm = m_ymfm.debug_get_fm_engine();
+
+    for (uint32_t i = 0; i < fm_t::OPERATORS; ++i) {
+        if (auto* op = fm.debug_operator(i)) {
+            op->reset();
+        }
+    }
+
+    for (uint32_t i = 0; i < fm_t::CHANNELS; ++i) {
+        if (auto* ch = fm.debug_channel(i)) {
+            ch->reset();
+        }
+    }
+
+    m_ymfm.invalidate_caches();
+}
+
 void OpmWrapper::SetReg(uint addr, uint data)
 {
     if (addr >= 0x100) return;

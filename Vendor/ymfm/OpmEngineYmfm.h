@@ -24,6 +24,11 @@ public:
         OpmWrapper::ResetSound();
     }
 
+    void ResetRuntimeState() override
+    {
+        OpmWrapper::ResetRuntimeState();
+    }
+
     void SetReg(uint32_t addr, uint32_t data) override
     {
         OpmWrapper::SetReg(addr, data);

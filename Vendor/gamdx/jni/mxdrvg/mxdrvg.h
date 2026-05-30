@@ -238,6 +238,11 @@ const char* MXDRVG_GetOpmEngineName(
 );
 
 MXDRVG_EXPORT
+void MXDRVG_ResetEngine(
+	void
+);
+
+MXDRVG_EXPORT
 void MXDRVG_ForceYmfmRelease(
 	void
 );

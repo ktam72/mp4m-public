@@ -12,6 +12,10 @@ public:
     virtual void Reset() = 0;
     virtual void ResetSound() = 0;
 
+    // レジスタ値を保持したままオペレーターの実行時状態のみをリセット
+    // (m_env_state, m_env_attenuation, m_phase, m_key_state, m_keyon_live)
+    virtual void ResetRuntimeState() {}
+
     virtual void SetReg(uint32_t addr, uint32_t data) = 0;
     virtual uint32_t GetReg(uint32_t addr) = 0;
     virtual uint32_t ReadStatus() = 0;

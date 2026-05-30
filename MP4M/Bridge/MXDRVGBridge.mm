@@ -357,6 +357,10 @@ static void resetMXDRVGEngine(int sampleRate) {
         g_state.pdxData ? (ULONG)g_state.pdxData.length : 0
     );
 
+    // REQ-006: MeasurePlayTime の Count ループ残留状態をクリア
+    // (未初期化キャッシュによる発音抜け防止)
+    MXDRVG_ResetEngine();
+
     // 【一時停止中】A-2 強制リセット（KNA03.MDX 等で一部パートが発音されなくなる副作用確認のため）
     // 初回音色不良対策として有効だったが、他の曲に悪影響が出るため一旦無効化。
     NSInteger currentEngine = [[NSUserDefaults standardUserDefaults] integerForKey:@"mp4m_opmEngine"];
