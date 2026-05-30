@@ -61,13 +61,17 @@ void OpmWrapper::ResetRuntimeState()
         }
     }
 
-    // Pan ビットを再初期化（$20-$27 の bit 6-7 = 0xC0 = L+R both）
+    // Pan ビットのみ再初期化（bit 6-7 を L+R both に設定）
+    // ALG(bit 0-2) と FB(bit 3-5) は現在の値を保持する。
     // ResetRuntimeState は全レジスタ初期化を行わないため、MeasurePlayTime
     // の Count ループ後に pan=00(MUTE) のままになっているチャンネルがある。
     // ここで明示的に書き戻すことで MDX シーケンスの ALG/FB 書き込み時に
     // Pan 保存ロジックが正しい値を保持する。
+    auto& regs = m_ymfm.debug_get_fm_engine().regs();
     for (uint32_t ch = 0; ch < fm_t::CHANNELS; ++ch) {
-        SetReg(0x20 + ch, 0xc0);
+        uint8_t alg = regs.ch_algorithm(ch);
+        uint8_t fb  = regs.ch_feedback(ch);
+        SetReg(0x20 + ch, 0xc0 | (fb << 3) | alg);
     }
 
     m_ymfm.invalidate_caches();
@@ -157,11 +161,17 @@ bool OpmWrapper::Count(int32 us)
     {
         if (m_timer_active[i] && m_chip_clocks >= m_timer_expire[i])
         {
-            // engine_timer_expired が engine_check_interrupts → ymfm_update_irq →
-            // Intr(true) を呼び出す。この再通知は行わない（重複防止）。
             m_engine->engine_timer_expired(i);
         }
     }
+
+    // engine_timer_expired → engine_check_interrupts は m_irq_state で
+    // ゲートされている。2つ目のタイマー発火時に既に IRQ が active だと
+    // ymfm_update_irq → Intr が呼ばれず MDX イベントが失われる。
+    // ここで pending ステータスを確認し、未通知の割り込みを処理する。
+    uint8_t pending = m_ymfm.read_status() & 0x03;
+    if (pending)
+        Intr(true);
     return true;
 }
 

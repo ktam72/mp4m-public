@@ -615,6 +615,7 @@ const char* MXDRVG_GetOpmEngineName(
 // (m_env_state, m_env_attenuation, m_phase, m_key_state 等) を
 // クリアする。Reset() と異なりレジスタ値を保持するため、
 // L_PLAY / L0007c0 で設定済みの音色パラメータが消去されない。
+// あわせてダミーの Mix(1) でキャッシュを事前構築する。
 // Count ループ以外での呼び出しは想定外部。
 MXDRVG_EXPORT
 void MXDRVG_ResetEngine(
@@ -622,6 +623,10 @@ void MXDRVG_ResetEngine(
 ) {
 	if (g_engine) {
 		g_engine->ResetRuntimeState();
+		// キャッシュ事前構築: 1サンプルのダミー Mix で prepare() を実行させ、
+		// 再生開始時の start_attack() が正しいキャッシュ値を参照できるようにする。
+		int16_t dummy[2] = {};
+		g_engine->Mix(dummy, 1);
 	}
 }
 
