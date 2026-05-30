@@ -61,6 +61,15 @@ void OpmWrapper::ResetRuntimeState()
         }
     }
 
+    // Pan ビットを再初期化（$20-$27 の bit 6-7 = 0xC0 = L+R both）
+    // ResetRuntimeState は全レジスタ初期化を行わないため、MeasurePlayTime
+    // の Count ループ後に pan=00(MUTE) のままになっているチャンネルがある。
+    // ここで明示的に書き戻すことで MDX シーケンスの ALG/FB 書き込み時に
+    // Pan 保存ロジックが正しい値を保持する。
+    for (uint32_t ch = 0; ch < fm_t::CHANNELS; ++ch) {
+        SetReg(0x20 + ch, 0xc0);
+    }
+
     m_ymfm.invalidate_caches();
 }
 
@@ -148,10 +157,9 @@ bool OpmWrapper::Count(int32 us)
     {
         if (m_timer_active[i] && m_chip_clocks >= m_timer_expire[i])
         {
+            // engine_timer_expired が engine_check_interrupts → ymfm_update_irq →
+            // Intr(true) を呼び出す。この再通知は行わない（重複防止）。
             m_engine->engine_timer_expired(i);
-            uint8_t timer_bit = (i == 0) ? 0x01 : 0x02;
-            if (m_ymfm.read_status() & timer_bit)
-                Intr(true);
         }
     }
     return true;

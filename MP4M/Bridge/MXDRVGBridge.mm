@@ -465,7 +465,11 @@ static void resetMXDRVGEngine(int sampleRate) {
     try {
         // 再生中にエンジンを切り替えるとスレッド競合のリスクがあるため停止する
         MXDRVG_Stop();
+
+        // MXDRVG_SetOpmEngine はタイプ変数のみ変更する。
+        // 実エンジンインスタンスを再作成するには resetMXDRVGEngine が必要。
         MXDRVG_SetOpmEngine(type);
+        resetMXDRVGEngine(44100);
     } catch (...) {
         #ifdef DEBUG
         fprintf(stderr, "[MXDRVGBridge] EXCEPTION during engine switch! Attempting recovery.\n");
