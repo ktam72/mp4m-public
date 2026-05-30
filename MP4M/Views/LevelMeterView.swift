@@ -31,7 +31,7 @@ struct LevelMeterView: View {
                 let spacing: CGFloat = 1
                 let totalSpacing = spacing * CGFloat(chCount - 1)
                 let chW = max(4, (geo.size.width - totalSpacing) / CGFloat(chCount))
-                let labelH: CGFloat = 22
+                let labelH: CGFloat = 28
                 let barAreaTop: CGFloat = labelH
                 let barBottom: CGFloat = geo.size.height - 2
                 let barHeight = max(0, barBottom - barAreaTop)
@@ -59,7 +59,7 @@ struct LevelMeterView: View {
                                     Text(panText)
                                         .font(.mp4mTiny)
                                         .foregroundColor(state.displayPanColor),
-                                    at: CGPoint(x: x + chW / 2, y: 18)
+                                    at: CGPoint(x: x + chW / 2, y: 22)
                                 )
                             }
 
@@ -74,7 +74,7 @@ struct LevelMeterView: View {
                             } else if peak.timer > 0 {
                                 peak.timer -= 1
                             } else if peak.level > 0 {
-                                peak.level = max(0, peak.level - 0.04)
+                                peak.level = max(0, peak.level - 0.02)
                             }
                             peakTracker.peaks[ch] = peak
 
@@ -88,7 +88,7 @@ struct LevelMeterView: View {
                             if currentLevel > 0 {
                                 let fillH = barHeight * currentLevel
                                 let fillRect = CGRect(x: x + 1, y: barBottom - fillH, width: chW - 2, height: fillH)
-                                ctx.fill(Path(fillRect), with: .color(Color(red: 0.35, green: 1.00, blue: 0.55).opacity(0.85)))
+                                ctx.fill(Path(fillRect), with: .color(Color.mp4mBright))
                             }
 
                             // ピークライン
