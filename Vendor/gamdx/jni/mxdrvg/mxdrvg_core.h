@@ -408,18 +408,13 @@ int MXDRVG_Start(
 	}
 
 	if (!g_engine) {
-		const char* ename = "?";
-		if (g_opm_engine_type == 1) {
-			g_engine = new OpmEngineFmgen(); ename = "fmgen";
-		} else if (g_opm_engine_type == 2) {
-			g_engine = new OpmEngineNuked(); ename = "nuked";
-		} else {
-			g_engine = new OpmEngineYmfm(); ename = "ymfm";
-		}
-		fprintf(stderr, "[MXDRVG_Start] created %s (type=%d)\n", ename, g_opm_engine_type);
+		if (g_opm_engine_type == 1)
+			g_engine = new OpmEngineFmgen();
+		else if (g_opm_engine_type == 2)
+			g_engine = new OpmEngineNuked();
+		else
+			g_engine = new OpmEngineYmfm();
 		g_engine->SetIntrCallback(engine_intr_callback);
-	} else {
-		fprintf(stderr, "[MXDRVG_Start] g_engine already exists, calling Init on existing (type=%d)\n", g_opm_engine_type);
 	}
 	g_engine->Init(4000000, G.INNERSAMPRATE, (G.OPMFILTER != 0));
 	memset(g_opm_regs, 0, sizeof(g_opm_regs));
@@ -589,7 +584,7 @@ MXDRVG_EXPORT
 void MXDRVG_SetOpmEngine(
 	int type
 ) {
-	if (type < 0 || type > 2) return;
+	if (type < 0 || type > 1) return;
 	if (type == g_opm_engine_type) return;
 
 	g_opm_engine_type = type;

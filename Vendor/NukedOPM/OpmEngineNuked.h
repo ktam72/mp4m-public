@@ -29,7 +29,6 @@ public:
         m_chip_clocks = 0;
         m_prev_l = m_prev_r = 0;
         OPM_Reset(&m_chip, opm_flags_none);
-        fprintf(stderr, "[NUKED] Init done. ic=%d cycles=%d\n", m_chip.ic, m_chip.cycles);
         return true;
     }
 
@@ -64,9 +63,6 @@ public:
     void SetReg(uint32_t addr, uint32_t data)
     {
         if (addr >= 0x100) return;
-        static int sr_cnt = 0;
-        if (++sr_cnt < 20 || (addr == 0x08) || (sr_cnt % 1000 == 0))
-            fprintf(stderr, "[NUKED SetReg#%d] $%02X=$%02X\n", sr_cnt, addr, data);
         OPM_Write(&m_chip, 0, (uint8_t)addr);
         int32_t _o[2]={}; uint8_t _s1=0,_s2=0,_so=0;
         OPM_Clock(&m_chip, _o, &_s1, &_s2, &_so);
@@ -87,12 +83,6 @@ public:
     void Mix(int16_t* buffer, int nsamples)
     {
         if (!buffer || nsamples <= 0) return;
-        static int mx_cnt = 0;
-        mx_cnt++;
-        int32_t l0 = m_prev_l * m_fmvolume / 16384;
-        int32_t r0 = m_prev_r * m_fmvolume / 16384;
-        if (mx_cnt <= 3 || (mx_cnt % 200 == 0))
-            fprintf(stderr, "[NUKED Mix#%d] ns=%d vol=%d L0=%d R0=%d\n", mx_cnt, nsamples, m_fmvolume, l0, r0);
         for (int i = 0; i < nsamples; i++)
         {
             int32_t l = m_prev_l * m_fmvolume / 16384;
@@ -108,7 +98,6 @@ public:
         int64_t slots = (int64_t)us * m_clock / 1000000LL / 64;
         uint8_t sh1 = 0, sh2 = 0, so = 0;
         int32_t output[2] = {};
-        int nonz = 0;
         for (int64_t i = 0; i < slots; i++)
         {
             OPM_Clock(&m_chip, output, &sh1, &sh2, &so);
@@ -116,13 +105,8 @@ public:
             {
                 m_prev_l = m_chip.mix[0];
                 m_prev_r = m_chip.mix[1];
-                if (m_prev_l || m_prev_r) nonz++;
             }
         }
-        static int cnt_calls = 0;
-        if (++cnt_calls <= 5 || (cnt_calls % 50 == 0))
-            fprintf(stderr, "[NUKED Count#%d] us=%d slots=%lld m_prev_l=%d m_prev_r=%d nonz=%d irq=%d\n",
-                    cnt_calls, us, (long long)slots, m_prev_l, m_prev_r, nonz, OPM_ReadIRQ(&m_chip));
         if (OPM_ReadIRQ(&m_chip))
             Intr(true);
         return true;
