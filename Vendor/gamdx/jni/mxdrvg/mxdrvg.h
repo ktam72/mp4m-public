@@ -243,11 +243,6 @@ void MXDRVG_ResetEngine(
 );
 
 MXDRVG_EXPORT
-void MXDRVG_ReplaceEngine(
-	int type
-);
-
-MXDRVG_EXPORT
 void MXDRVG_ForceYmfmRelease(
 	void
 );

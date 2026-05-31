@@ -23,7 +23,6 @@ static void resetMXDRVGEngine(int sampleRate) {
     [[NSUserDefaults standardUserDefaults] registerDefaults:@{@"mp4m_opmEngine": @1}];
     // UserDefaults からエンジン種別を復元
     NSInteger engineType = [[NSUserDefaults standardUserDefaults] integerForKey:@"mp4m_opmEngine"];
-    fprintf(stderr, "[resetMXDRVGEngine] engineType from UD: %ld\n", (long)engineType);
 
     // 例外安全対策：初期化中に例外が起きてもアプリを落とさない
     try {
@@ -451,31 +450,44 @@ static void resetMXDRVGEngine(int sampleRate) {
 }
 
 + (void)setOpmEngine:(int)type {
-    fprintf(stderr, "[ENGINE SWITCH ENTER] type=%d, current=%d\n", type, MXDRVG_GetOpmEngine());
-    if (type == MXDRVG_GetOpmEngine()) {
-        fprintf(stderr, "[ENGINE SWITCH] Already on this engine, skipping.\n");
-        return;
-    }
+    if (type == MXDRVG_GetOpmEngine()) return;
 
     NSString *fromName = [self opmEngineName];
-    const char* typeName = (type == 0) ? "ymfm" : (type == 1) ? "fmgen" : "nuked";
+    int currentTime = [self currentPlayTimeMs];
+
+    // 切り替え前の状態を明確にログ出力（比較用）
     fprintf(stderr, "\n[ENGINE SWITCH] ========== ENGINE SWITCH ==========\n");
     fprintf(stderr, "[ENGINE SWITCH] From: %s → To: %s\n",
-            [fromName UTF8String], typeName);
+            [fromName UTF8String],
+            (type == 0) ? "ymfm" : "fmgen");
+    fprintf(stderr, "[ENGINE SWITCH] At currentTimeMs: %d\n", currentTime);
+    fprintf(stderr, "[ENGINE SWITCH] ====================================\n\n");
 
-    // 再生停止
-    MXDRVG_Stop();
+    // 例外安全対策付きエンジン切り替え
+    try {
+        // 再生中にエンジンを切り替えるとスレッド競合のリスクがあるため停止する
+        MXDRVG_Stop();
 
-    // エンジン種別を設定し、実インスタンスを直接差し替える
-    MXDRVG_SetOpmEngine(type);
-    MXDRVG_ReplaceEngine(type);
-    MXDRVG_TotalVolume(128);
+        // MXDRVG_SetOpmEngine はタイプ変数のみ変更する。
+        // 実エンジンインスタンスを再作成するには resetMXDRVGEngine が必要。
+        MXDRVG_SetOpmEngine(type);
+        resetMXDRVGEngine(44100);
+    } catch (...) {
+        #ifdef DEBUG
+        fprintf(stderr, "[MXDRVGBridge] EXCEPTION during engine switch! Attempting recovery.\n");
+        #endif
+        // 最低限エンジンを停止状態にしておく
+        MXDRVG_Stop();
+    }
 
+    // 切り替え完了ログ
     fprintf(stderr, "[ENGINE SWITCH] Engine switched successfully. New engine: %s\n", [[self opmEngineName] UTF8String]);
 
+    // 比較用途のため、同じ曲を自動で最初からロードし直す（位置0から）
     if (g_state.lastLoadedMDXPath) {
         fprintf(stderr, "[ENGINE SWITCH] Auto-reloading same file for comparison: %s\n", [g_state.lastLoadedMDXPath UTF8String]);
         [self loadMDXFile:g_state.lastLoadedMDXPath];
+        // 自動で再生開始（loopCount=2固定で比較しやすくする）
         [self playWithLoopCount:2];
         fprintf(stderr, "[ENGINE SWITCH] Auto playback started after engine switch.\n");
     } else {
