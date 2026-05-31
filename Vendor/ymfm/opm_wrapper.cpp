@@ -168,10 +168,10 @@ bool OpmWrapper::Count(int32 us)
     // engine_timer_expired → engine_check_interrupts は m_irq_state で
     // ゲートされている。2つ目のタイマー発火時に既に IRQ が active だと
     // ymfm_update_irq → Intr が呼ばれず MDX イベントが失われる。
-    // ここで pending ステータスを確認し、タイマーごとに個別に Intr を呼ぶ。
+    // ここで pending ステータスを確認し、未通知の割り込みを処理する。
     uint8_t pending = m_ymfm.read_status() & 0x03;
-    if (pending & 0x01) Intr(true);
-    if (pending & 0x02) Intr(true);
+    if (pending)
+        Intr(true);
     return true;
 }
 
@@ -197,9 +197,10 @@ void OpmWrapper::ymfm_set_timer(uint32_t tnum, int32_t duration_in_clocks)
 
 void OpmWrapper::ymfm_update_irq(bool asserted)
 {
-    // Intr は Count() 内の pending チェックでタイマーごとに個別に呼ぶため、
-    // ここでは呼ばない（engine_check_interrupts 経由の重複防止）。
-    (void)asserted;
+    // engine_timer_expired 内部の engine_check_interrupts から呼ばれる。
+    // fmgen の SetStatus → Intr(true) に相当する第一通知。
+    if (asserted)
+        Intr(true);
 }
 
 void OpmWrapper::ForceReleaseAllChannels()
