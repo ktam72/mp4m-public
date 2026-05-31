@@ -64,8 +64,7 @@ public:
     {
         if (addr >= 0x100) return;
         OPM_Write(&m_chip, 0, (uint8_t)addr);
-        int32_t _o[2]={}; uint8_t _s1=0,_s2=0,_so=0;
-        OPM_Clock(&m_chip, _o, &_s1, &_s2, &_so);
+        { int32_t _o[2]={}; uint8_t _s1=0,_s2=0,_so=0; OPM_Clock(&m_chip,_o,&_s1,&_s2,&_so); }
         OPM_Write(&m_chip, 1, (uint8_t)data);
     }
 
