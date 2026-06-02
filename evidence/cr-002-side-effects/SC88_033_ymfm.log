@@ -1,0 +1,6 @@
+[CLI] CommandLine.arguments: ["./build/DerivedData/Build/Products/Debug/MP4M.app/Contents/MacOS/MP4M", "--file=/Volumes/990Pro_2TB/MDX/Falcom/Sorcerian/Original/Swallow_or/SC88_033.MDX"]
+[CLI] Valid path: /Volumes/990Pro_2TB/MDX/Falcom/Sorcerian/Original/Swallow_or/SC88_033.MDX (isDir=false)
+[Singleton] pendingPath: /Volumes/990Pro_2TB/MDX/Falcom/Sorcerian/Original/Swallow_or/SC88_033.MDX
+[MP4MApp] handleSingleInstance - isFirst: false
+[Singleton] lock failed (second instance)
+[Singleton] Sending MP4MOpenFile notification to first instance: /Volumes/990Pro_2TB/MDX/Falcom/Sorcerian/Original/Swallow_or/SC88_033.MDX
