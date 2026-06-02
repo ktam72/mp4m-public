@@ -57,6 +57,22 @@ public:
     // SetReg() で書き込まれた値がキャッシュされている。
     // CH3 M1 の AR (0x88) 等の解析用。
     virtual int GetRegValue(int addr) { return 0; }
+
+    // REQ-007-01: サイクルモード対応 (Nuked OPM 統合用)
+    // ymfm/fmgen は Mix() で len サンプル一括生成するサンプル単位 API。
+    // Nuked OPM は OPM_Clock() を 1 サイクルずつ呼ぶサイクル単位 API のため、
+    // 両者を抽象化する。既存エミュレータはデフォルト実装で動作するため
+    // 修正不要。Nuked OPM (OpmEngineNuked) のみオーバーライドする。
+    virtual void BeginSampleGeneration() {}
+    virtual void EndSampleGeneration() {}
+    virtual void ClockOnce(int16_t* output) {}
+
+    // REQ-007-08: タイマー処理統一
+    // id: 0 = CT1, 1 = CT2 (YM2151 のタイマー A/B 相当)
+    // ymfm: ymfm_engine_timer_count() 経由
+    // fmgen: Timer::Get() 経由
+    // nuked: OPM_ReadCT1 / OPM_ReadCT2 経由
+    virtual uint32_t GetTimerCount(int id) { return 0; }
 };
 
 #endif
