@@ -82,10 +82,14 @@ targets:
           - "*.cpp"
           - "*.h"
           - "fmgeninl.h"
+      - path: Vendor/NukedOPM
+        includes:
+          - "*.c"
+          - "*.h"
 
     settings:
       BRIDGING_HEADER: MP4M/Bridge/MP4M-Bridging-Header.h
-      HEADER_SEARCH_PATHS: $(SRCROOT) $(SRCROOT)/Vendor $(SRCROOT)/Vendor/gamdx/jni $(SRCROOT)/Vendor/ymfm $(SRCROOT)/MP4M/Bridge
+      HEADER_SEARCH_PATHS: $(SRCROOT) $(SRCROOT)/Vendor $(SRCROOT)/Vendor/gamdx/jni $(SRCROOT)/Vendor/ymfm $(SRCROOT)/Vendor/NukedOPM $(SRCROOT)/MP4M/Bridge
       USER_HEADER_SEARCH_PATHS: $(SRCROOT)/MP4M/Bridge
       CLANG_CXX_LANGUAGE_DIALECT: gnu++17
       CLANG_CXX_LIBRARY: libc++
@@ -116,7 +120,7 @@ targets:
     settings:
       ENABLE_TESTABILITY: YES
       SWIFT_OBJC_BRIDGING_HEADER: MP4M/Bridge/MP4M-Bridging-Header.h
-      HEADER_SEARCH_PATHS: $(SRCROOT) $(SRCROOT)/Vendor $(SRCROOT)/Vendor/gamdx/jni $(SRCROOT)/Vendor/ymfm $(SRCROOT)/MP4M/Bridge
+      HEADER_SEARCH_PATHS: $(SRCROOT) $(SRCROOT)/Vendor $(SRCROOT)/Vendor/gamdx/jni $(SRCROOT)/Vendor/ymfm $(SRCROOT)/Vendor/NukedOPM $(SRCROOT)/MP4M/Bridge
       USER_HEADER_SEARCH_PATHS: $(SRCROOT)/MP4M/Bridge
       CLANG_CXX_LANGUAGE_DIALECT: gnu++17
       CLANG_CXX_LIBRARY: libc++
