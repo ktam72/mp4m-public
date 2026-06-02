@@ -2,7 +2,7 @@ import SwiftUI
 
 struct AboutView: View {
     @Binding var isPresented: Bool
-    @AppStorage(UserDefaultsKey.opmEngine) private var opmEngineType: Int = 0
+    @AppStorage(UserDefaultsKey.opmEngine) private var opmEngineType: Int = 1
     var onEngineSwitch: ((Int) -> Void)?
 
     var body: some View {
@@ -29,7 +29,6 @@ struct AboutView: View {
                 HStack(spacing: 0) {
                     engineButton("ymfm", type: 0)
                     engineButton("fmgen", type: 1)
-                    engineButton("nuked", type: 2)
                 }
                 .overlay(
                     RoundedRectangle(cornerRadius: 2)
@@ -51,11 +50,6 @@ struct AboutView: View {
                         name: "fmgen",
                         author: "cisc",
                         license: "Free for non-commercial use"
-                    )
-                    LicenseRow(
-                        name: "Nuked OPM",
-                        author: "Nuke.YKT",
-                        license: "LGPL 2.1 (with source disclosure)"
                     )
                     LicenseRow(
                         name: "GAMDX",
