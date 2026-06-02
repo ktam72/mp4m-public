@@ -14,6 +14,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - ZMUSIC (ZMD/ZDF) format support
 - MDX/PDX metadata viewer
 
+## [2.7.0] — 2026-06-03
+
+### Changed
+- **バージョン**: 2.6.0 → 2.7.0
+- ビルド番号: 12 → 13
+- AboutView のデフォルト OPM エンジンを fmgen (1) → ymfm (0) に変更（CR-002 適用後の ymfm 安定挙動を新規ユーザーにも体験してもらうため）
+
+### Added
+- **Nuked OPM エンジン統合 (REQ-007)**: 3 番目の OPM エミュレーターとして Nuked OPM (Nuke.YKT, github.com/nukeykt/Nuked-OPM) を追加。AboutView の "OPM Engine" ボタンで ymfm / fmgen / nuked の 3 エンジン切替が可能
+  - **Vendor/NukedOPM/**: Nuked OPM ソース (opm.h 289 行, opm.c 2241 行) を直接取り込み。LGPL 2.1 ライセンス全文を `MP4M/Resources/THIRD_PARTY_LICENSES/NukedOPM.txt` に同梱
+  - **IOpmEngine サイクルモード対応**: サイクル単位 API (ClockOnce, BeginSampleGeneration, EndSampleGeneration, GetTimerCount) を追加。既存エミュレータはデフォルト実装で後方互換性確保、Nuked OPM のみオーバーライド
+  - **OpmEngineNuked アダプタ**: SLOTS_PER_SAMPLE=32、us→cycles 変換、m_regs[256] キャッシュ、OPM_Clock IRQ/CT 通知を実装
+  - **MXDRVG 統合**: MXDRVG_Start と MXDRVG_SetOpmEngine に type=2 (nuked) 分岐を追加
+  - **過去 REQ-006 失敗の根本原因 (IOpmEngine API 不一致) に対処**: サイクルモード API 拡張により、Nuked OPM のネイティブ API (OPM_Clock) をそのまま活用
+
+### Technical Details
+- `Vendor/NukedOPM/opm.h`, `opm.c` — Nuked OPM コア実装 (直接取り込み)
+- `Vendor/NukedOPM/OpmEngineNuked.h` — IOpmEngine 実装アダプタ (~200 行)
+- `Vendor/ymfm/IOpmEngine.h` — サイクルモード API 4 メソッド追加 (デフォルト no-op)
+- `Vendor/gamdx/jni/mxdrvg/mxdrvg_core.h` — type=2 分岐追加
+- `MP4M/Views/AboutView.swift` — engineButton("nuked", type: 2) + LicenseRow(Nuked OPM) 追加
+- `MP4M/Resources/THIRD_PARTY_LICENSES/NukedOPM.txt` — LGPL 2.1 全文同梱
+- `project.yml` — Vendor/NukedOPM を sources + HEADER_SEARCH_PATHS に追加
+- 検証: ymp4m で 3 エンジン切替動作確認（チェックリスト: `evidence/nuked-opm-validation/README.md`, `evidence/nuked-opm-regression/README.md`）
+
 ## [2.6.0] — 2026-06-03
 
 ### Changed

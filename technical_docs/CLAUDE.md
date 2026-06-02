@@ -1223,3 +1223,88 @@ open MP4M.xcodeproj
 
 **日付**: 2026-05-30
 **関連コミット**: d97440b（A-2 初回成功）、d2d9449（SC88_036 調査記録）
+
+---
+
+## 2026-06-03 — CR-001 / CR-002 適用と Nuked OPM 統合 (REQ-007)
+
+### CR-001: FileSelector の PATH 文字列を選択可能に
+
+**問題**: ユーザーが MDX ファイルパスをクリップボードにコピーできない (Text Selection 非活性)
+
+**修正**:
+- `MP4M/Views/FileSelectorView.swift` の Text に `.textSelection(.enabled)` を追加
+- `.help()` でフルパスのツールチップ表示
+- `.contextMenu` から `NSPasteboard` 経由で Copy できる動線を提供
+- View のみの変更、Model / ViewModel には影響なし
+
+**影響**: 2.5.0 → 2.6.0 リリース。ユーザー体験向上。
+
+### CR-002: KNA03.MDX の中～高音打撃を ymfm で聞こえるように
+
+**問題**: アプリ起動後、ymfm 使用時のみ CH3 相当 (AR=31) の音が出ない (Knight Arms KNA03.MDX 等の FM パーカッション曲)。fmgen では正常。
+
+**根本原因**:
+- YM2151 の attack_rate が 62 または 63 のとき、ymfm original は `if (rate < 62)` で attack increment をスキップ
+- 通常は KeyOn 時の `keyonoff()` で `m_cache.eg_rate[EG_ATTACK]` がキャッシュされるが、ymfm 内部の `start_attack()` 内で `m_cache` 構築が間に合わず、`m_env_attenuation = 0` へのジャンプが機能しないケースがある
+- A-2 (起動時リセット) では「演奏中に動的に発生する」パターンには対応できない
+
+**修正**:
+- `Vendor/ymfm/ymfm_fm.ipp` の `fm_operator::keyonoff()` に `cache_operator_data()` 明示呼出を追加 (N+案)
+- ymfm オリジナルの `if (rate < 62)` 仕様を尊重 (攻撃 increment スキップ)
+- `mxdrvg_core.h`, `opm_wrapper.h/cpp`, `OpmEngineYmfm.h`, `MXDRVGBridge.mm` を連動修正
+
+**結果**:
+- KNA シリーズ 25 曲すべてで実音正常再生
+- 副作用: SC88 シリーズ 3 曲 (017, 033, 036) も改善
+- 副次的な A1023 状態は表示されるが実音は正常 (KNA シリーズ 25 曲で ymfm と fmgen が同等品質)
+
+**ユーザー判断基準の遵守**:
+- ✅ 「特定曲だけ解決する手法」を回避 (ymfm コアへの汎用修正)
+- ✅ 「他曲に悪影響を及ぼす手法」を回避 (撤退案: ymfm original 仕様尊重)
+
+### REQ-007: Nuked OPM 統合 (バージョン 2.7.0)
+
+**目的**: 3 番目の OPM エミュレーターとして Nuked OPM (Nuke.YKT, github.com/nukeykt/Nuked-OPM) を追加し、ユーザーが ymfm / fmgen / nuked の 3 エンジンから選択可能にする。
+
+**過去 REQ-006 失敗の根本原因**:
+- 過去には 5+ 個の修正 (9dbc84e, 17371ac, 284fbd8, d434fa7, 3b6fbf6, 6697810, 64c12d7, aa7ddaa, fc9db7c) を試みたが、**IOpmEngine API がサイクルモードに対応していなかった** ため、Nuked OPM のネイティブ API (OPM_Clock) を活用できず、結果として断続的なバグが残った。
+- REQ-006 は最終的に Revert。
+
+**REQ-007 での根本対処**:
+- **IOpmEngine サイクルモード対応**: サイクル単位 API (ClockOnce, BeginSampleGeneration, EndSampleGeneration, GetTimerCount) を追加
+- 既存エミュレータ (ymfm/fmgen) はデフォルト実装 (no-op / 0 返却) で後方互換性確保
+- Nuked OPM のみオーバーライドしてサイクルベース処理を活用
+
+**パッケージ分割実装**:
+1. **REQ-007-02**: Nuked OPM ソース (opm.h 289 行 + opm.c 2241 行 + LICENSE 504 行 + README.md) を `Vendor/NukedOPM/` に取り込み (コミット `4548946`)
+2. **REQ-007-01/03/08**: `OpmEngineNuked.h` アダプタ作成 (SLOTS_PER_SAMPLE=32、us→cycles 変換、m_regs[256] キャッシュ、OPM_Clock IRQ/CT 通知)、IOpmEngine に 4 メソッド追加 (コミット `dca4681`)
+3. **REQ-007-07**: `project.yml` に Vendor/NukedOPM を sources + HEADER_SEARCH_PATHS に追加 (コミット `31cea92`)
+4. **REQ-007-04/08**: `mxdrvg_core.h` の MXDRVG_Start と MXDRVG_SetOpmEngine に type=2 (nuked) 分岐追加 (コミット `d4e7597`)
+5. **REQ-007-05/06**: AboutView に engineButton("nuked", type: 2) + LicenseRow(Nuked OPM, Nuke.YKT, LGPL 2.1) 追加、THIRD_PARTY_LICENSES/NukedOPM.txt に LGPL 2.1 全文同梱、デフォルトエンジン ymfm (0) に変更 (コミット `cffa15a`)
+6. **REQ-007-09**: 検証チェックリスト KNA 10 曲 + SC88 3 曲 (コミット `9632cfe`)
+7. **REQ-007-10**: 非回帰テストチェックリスト KNA シリーズ 25 曲 (コミット `4e11349`)
+
+**Spec-Driven 成果物**:
+- `docs/requirements.md` — REQ-007 + 10 サブ要件 (コミット `59b0a0c`)
+- `docs/design-req-007.md` — クラス図、シーケンス図 4 種、ファイル変更計画、REQ-ID マッピング (コミット `59b0a0c`)
+- `evidence/cr-002-side-effects/README.md` — SC88 シリーズ副作用チェック記録 (コミット `db5df5c`)
+
+**LGPL 2.1 ライセンス遵守**:
+- 動的リンクのため library のみソース開示で OK
+- `MP4M/Resources/THIRD_PARTY_LICENSES/NukedOPM.txt` に LGPL 2.1 全文 (504 行) をアプリ bundle に同梱
+- AboutView に LicenseRow(Nuked OPM, Nuke.YKT, LGPL 2.1 (with source disclosure)) を表示
+
+**ユーザー判断基準の遵守**:
+- ✅ 「特定曲だけ解決する手法」を回避 (汎用 IOpmEngine 拡張)
+- ✅ 「他曲に悪影響を及ぼす手法」を回避 (ymfm/fmgen はデフォルト実装で無修正)
+- ✅ 「Vendor 配下の直接修正は upstream pull で競合リスク」を緩和 (過去 REQ-006 Revert から学習、API 拡張で間接統合)
+
+**ビルド確認**:
+- xcodegen generate + xcodebuild BUILD SUCCEEDED
+- アプリ bundle 内に NukedOPM.txt が Resources/ に含まれることを確認
+
+**日付**: 2026-06-03
+**関連コミット**: fcfd5e2 (2.6.0 上げ), 35a15dd (CR-001), a354e3d (CR-002), 4548946, dca4681, 31cea92, d4e7597, cffa15a, 9632cfe, 59b0a0c, db5df5c, 4e11349 (REQ-007), 4590a0d... (2.7.0 上げ)
+**バージョン**: 2.6.0 → 2.7.0
+
