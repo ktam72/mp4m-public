@@ -77,11 +77,13 @@ static void OPMINTFUNC(
 // ランタイム OPM エンジン切替対応（バージョンポップアップで切替可能）
 //   0 = ymfm  (デフォルト)
 //   1 = fmgen
+//   2 = Nuked OPM (LGPL 2.1)
 #include "../../ymfm/IOpmEngine.h"
 #include "../../ymfm/OpmEngineYmfm.h"
 #include "../fmgen/OpmEngineFmgen.h"
+#include "../../NukedOPM/OpmEngineNuked.h"
 
-static int g_opm_engine_type = 0;     // 0:ymfm, 1:fmgen
+static int g_opm_engine_type = 0;     // 0:ymfm, 1:fmgen, 2:nuked
 static IOpmEngine* g_engine = nullptr;
 static uint8_t g_opm_regs[256] = {};  // 全レジスタ状態保存（エンジン切替時のリプレイ用）
 static std::mutex s_engine_mtx;       // g_engine へのスレッドセーフアクセス用
@@ -445,6 +447,8 @@ int MXDRVG_Start(
 	if (!g_engine) {
 		if (g_opm_engine_type == 1)
 			g_engine = new OpmEngineFmgen();
+		else if (g_opm_engine_type == 2)
+			g_engine = new OpmEngineNuked();
 		else
 			g_engine = new OpmEngineYmfm();
 		g_engine->SetIntrCallback(engine_intr_callback);
@@ -617,7 +621,7 @@ MXDRVG_EXPORT
 void MXDRVG_SetOpmEngine(
 	int type
 ) {
-	if (type < 0 || type > 1) return;
+	if (type < 0 || type > 2) return;
 	if (type == g_opm_engine_type) return;
 
 	g_opm_engine_type = type;
@@ -628,6 +632,8 @@ void MXDRVG_SetOpmEngine(
 
 		if (type == 1)
 			new_engine = new OpmEngineFmgen();
+		else if (type == 2)
+			new_engine = new OpmEngineNuked();
 		else
 			new_engine = new OpmEngineYmfm();
 
