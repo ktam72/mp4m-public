@@ -22,6 +22,14 @@ struct FileSelectorView: View {
                         .lineLimit(1)
                         .truncationMode(.head)
                         .padding(.horizontal, 8)
+                        .textSelection(.enabled)
+                        .help(dir.path)
+                        .contextMenu {
+                            Button("Copy Path") {
+                                NSPasteboard.general.clearContents()
+                                NSPasteboard.general.setString(dir.path, forType: .string)
+                            }
+                        }
                 }
                 Button { openFolder() } label: {
                     Text("[OPEN]").font(.mp4mSmall).foregroundColor(Color.mp4mAmber)
