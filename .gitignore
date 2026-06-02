@@ -55,7 +55,6 @@ my_fixes.md
 node_modules/
 release-app/
 CLAUDE.md
-CHANGELOG.md
 
 # Claude local config
 .claude/
