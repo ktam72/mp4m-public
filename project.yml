@@ -145,3 +145,4 @@ targets:
           - "*.dat"
           - "*.xcassets"
           - "*.icns"
+          - "*.txt"
