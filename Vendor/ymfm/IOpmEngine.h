@@ -38,6 +38,25 @@ public:
     // ymfm 初回再生音色不良対策 (A-2) で使用。
     // fmgen では no-op、ymfm でのみ内部エンベロープを強制リセットする。
     virtual void ForceReleaseAllChannels() {}
+
+    // F案: ymfm エンベロープ状態・RMS 観測用。
+    // fmgen では no-op (デフォルト 0/0.0/false)、ymfm でのみ有効値を返す。
+    // ch: 1-8 (FM channel), opnum: 0=M1, 1=M2, 2=C1, 3=C2
+    virtual int GetOpEgState(int ch, int opnum) { return 0; }
+    virtual int GetOpEgAttenuation(int ch, int opnum) { return 0; }
+    virtual double GetCurrentRmsL() { return 0.0; }
+    virtual double GetCurrentRmsR() { return 0.0; }
+    virtual bool IsOpmDebugEnabled() { return false; }
+
+    // A案: ymfm の KC レジスタ (0x28) を直接読み取る。
+    // fmgen は no-op (デフォルト 0)、ymfm でのみ有効値を返す。
+    // 8bit 値 (KC[0-7])、KNA03 の CH3 kc=0x0C 問題切り分け用。
+    virtual int GetRegKc(int ch) { return 0; }
+
+    // D案: 任意のレジスタ値 (0x00-0xFF) を読み取る。
+    // SetReg() で書き込まれた値がキャッシュされている。
+    // CH3 M1 の AR (0x88) 等の解析用。
+    virtual int GetRegValue(int addr) { return 0; }
 };
 
 #endif

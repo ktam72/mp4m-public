@@ -1,0 +1,3651 @@
+[CLI] CommandLine.arguments: ["./build/DerivedData/Build/Products/Debug/MP4M.app/Contents/MacOS/MP4M", "--file=/Volumes/990Pro_2TB/MDX/Arsys/Knight_Arms/KNA11.MDX"]
+[CLI] Valid path: /Volumes/990Pro_2TB/MDX/Arsys/Knight_Arms/KNA11.MDX (isDir=false)
+[Singleton] pendingPath: /Volumes/990Pro_2TB/MDX/Arsys/Knight_Arms/KNA11.MDX
+[MP4MApp] handleSingleInstance - isFirst: true
+[Singleton] lock acquired (first instance)
+[Singleton] pendingPath kept as: /Volumes/990Pro_2TB/MDX/Arsys/Knight_Arms/KNA11.MDX
+[AppDelegate] applicationWillFinishLaunching pendingPath=/Volumes/990Pro_2TB/MDX/Arsys/Knight_Arms/KNA11.MDX
+2026-06-03 02:00:08.345 MP4M[75829:1133852] ApplePersistenceIgnoreState: Existing state will not be touched. New state will be written to /var/folders/4v/cxv29gn97gld63p51c4tzj780000gn/T/com.ktam.MP4M.savedState
+[FileBrowserViewModel] init - START
+[FileBrowserViewModel] MP4MApp.pendingPath: /Volumes/990Pro_2TB/MDX/Arsys/Knight_Arms/KNA11.MDX
+[BrowserVM] pendingPath=/Volumes/990Pro_2TB/MDX/Arsys/Knight_Arms/KNA11.MDX
+[BrowserVM] launchFileURL set to: /Volumes/990Pro_2TB/MDX/Arsys/Knight_Arms/KNA11.MDX
+[FileBrowserViewModel] init - END
+[ContentView] onAppear - START
+[ContentView] pendingPath: /Volumes/990Pro_2TB/MDX/Arsys/Knight_Arms/KNA11.MDX
+[ContentView] launchFileURL: /Volumes/990Pro_2TB/MDX/Arsys/Knight_Arms/KNA11.MDX
+[MXDRVAudioEngine] init - START
+[MXDRVAudioEngine] init - END
+[PlayerViewModel.init] START
+[Metal] GPU compute initialized successfully
+[PlayerViewModel.init] calling audioService.start()
+[MXDRVAudioEngine] start - sampleRate: 44100
+[MXDRVGBridge] startWithSampleRate: 44100
+[OPM_DEBUG] OPM詳細ログを有効化 (MP4M_YMFM_DEBUG=1, interval=6 frames)
+[MXDRVGBridge] MXDRVG_Start done
+[MXDRVAudioEngine] start - END
+[PlayerViewModel.init] audioService.start() done
+[ContentView] PlayerViewModel initialized
+[Launch] launchFileURL detected: /Volumes/990Pro_2TB/MDX/Arsys/Knight_Arms/KNA11.MDX
+[Launch] playingIndex set to 15
+[ContentView] onAppear - END
+[ContentView] Activating window (attempt 1): MP4M
+[Launch] Starting load+playAsync for URL: /Volumes/990Pro_2TB/MDX/Arsys/Knight_Arms/KNA11.MDX
+[PlayerVM.load] START url=/Volumes/990Pro_2TB/MDX/Arsys/Knight_Arms/KNA11.MDX
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[loadMDXFile] Loading: /Volumes/990Pro_2TB/MDX/Arsys/Knight_Arms/KNA11.MDX
+[loadMDXFile] Loaded file, size: 1086
+[PDX] No PDX data provided
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[PlayerVM.load] SUCCESS title=EM"Ｋnight Ａrms (C)Arsys *     Ｇalaxy Ｋnights Ｍarch     *titl* by Yatsube pdxFileName=No PDX
+[Launch] load completed, now calling playAsync
+[PlayerVM.playAsync] START status=stopped loopCount=1
+[PlayerViewModel] playAsync - Starting new playback
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_CH_INIT] === Initial state burst right after SetData (ymfm) ===
+[YMFM_CH_INIT] CH1:OFF(kc=3C,vol=00) CH2:OFF(kc=19,vol=00) CH3:OFF(kc=29,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=41,vol=00) CH6:OFF(kc=0C,vol=00) CH7:OFF(kc=31,vol=00) CH8:OFF(kc=3C,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=3C,vol=00) CH2:OFF(kc=19,vol=00) CH3:OFF(kc=29,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=41,vol=00) CH6:OFF(kc=0C,vol=00) CH7:OFF(kc=31,vol=00) CH8:OFF(kc=3C,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=3C,vol=00) CH2:OFF(kc=19,vol=00) CH3:OFF(kc=29,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=41,vol=00) CH6:OFF(kc=0C,vol=00) CH7:OFF(kc=31,vol=00) CH8:OFF(kc=3C,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=3C,vol=00) CH2:OFF(kc=19,vol=00) CH3:OFF(kc=29,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=41,vol=00) CH6:OFF(kc=0C,vol=00) CH7:OFF(kc=31,vol=00) CH8:OFF(kc=3C,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=3C,vol=00) CH2:OFF(kc=19,vol=00) CH3:OFF(kc=29,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=41,vol=00) CH6:OFF(kc=0C,vol=00) CH7:OFF(kc=31,vol=00) CH8:OFF(kc=3C,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=3C,vol=00) CH2:OFF(kc=19,vol=00) CH3:OFF(kc=29,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=41,vol=00) CH6:OFF(kc=0C,vol=00) CH7:OFF(kc=31,vol=00) CH8:OFF(kc=3C,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=3C,vol=00) CH2:OFF(kc=19,vol=00) CH3:OFF(kc=29,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=41,vol=00) CH6:OFF(kc=0C,vol=00) CH7:OFF(kc=31,vol=00) CH8:OFF(kc=3C,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=3C,vol=00) CH2:OFF(kc=19,vol=00) CH3:OFF(kc=29,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=41,vol=00) CH6:OFF(kc=0C,vol=00) CH7:OFF(kc=31,vol=00) CH8:OFF(kc=3C,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=3C,vol=00) CH2:OFF(kc=19,vol=00) CH3:OFF(kc=29,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=41,vol=00) CH6:OFF(kc=0C,vol=00) CH7:OFF(kc=31,vol=00) CH8:OFF(kc=3C,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=3C,vol=00) CH2:OFF(kc=19,vol=00) CH3:OFF(kc=29,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=41,vol=00) CH6:OFF(kc=0C,vol=00) CH7:OFF(kc=31,vol=00) CH8:OFF(kc=3C,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=3C,vol=00) CH2:OFF(kc=19,vol=00) CH3:OFF(kc=29,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=41,vol=00) CH6:OFF(kc=0C,vol=00) CH7:OFF(kc=31,vol=00) CH8:OFF(kc=3C,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=3C,vol=00) CH2:OFF(kc=19,vol=00) CH3:OFF(kc=29,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=41,vol=00) CH6:OFF(kc=0C,vol=00) CH7:OFF(kc=31,vol=00) CH8:OFF(kc=3C,vol=00) 
+[YMFM_CH_INIT] === End of initial burst ===
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[PlayerViewModel] playAsync - playWithLoopCount done, totalTimeMs: 16587
+[PlayerVM] startPlayback - START
+[PlayerVM] startEngine succeeded
+[PlayerVM] startPlayback - playStartTimeMs: 0
+[PlayerVM] status set to .playing, display timer started
+[PlayerVM.playAsync] playback started, status=playing
+[Launch] playAsync returned
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[PlayerVM] updateDisplay - frame: 60, currentTimeMs: 1109
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_CH] CH1:ON (kc=3D,vol=0C) CH2:ON (kc=19,vol=0C) CH3:ON (kc=30,vol=0C) CH4:ON (kc=34,vol=0C) CH5:ON (kc=3C,vol=0A) CH6:ON (kc=0A,vol=0C) CH7:ON (kc=29,vol=0A) CH8:ON (kc=32,vol=0A) 
+[YMFM_EG]
+  CH1: M1=S0009 M2=S0007 M3=R0000 M4=R0000
+       AR=[15,15,18,18] D1R=[06,06,08,08] D2R=[00,04,00,00] D1L=[4,2,0,0] RR=[15,15,12,12] TL=[27,27,26,26]
+       kc(reg)=51 kc(eng)=3D  <-- MISMATCH
+  CH2: M1=S0034 M2=R0000 M3=R0000 M4=R0000
+       AR=[15,22,18,18] D1R=[06,15,08,08] D2R=[00,00,00,00] D1L=[4,0,0,0] RR=[15,15,12,12] TL=[27,13,26,26]
+       kc(reg)=21 kc(eng)=19  <-- MISMATCH
+  CH3: M1=S0034 M2=S0009 M3=R0001 M4=R0004
+       AR=[15,20,25,25] D1R=[12,08,00,00] D2R=[02,05,02,02] D1L=[15,1,0,0] RR=[15,15,15,15] TL=[40,15,28,28]
+       kc(reg)=3C kc(eng)=30  <-- MISMATCH
+  CH4: M1=S0195 M2=R0568 M3=R0005 M4=R0005
+       AR=[15,30,25,25] D1R=[12,15,00,00] D2R=[02,18,02,02] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[40,14,28,28]
+       kc(reg)=44 kc(eng)=34  <-- MISMATCH
+  CH5: M1=S0001 M2=S0000 M3=R0003 M4=R0011
+       AR=[28,20,18,18] D1R=[02,00,02,02] D2R=[04,05,04,04] D1L=[15,12,0,0] RR=[15,15,15,15] TL=[12,18,30,30]
+       kc(reg)=4C kc(eng)=3C  <-- MISMATCH
+  CH6: M1=S0007 M2=R0568 M3=R0015 M4=R0015
+       AR=[28,30,18,18] D1R=[02,15,02,02] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[18,14,30,30]
+       kc(reg)=0A kc(eng)=0A
+  CH7: M1=S0000 M2=R0000 M3=R0003 M4=R0011
+       AR=[28,20,28,28] D1R=[00,02,00,00] D2R=[04,00,04,04] D1L=[15,0,0,0] RR=[15,15,15,15] TL=[18,10,10,10]
+       kc(reg)=35 kc(eng)=29  <-- MISMATCH
+  CH8: M1=S0000 M2=R0724 M3=R0015 M4=R0015
+       AR=[28,28,28,28] D1R=[00,15,00,00] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[24,14,16,16]
+       kc(reg)=3E kc(eng)=32  <-- MISMATCH
+       keyon(reg)=0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_RMS] L=-21.1dB R=-22.4dB
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[PlayerVM] updateDisplay - frame: 120, currentTimeMs: 2225
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_CH] CH1:ON (kc=3C,vol=0C) CH2:ON (kc=19,vol=0C) CH3:ON (kc=29,vol=0C) CH4:ON (kc=30,vol=0C) CH5:ON (kc=35,vol=0A) CH6:ON (kc=0C,vol=0C) CH7:ON (kc=26,vol=0A) CH8:ON (kc=2E,vol=0A) 
+[YMFM_EG]
+  CH1: M1=D0007 M2=D0007 M3=R0000 M4=R0000
+       AR=[15,15,18,18] D1R=[06,06,08,08] D2R=[00,04,00,00] D1L=[4,2,0,0] RR=[15,15,12,12] TL=[27,27,26,26]
+       kc(reg)=4C kc(eng)=3C  <-- MISMATCH
+  CH2: M1=S0013 M2=R0000 M3=R0000 M4=R0000
+       AR=[15,22,18,18] D1R=[06,15,08,08] D2R=[00,00,00,00] D1L=[4,0,0,0] RR=[15,15,12,12] TL=[27,13,26,26]
+       kc(reg)=21 kc(eng)=19  <-- MISMATCH
+  CH3: M1=D0097 M2=S0000 M3=R0000 M4=R0000
+       AR=[15,20,25,25] D1R=[12,08,00,00] D2R=[02,05,02,02] D1L=[15,1,0,0] RR=[15,15,15,15] TL=[40,15,28,28]
+       kc(reg)=35 kc(eng)=29  <-- MISMATCH
+  CH4: M1=S0067 M2=S0009 M3=R0002 M4=R0002
+       AR=[15,30,25,25] D1R=[12,15,00,00] D2R=[02,18,02,02] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[40,14,28,28]
+       kc(reg)=3C kc(eng)=30  <-- MISMATCH
+  CH5: M1=S0000 M2=S0000 M3=R0000 M4=R0000
+       AR=[28,20,18,18] D1R=[02,00,02,02] D2R=[04,05,04,04] D1L=[15,12,0,0] RR=[15,15,15,15] TL=[12,18,30,30]
+       kc(reg)=45 kc(eng)=35  <-- MISMATCH
+  CH6: M1=S0003 M2=S0009 M3=R0005 M4=R0006
+       AR=[28,30,18,18] D1R=[02,15,02,02] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[18,14,30,30]
+       kc(reg)=0C kc(eng)=0C
+  CH7: M1=S0000 M2=R0000 M3=R0000 M4=R0000
+       AR=[28,20,28,28] D1R=[00,02,00,00] D2R=[04,00,04,04] D1L=[15,0,0,0] RR=[15,15,15,15] TL=[18,10,10,10]
+       kc(reg)=2E kc(eng)=26  <-- MISMATCH
+  CH8: M1=S0000 M2=S0011 M3=R0005 M4=R0006
+       AR=[28,28,28,28] D1R=[00,15,00,00] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[24,14,16,16]
+       kc(reg)=3A kc(eng)=2E  <-- MISMATCH
+       keyon(reg)=0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_RMS] L=-19.0dB R=-20.4dB
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[PlayerVM] updateDisplay - frame: 180, currentTimeMs: 3350
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_CH] CH1:ON (kc=3C,vol=0C) CH2:ON (kc=16,vol=0C) CH3:ON (kc=2E,vol=0C) CH4:ON (kc=28,vol=0C) CH5:ON (kc=3E,vol=0A) CH6:ON (kc=0C,vol=0C) CH7:ON (kc=2E,vol=0A) CH8:ON (kc=29,vol=0A) 
+[YMFM_EG]
+  CH1: M1=S0026 M2=S0019 M3=R0000 M4=R0000
+       AR=[15,15,18,18] D1R=[06,06,08,08] D2R=[00,04,00,00] D1L=[4,2,0,0] RR=[15,15,12,12] TL=[27,27,26,26]
+       kc(reg)=50 kc(eng)=3C  <-- MISMATCH
+  CH2: M1=S0034 M2=R0000 M3=R0000 M4=R0000
+       AR=[15,22,18,18] D1R=[06,15,08,08] D2R=[00,00,00,00] D1L=[4,0,0,0] RR=[15,15,12,12] TL=[27,13,26,26]
+       kc(reg)=1A kc(eng)=16  <-- MISMATCH
+  CH3: M1=S0109 M2=S0021 M3=R0003 M4=R0003
+       AR=[15,20,25,25] D1R=[12,08,00,00] D2R=[02,05,02,02] D1L=[15,1,0,0] RR=[15,15,15,15] TL=[40,15,28,28]
+       kc(reg)=3A kc(eng)=2E  <-- MISMATCH
+  CH4: M1=S0189 M2=R0153 M3=R0005 M4=R0005
+       AR=[15,30,25,25] D1R=[12,15,00,00] D2R=[02,18,02,02] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[40,14,28,28]
+       kc(reg)=34 kc(eng)=28  <-- MISMATCH
+  CH5: M1=S0004 M2=S0000 M3=R0010 M4=R0010
+       AR=[28,20,18,18] D1R=[02,00,02,02] D2R=[04,05,04,04] D1L=[15,12,0,0] RR=[15,15,15,15] TL=[12,18,30,30]
+       kc(reg)=4E kc(eng)=3E  <-- MISMATCH
+  CH6: M1=S0007 M2=R0153 M3=R0016 M4=R0016
+       AR=[28,30,18,18] D1R=[02,15,02,02] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[18,14,30,30]
+       kc(reg)=0C kc(eng)=0C
+  CH7: M1=S0000 M2=R0000 M3=R0010 M4=R0010
+       AR=[28,20,28,28] D1R=[00,02,00,00] D2R=[04,00,04,04] D1L=[15,0,0,0] RR=[15,15,15,15] TL=[18,10,10,10]
+       kc(reg)=3A kc(eng)=2E  <-- MISMATCH
+  CH8: M1=S0000 M2=R0203 M3=R0016 M4=R0016
+       AR=[28,28,28,28] D1R=[00,15,00,00] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[24,14,16,16]
+       kc(reg)=35 kc(eng)=29  <-- MISMATCH
+       keyon(reg)=0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_RMS] L=-19.9dB R=-20.1dB
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[PlayerVM] updateDisplay - frame: 240, currentTimeMs: 4466
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_CH] CH1:ON (kc=35,vol=0C) CH2:ON (kc=18,vol=0C) CH3:ON (kc=31,vol=0C) CH4:ON (kc=31,vol=0C) CH5:ON (kc=41,vol=0A) CH6:ON (kc=0C,vol=0C) CH7:ON (kc=31,vol=0A) CH8:ON (kc=30,vol=0A) 
+[YMFM_EG]
+  CH1: M1=D0001 M2=D0002 M3=R0000 M4=R0000
+       AR=[15,15,18,18] D1R=[06,06,08,08] D2R=[00,04,00,00] D1L=[4,2,0,0] RR=[15,15,12,12] TL=[27,27,26,26]
+       kc(reg)=45 kc(eng)=35  <-- MISMATCH
+  CH2: M1=S0017 M2=R0000 M3=R0000 M4=R0000
+       AR=[15,22,18,18] D1R=[06,15,08,08] D2R=[00,00,00,00] D1L=[4,0,0,0] RR=[15,15,12,12] TL=[27,13,26,26]
+       kc(reg)=1C kc(eng)=18  <-- MISMATCH
+  CH3: M1=D0063 M2=S0001 M3=R0007 M4=R0000
+       AR=[15,20,25,25] D1R=[12,08,00,00] D2R=[02,05,02,02] D1L=[15,1,0,0] RR=[15,15,15,15] TL=[40,15,28,28]
+       kc(reg)=41 kc(eng)=31  <-- MISMATCH
+  CH4: M1=S0069 M2=S0013 M3=R0003 M4=R0002
+       AR=[15,30,25,25] D1R=[12,15,00,00] D2R=[02,18,02,02] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[40,14,28,28]
+       kc(reg)=41 kc(eng)=31  <-- MISMATCH
+  CH5: M1=S0000 M2=S0000 M3=R0021 M4=R0000
+       AR=[28,20,18,18] D1R=[02,00,02,02] D2R=[04,05,04,04] D1L=[15,12,0,0] RR=[15,15,15,15] TL=[12,18,30,30]
+       kc(reg)=55 kc(eng)=41  <-- MISMATCH
+  CH6: M1=S0003 M2=S0013 M3=R0007 M4=R0006
+       AR=[28,30,18,18] D1R=[02,15,02,02] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[18,14,30,30]
+       kc(reg)=0C kc(eng)=0C
+  CH7: M1=S0000 M2=R0000 M3=R0021 M4=R0001
+       AR=[28,20,28,28] D1R=[00,02,00,00] D2R=[04,00,04,04] D1L=[15,0,0,0] RR=[15,15,15,15] TL=[18,10,10,10]
+       kc(reg)=41 kc(eng)=31  <-- MISMATCH
+  CH8: M1=S0000 M2=S0015 M3=R0007 M4=R0006
+       AR=[28,28,28,28] D1R=[00,15,00,00] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[24,14,16,16]
+       kc(reg)=3C kc(eng)=30  <-- MISMATCH
+       keyon(reg)=0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_RMS] L=-20.0dB R=-20.6dB
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[PlayerVM] updateDisplay - frame: 300, currentTimeMs: 5586
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_CH] CH1:ON (kc=40,vol=0C) CH2:ON (kc=10,vol=0C) CH3:ON (kc=30,vol=0C) CH4:ON (kc=2C,vol=0C) CH5:ON (kc=32,vol=0A) CH6:ON (kc=0A,vol=0C) CH7:ON (kc=32,vol=0A) CH8:ON (kc=2E,vol=0A) 
+[YMFM_EG]
+  CH1: M1=S0028 M2=S0015 M3=R0000 M4=R0000
+       AR=[15,15,18,18] D1R=[06,06,08,08] D2R=[00,04,00,00] D1L=[4,2,0,0] RR=[15,15,12,12] TL=[27,27,26,26]
+       kc(reg)=54 kc(eng)=40  <-- MISMATCH
+  CH2: M1=S0007 M2=R0000 M3=R0000 M4=R0000
+       AR=[15,22,18,18] D1R=[06,15,08,08] D2R=[00,00,00,00] D1L=[4,0,0,0] RR=[15,15,12,12] TL=[27,13,26,26]
+       kc(reg)=14 kc(eng)=10  <-- MISMATCH
+  CH3: M1=S0119 M2=S0022 M3=R0001 M4=R0001
+       AR=[15,20,25,25] D1R=[12,08,00,00] D2R=[02,05,02,02] D1L=[15,1,0,0] RR=[15,15,15,15] TL=[40,15,28,28]
+       kc(reg)=3C kc(eng)=30  <-- MISMATCH
+  CH4: M1=S0030 M2=R0589 M3=R0005 M4=R0001
+       AR=[15,30,25,25] D1R=[12,15,00,00] D2R=[02,18,02,02] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[40,14,28,28]
+       kc(reg)=38 kc(eng)=2C  <-- MISMATCH
+  CH5: M1=S0004 M2=S0000 M3=R0003 M4=R0003
+       AR=[28,20,18,18] D1R=[02,00,02,02] D2R=[04,05,04,04] D1L=[15,12,0,0] RR=[15,15,15,15] TL=[12,18,30,30]
+       kc(reg)=3E kc(eng)=32  <-- MISMATCH
+  CH6: M1=S0001 M2=R0589 M3=R0016 M4=R0003
+       AR=[28,30,18,18] D1R=[02,15,02,02] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[18,14,30,30]
+       kc(reg)=0A kc(eng)=0A
+  CH7: M1=S0000 M2=R0000 M3=R0003 M4=R0003
+       AR=[28,20,28,28] D1R=[00,02,00,00] D2R=[04,00,04,04] D1L=[15,0,0,0] RR=[15,15,15,15] TL=[18,10,10,10]
+       kc(reg)=3E kc(eng)=32  <-- MISMATCH
+  CH8: M1=S0000 M2=R0750 M3=R0016 M4=R0003
+       AR=[28,28,28,28] D1R=[00,15,00,00] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[24,14,16,16]
+       kc(reg)=3A kc(eng)=2E  <-- MISMATCH
+       keyon(reg)=0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_RMS] L=-21.2dB R=-20.7dB
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[PlayerVM] updateDisplay - frame: 360, currentTimeMs: 6702
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_CH] CH1:ON (kc=48,vol=0C) CH2:ON (kc=18,vol=0C) CH3:ON (kc=35,vol=0C) CH4:ON (kc=31,vol=0C) CH5:ON (kc=44,vol=0A) CH6:ON (kc=0C,vol=0C) CH7:ON (kc=26,vol=0A) CH8:ON (kc=30,vol=0A) 
+[YMFM_EG]
+  CH1: M1=S0001 M2=S0001 M3=R0000 M4=R0000
+       AR=[15,15,18,18] D1R=[06,06,08,08] D2R=[00,04,00,00] D1L=[4,2,0,0] RR=[15,15,12,12] TL=[27,27,26,26]
+       kc(reg)=5C kc(eng)=48  <-- MISMATCH
+  CH2: M1=S0001 M2=R0000 M3=R0000 M4=R0000
+       AR=[15,22,18,18] D1R=[06,15,08,08] D2R=[00,00,00,00] D1L=[4,0,0,0] RR=[15,15,12,12] TL=[27,13,26,26]
+       kc(reg)=1C kc(eng)=18  <-- MISMATCH
+  CH3: M1=D0010 M2=S0001 M3=R0000 M4=R0000
+       AR=[15,20,25,25] D1R=[12,08,00,00] D2R=[02,05,02,02] D1L=[15,1,0,0] RR=[15,15,15,15] TL=[40,15,28,28]
+       kc(reg)=45 kc(eng)=35  <-- MISMATCH
+  CH4: M1=D0009 M2=S0017 M3=R0000 M4=R0000
+       AR=[15,30,25,25] D1R=[12,15,00,00] D2R=[02,18,02,02] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[40,14,28,28]
+       kc(reg)=41 kc(eng)=31  <-- MISMATCH
+  CH5: M1=S0000 M2=S0000 M3=R0000 M4=R0000
+       AR=[28,20,18,18] D1R=[02,00,02,02] D2R=[04,05,04,04] D1L=[15,12,0,0] RR=[15,15,15,15] TL=[12,18,30,30]
+       kc(reg)=58 kc(eng)=44  <-- MISMATCH
+  CH6: M1=S0000 M2=S0017 M3=R0001 M4=R0001
+       AR=[28,30,18,18] D1R=[02,15,02,02] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[18,14,30,30]
+       kc(reg)=0C kc(eng)=0C
+  CH7: M1=S0000 M2=R0000 M3=R0001 M4=R0001
+       AR=[28,20,28,28] D1R=[00,02,00,00] D2R=[04,00,04,04] D1L=[15,0,0,0] RR=[15,15,15,15] TL=[18,10,10,10]
+       kc(reg)=32 kc(eng)=26  <-- MISMATCH
+  CH8: M1=S0000 M2=S0020 M3=R0001 M4=R0001
+       AR=[28,28,28,28] D1R=[00,15,00,00] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[24,14,16,16]
+       kc(reg)=3C kc(eng)=30  <-- MISMATCH
+       keyon(reg)=0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_RMS] L=-22.0dB R=-22.2dB
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[PlayerVM] updateDisplay - frame: 420, currentTimeMs: 7816
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_CH] CH1:ON (kc=45,vol=0C) CH2:ON (kc=10,vol=0C) CH3:ON (kc=34,vol=0C) CH4:ON (kc=31,vol=0C) CH5:ON (kc=3C,vol=0A) CH6:ON (kc=0A,vol=0C) CH7:ON (kc=38,vol=0A) CH8:ON (kc=32,vol=0A) 
+[YMFM_EG]
+  CH1: M1=S0026 M2=S0015 M3=R0000 M4=R0000
+       AR=[15,15,18,18] D1R=[06,06,08,08] D2R=[00,04,00,00] D1L=[4,2,0,0] RR=[15,15,12,12] TL=[27,27,26,26]
+       kc(reg)=59 kc(eng)=45  <-- MISMATCH
+  CH2: M1=S0033 M2=R0000 M3=R0000 M4=R0000
+       AR=[15,22,18,18] D1R=[06,15,08,08] D2R=[00,00,00,00] D1L=[4,0,0,0] RR=[15,15,12,12] TL=[27,13,26,26]
+       kc(reg)=14 kc(eng)=10  <-- MISMATCH
+  CH3: M1=S0109 M2=S0021 M3=R0004 M4=R0003
+       AR=[15,20,25,25] D1R=[12,08,00,00] D2R=[02,05,02,02] D1L=[15,1,0,0] RR=[15,15,15,15] TL=[40,15,28,28]
+       kc(reg)=44 kc(eng)=34  <-- MISMATCH
+  CH4: M1=S0189 M2=R0572 M3=R0007 M4=R0007
+       AR=[15,30,25,25] D1R=[12,15,00,00] D2R=[02,18,02,02] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[40,14,28,28]
+       kc(reg)=3D kc(eng)=31  <-- MISMATCH
+  CH5: M1=S0004 M2=S0000 M3=R0010 M4=R0010
+       AR=[28,20,18,18] D1R=[02,00,02,02] D2R=[04,05,04,04] D1L=[15,12,0,0] RR=[15,15,15,15] TL=[12,18,30,30]
+       kc(reg)=4C kc(eng)=3C  <-- MISMATCH
+  CH6: M1=S0007 M2=R0572 M3=R0017 M4=R0017
+       AR=[28,30,18,18] D1R=[02,15,02,02] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[18,14,30,30]
+       kc(reg)=0A kc(eng)=0A
+  CH7: M1=S0000 M2=R0000 M3=R0010 M4=R0010
+       AR=[28,20,28,28] D1R=[00,02,00,00] D2R=[04,00,04,04] D1L=[15,0,0,0] RR=[15,15,15,15] TL=[18,10,10,10]
+       kc(reg)=48 kc(eng)=38  <-- MISMATCH
+  CH8: M1=S0000 M2=R0729 M3=R0017 M4=R0017
+       AR=[28,28,28,28] D1R=[00,15,00,00] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[24,14,16,16]
+       kc(reg)=42 kc(eng)=32  <-- MISMATCH
+       keyon(reg)=0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_RMS] L=-20.0dB R=-20.6dB
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[PlayerVM] updateDisplay - frame: 480, currentTimeMs: 8930
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_CH] CH1:ON (kc=3E,vol=0C) CH2:ON (kc=0E,vol=0C) CH3:ON (kc=30,vol=0C) CH4:ON (kc=2C,vol=0C) CH5:ON (kc=41,vol=0A) CH6:ON (kc=0C,vol=0C) CH7:ON (kc=31,vol=0A) CH8:ON (kc=30,vol=0A) 
+[YMFM_EG]
+  CH1: M1=D0041 M2=D0031 M3=R0000 M4=R0000
+       AR=[15,15,18,18] D1R=[06,06,08,08] D2R=[00,04,00,00] D1L=[4,2,0,0] RR=[15,15,12,12] TL=[27,27,26,26]
+       kc(reg)=52 kc(eng)=3E  <-- MISMATCH
+  CH2: M1=S0015 M2=R0000 M3=R0000 M4=R0000
+       AR=[15,22,18,18] D1R=[06,15,08,08] D2R=[00,00,00,00] D1L=[4,0,0,0] RR=[15,15,12,12] TL=[27,13,26,26]
+       kc(reg)=12 kc(eng)=0E  <-- MISMATCH
+  CH3: M1=D0208 M2=D0025 M3=R0000 M4=R0000
+       AR=[15,20,25,25] D1R=[12,08,00,00] D2R=[02,05,02,02] D1L=[15,1,0,0] RR=[15,15,15,15] TL=[40,15,28,28]
+       kc(reg)=3C kc(eng)=30  <-- MISMATCH
+  CH4: M1=S0061 M2=S0001 M3=R0003 M4=R0002
+       AR=[15,30,25,25] D1R=[12,15,00,00] D2R=[02,18,02,02] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[40,14,28,28]
+       kc(reg)=38 kc(eng)=2C  <-- MISMATCH
+  CH5: M1=S0000 M2=S0000 M3=D0013 M4=D0012
+       AR=[28,20,18,18] D1R=[02,00,02,02] D2R=[04,05,04,04] D1L=[15,12,0,0] RR=[15,15,15,15] TL=[12,18,30,30]
+       kc(reg)=55 kc(eng)=41  <-- MISMATCH
+  CH6: M1=S0003 M2=S0001 M3=R0007 M4=R0005
+       AR=[28,30,18,18] D1R=[02,15,02,02] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[18,14,30,30]
+       kc(reg)=0C kc(eng)=0C
+  CH7: M1=S0000 M2=R0000 M3=R0000 M4=R0000
+       AR=[28,20,28,28] D1R=[00,02,00,00] D2R=[04,00,04,04] D1L=[15,0,0,0] RR=[15,15,15,15] TL=[18,10,10,10]
+       kc(reg)=41 kc(eng)=31  <-- MISMATCH
+  CH8: M1=S0000 M2=S0000 M3=R0007 M4=R0006
+       AR=[28,28,28,28] D1R=[00,15,00,00] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[24,14,16,16]
+       kc(reg)=3C kc(eng)=30  <-- MISMATCH
+       keyon(reg)=0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_RMS] L=-18.9dB R=-20.2dB
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[PlayerVM] updateDisplay - frame: 540, currentTimeMs: 10042
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_CH] CH1:ON (kc=39,vol=0C) CH2:ON (kc=10,vol=0C) CH3:ON (kc=34,vol=0C) CH4:ON (kc=32,vol=0C) CH5:ON (kc=41,vol=0A) CH6:ON (kc=0C,vol=0C) CH7:ON (kc=30,vol=0A) CH8:ON (kc=31,vol=0A) 
+[YMFM_EG]
+  CH1: M1=S0020 M2=S0014 M3=R0000 M4=R0000
+       AR=[15,15,18,18] D1R=[06,06,08,08] D2R=[00,04,00,00] D1L=[4,2,0,0] RR=[15,15,12,12] TL=[27,27,26,26]
+       kc(reg)=49 kc(eng)=39  <-- MISMATCH
+  CH2: M1=S0042 M2=R0000 M3=R0000 M4=R0000
+       AR=[15,22,18,18] D1R=[06,15,08,08] D2R=[00,00,00,00] D1L=[4,0,0,0] RR=[15,15,12,12] TL=[27,13,26,26]
+       kc(reg)=14 kc(eng)=10  <-- MISMATCH
+  CH3: M1=S0106 M2=S0020 M3=R0004 M4=R0001
+       AR=[15,20,25,25] D1R=[12,08,00,00] D2R=[02,05,02,02] D1L=[15,1,0,0] RR=[15,15,15,15] TL=[40,15,28,28]
+       kc(reg)=44 kc(eng)=34  <-- MISMATCH
+  CH4: M1=S0193 M2=R0129 M3=R0005 M4=R0007
+       AR=[15,30,25,25] D1R=[12,15,00,00] D2R=[02,18,02,02] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[40,14,28,28]
+       kc(reg)=3E kc(eng)=32  <-- MISMATCH
+  CH5: M1=S0004 M2=S0000 M3=R0010 M4=R0002
+       AR=[28,20,18,18] D1R=[02,00,02,02] D2R=[04,05,04,04] D1L=[15,12,0,0] RR=[15,15,15,15] TL=[12,18,30,30]
+       kc(reg)=55 kc(eng)=41  <-- MISMATCH
+  CH6: M1=S0007 M2=R0129 M3=R0015 M4=R0017
+       AR=[28,30,18,18] D1R=[02,15,02,02] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[18,14,30,30]
+       kc(reg)=0C kc(eng)=0C
+  CH7: M1=S0000 M2=R0000 M3=R0010 M4=R0002
+       AR=[28,20,28,28] D1R=[00,02,00,00] D2R=[04,00,04,04] D1L=[15,0,0,0] RR=[15,15,15,15] TL=[18,10,10,10]
+       kc(reg)=3C kc(eng)=30  <-- MISMATCH
+  CH8: M1=S0000 M2=R0175 M3=R0015 M4=R0017
+       AR=[28,28,28,28] D1R=[00,15,00,00] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[24,14,16,16]
+       kc(reg)=41 kc(eng)=31  <-- MISMATCH
+       keyon(reg)=0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_RMS] L=-19.9dB R=-19.0dB
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[PlayerVM] updateDisplay - frame: 600, currentTimeMs: 11140
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[PlayerVM] updateDisplay - frame: 660, currentTimeMs: 12257
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_CH] CH1:ON (kc=3C,vol=0C) CH2:ON (kc=0C,vol=0C) CH3:ON (kc=35,vol=0C) CH4:ON (kc=31,vol=0C) CH5:ON (kc=35,vol=0A) CH6:ON (kc=0C,vol=0C) CH7:ON (kc=32,vol=0A) CH8:ON (kc=32,vol=0A) 
+[YMFM_EG]
+  CH1: M1=D0016 M2=D0015 M3=R0000 M4=R0000
+       AR=[15,15,18,18] D1R=[06,06,08,08] D2R=[00,04,00,00] D1L=[4,2,0,0] RR=[15,15,12,12] TL=[27,27,26,26]
+       kc(reg)=4C kc(eng)=3C  <-- MISMATCH
+  CH2: M1=S0013 M2=R0000 M3=R0000 M4=R0000
+       AR=[15,22,18,18] D1R=[06,15,08,08] D2R=[00,00,00,00] D1L=[4,0,0,0] RR=[15,15,12,12] TL=[27,13,26,26]
+       kc(reg)=0C kc(eng)=0C
+  CH3: M1=D0138 M2=S0000 M3=R0000 M4=R0000
+       AR=[15,20,25,25] D1R=[12,08,00,00] D2R=[02,05,02,02] D1L=[15,1,0,0] RR=[15,15,15,15] TL=[40,15,28,28]
+       kc(reg)=45 kc(eng)=35  <-- MISMATCH
+  CH4: M1=S0064 M2=S0005 M3=R0002 M4=R0001
+       AR=[15,30,25,25] D1R=[12,15,00,00] D2R=[02,18,02,02] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[40,14,28,28]
+       kc(reg)=41 kc(eng)=31  <-- MISMATCH
+  CH5: M1=S0000 M2=S0000 M3=R0000 M4=R0000
+       AR=[28,20,18,18] D1R=[02,00,02,02] D2R=[04,05,04,04] D1L=[15,12,0,0] RR=[15,15,15,15] TL=[12,18,30,30]
+       kc(reg)=45 kc(eng)=35  <-- MISMATCH
+  CH6: M1=S0002 M2=S0005 M3=R0007 M4=R0005
+       AR=[28,30,18,18] D1R=[02,15,02,02] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[18,14,30,30]
+       kc(reg)=0C kc(eng)=0C
+  CH7: M1=S0000 M2=R0000 M3=R0000 M4=R0000
+       AR=[28,20,28,28] D1R=[00,02,00,00] D2R=[04,00,04,04] D1L=[15,0,0,0] RR=[15,15,15,15] TL=[18,10,10,10]
+       kc(reg)=42 kc(eng)=32  <-- MISMATCH
+  CH8: M1=S0000 M2=S0004 M3=R0007 M4=R0005
+       AR=[28,28,28,28] D1R=[00,15,00,00] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[24,14,16,16]
+       kc(reg)=3E kc(eng)=32  <-- MISMATCH
+       keyon(reg)=0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_RMS] L=-21.4dB R=-22.3dB
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[PlayerVM] updateDisplay - frame: 720, currentTimeMs: 13366
+[YMFM_CH] CH1:ON (kc=3A,vol=0C) CH2:ON (kc=0A,vol=0C) CH3:ON (kc=34,vol=0C) CH4:ON (kc=30,vol=0C) CH5:ON (kc=3C,vol=0A) CH6:ON (kc=0A,vol=0C) CH7:ON (kc=35,vol=0A) CH8:ON (kc=31,vol=0A) 
+[YMFM_EG]
+  CH1: M1=S0100 M2=S0013 M3=R0000 M4=R0000
+       AR=[15,15,18,18] D1R=[06,06,08,08] D2R=[00,04,00,00] D1L=[4,2,0,0] RR=[15,15,12,12] TL=[27,27,26,26]
+       kc(reg)=4A kc(eng)=3A  <-- MISMATCH
+  CH2: M1=S0073 M2=R0000 M3=R0000 M4=R0000
+       AR=[15,22,18,18] D1R=[06,15,08,08] D2R=[00,00,00,00] D1L=[4,0,0,0] RR=[15,15,12,12] TL=[27,13,26,26]
+       kc(reg)=0A kc(eng)=0A
+  CH3: M1=S0582 M2=S0020 M3=R0019 M4=R0019
+       AR=[15,20,25,25] D1R=[12,08,00,00] D2R=[02,05,02,02] D1L=[15,1,0,0] RR=[15,15,15,15] TL=[40,15,28,28]
+       kc(reg)=44 kc(eng)=34  <-- MISMATCH
+  CH4: M1=S0423 M2=R0536 M3=R0014 M4=R0014
+       AR=[15,30,25,25] D1R=[12,15,00,00] D2R=[02,18,02,02] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[40,14,28,28]
+       kc(reg)=40 kc(eng)=30  <-- MISMATCH
+  CH5: M1=S0019 M2=S0000 M3=R0050 M4=R0050
+       AR=[28,20,18,18] D1R=[02,00,02,02] D2R=[04,05,04,04] D1L=[15,12,0,0] RR=[15,15,15,15] TL=[12,18,30,30]
+       kc(reg)=4C kc(eng)=3C  <-- MISMATCH
+  CH6: M1=S0014 M2=R0536 M3=R0037 M4=R0037
+       AR=[28,30,18,18] D1R=[02,15,02,02] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[18,14,30,30]
+       kc(reg)=0A kc(eng)=0A
+  CH7: M1=S0000 M2=R0000 M3=R0050 M4=R0050
+       AR=[28,20,28,28] D1R=[00,02,00,00] D2R=[04,00,04,04] D1L=[15,0,0,0] RR=[15,15,15,15] TL=[18,10,10,10]
+       kc(reg)=45 kc(eng)=35  <-- MISMATCH
+  CH8: M1=S0000 M2=R0684 M3=R0037 M4=R0037
+       AR=[28,28,28,28] D1R=[00,15,00,00] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[24,14,16,16]
+       kc(reg)=41 kc(eng)=31  <-- MISMATCH
+       keyon(reg)=0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_RMS] L=-21.8dB R=-22.0dB
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[PlayerVM] updateDisplay - frame: 780, currentTimeMs: 14488
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_CH] CH1:ON (kc=3C,vol=0C) CH2:ON (kc=19,vol=0C) CH3:ON (kc=29,vol=0C) CH4:ON (kc=31,vol=0C) CH5:ON (kc=41,vol=0A) CH6:ON (kc=0C,vol=0C) CH7:ON (kc=31,vol=0A) CH8:ON (kc=3C,vol=0A) 
+[YMFM_EG]
+  CH1: M1=S0012 M2=S0012 M3=R0000 M4=R0000
+       AR=[15,15,18,18] D1R=[06,06,08,08] D2R=[00,04,00,00] D1L=[4,2,0,0] RR=[15,15,12,12] TL=[27,27,26,26]
+       kc(reg)=4C kc(eng)=3C  <-- MISMATCH
+  CH2: M1=S0015 M2=R0000 M3=R0000 M4=R0000
+       AR=[15,22,18,18] D1R=[06,15,08,08] D2R=[00,00,00,00] D1L=[4,0,0,0] RR=[15,15,12,12] TL=[27,13,26,26]
+       kc(reg)=21 kc(eng)=19  <-- MISMATCH
+  CH3: M1=S0064 M2=S0016 M3=R0001 M4=R0002
+       AR=[15,20,25,25] D1R=[12,08,00,00] D2R=[02,05,02,02] D1L=[15,1,0,0] RR=[15,15,15,15] TL=[40,15,28,28]
+       kc(reg)=35 kc(eng)=29  <-- MISMATCH
+  CH4: M1=S0061 M2=R0315 M3=R0002 M4=R0002
+       AR=[15,30,25,25] D1R=[12,15,00,00] D2R=[02,18,02,02] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[40,14,28,28]
+       kc(reg)=41 kc(eng)=31  <-- MISMATCH
+  CH5: M1=S0002 M2=S0000 M3=R0005 M4=R0007
+       AR=[28,20,18,18] D1R=[02,00,02,02] D2R=[04,05,04,04] D1L=[15,12,0,0] RR=[15,15,15,15] TL=[12,18,30,30]
+       kc(reg)=55 kc(eng)=41  <-- MISMATCH
+  CH6: M1=S0002 M2=R0315 M3=R0007 M4=R0007
+       AR=[28,30,18,18] D1R=[02,15,02,02] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[18,14,30,30]
+       kc(reg)=0C kc(eng)=0C
+  CH7: M1=S0000 M2=R0000 M3=R0005 M4=R0007
+       AR=[28,20,28,28] D1R=[00,02,00,00] D2R=[04,00,04,04] D1L=[15,0,0,0] RR=[15,15,15,15] TL=[18,10,10,10]
+       kc(reg)=41 kc(eng)=31  <-- MISMATCH
+  CH8: M1=S0000 M2=R0410 M3=R0007 M4=R0007
+       AR=[28,28,28,28] D1R=[00,15,00,00] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[24,14,16,16]
+       kc(reg)=4C kc(eng)=3C  <-- MISMATCH
+       keyon(reg)=0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_RMS] L=-21.8dB R=-21.4dB
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[PlayerVM] updateDisplay - frame: 840, currentTimeMs: 15611
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_CH] CH1:ON (kc=3D,vol=0C) CH2:ON (kc=19,vol=0C) CH3:ON (kc=2D,vol=0C) CH4:ON (kc=34,vol=0C) CH5:ON (kc=3C,vol=0A) CH6:ON (kc=0A,vol=0C) CH7:ON (kc=29,vol=0A) CH8:ON (kc=30,vol=0A) 
+[YMFM_EG]
+  CH1: M1=S0020 M2=S0020 M3=R0000 M4=R0000
+       AR=[15,15,18,18] D1R=[06,06,08,08] D2R=[00,04,00,00] D1L=[4,2,0,0] RR=[15,15,12,12] TL=[27,27,26,26]
+       kc(reg)=4D kc(eng)=3D  <-- MISMATCH
+  CH2: M1=S0006 M2=R0000 M3=R0000 M4=R0000
+       AR=[15,22,18,18] D1R=[06,15,08,08] D2R=[00,00,00,00] D1L=[4,0,0,0] RR=[15,15,12,12] TL=[27,13,26,26]
+       kc(reg)=21 kc(eng)=19  <-- MISMATCH
+  CH3: M1=S0110 M2=S0026 M3=R0003 M4=R0004
+       AR=[15,20,25,25] D1R=[12,08,00,00] D2R=[02,05,02,02] D1L=[15,1,0,0] RR=[15,15,15,15] TL=[40,15,28,28]
+       kc(reg)=39 kc(eng)=2D  <-- MISMATCH
+  CH4: M1=S0030 M2=R0549 M3=R0001 M4=R0001
+       AR=[15,30,25,25] D1R=[12,15,00,00] D2R=[02,18,02,02] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[40,14,28,28]
+       kc(reg)=44 kc(eng)=34  <-- MISMATCH
+  CH5: M1=S0004 M2=S0000 M3=R0010 M4=R0010
+       AR=[28,20,18,18] D1R=[02,00,02,02] D2R=[04,05,04,04] D1L=[15,12,0,0] RR=[15,15,15,15] TL=[12,18,30,30]
+       kc(reg)=4C kc(eng)=3C  <-- MISMATCH
+  CH6: M1=S0001 M2=R0549 M3=R0003 M4=R0003
+       AR=[28,30,18,18] D1R=[02,15,02,02] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[18,14,30,30]
+       kc(reg)=0A kc(eng)=0A
+  CH7: M1=S0000 M2=R0000 M3=R0010 M4=R0010
+       AR=[28,20,28,28] D1R=[00,02,00,00] D2R=[04,00,04,04] D1L=[15,0,0,0] RR=[15,15,15,15] TL=[18,10,10,10]
+       kc(reg)=35 kc(eng)=29  <-- MISMATCH
+  CH8: M1=S0000 M2=R0700 M3=R0003 M4=R0003
+       AR=[28,28,28,28] D1R=[00,15,00,00] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[24,14,16,16]
+       kc(reg)=3C kc(eng)=30  <-- MISMATCH
+       keyon(reg)=0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_RMS] L=-20.0dB R=-22.8dB
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[PlayerVM] updateDisplay - frame: 900, currentTimeMs: 16725
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_CH] CH1:ON (kc=3E,vol=0C) CH2:ON (kc=1A,vol=0C) CH3:ON (kc=2E,vol=0C) CH4:ON (kc=29,vol=0C) CH5:ON (kc=3C,vol=0A) CH6:ON (kc=0C,vol=0C) CH7:ON (kc=29,vol=0A) CH8:ON (kc=30,vol=0A) 
+[YMFM_EG]
+  CH1: M1=D0026 M2=D0026 M3=R0000 M4=R0000
+       AR=[15,15,18,18] D1R=[06,06,08,08] D2R=[00,04,00,00] D1L=[4,2,0,0] RR=[15,15,12,12] TL=[27,27,26,26]
+       kc(reg)=4E kc(eng)=3E  <-- MISMATCH
+  CH2: M1=S0013 M2=R0000 M3=R0000 M4=R0000
+       AR=[15,22,18,18] D1R=[06,15,08,08] D2R=[00,00,00,00] D1L=[4,0,0,0] RR=[15,15,12,12] TL=[27,13,26,26]
+       kc(reg)=22 kc(eng)=1A  <-- MISMATCH
+  CH3: M1=D0169 M2=D0008 M3=R0000 M4=R0000
+       AR=[15,20,25,25] D1R=[12,08,00,00] D2R=[02,05,02,02] D1L=[15,1,0,0] RR=[15,15,15,15] TL=[40,15,28,28]
+       kc(reg)=3A kc(eng)=2E  <-- MISMATCH
+  CH4: M1=S0063 M2=S0002 M3=R0001 M4=R0001
+       AR=[15,30,25,25] D1R=[12,15,00,00] D2R=[02,18,02,02] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[40,14,28,28]
+       kc(reg)=35 kc(eng)=29  <-- MISMATCH
+  CH5: M1=S0000 M2=S0000 M3=D0005 M4=D0005
+       AR=[28,20,18,18] D1R=[02,00,02,02] D2R=[04,05,04,04] D1L=[15,12,0,0] RR=[15,15,15,15] TL=[12,18,30,30]
+       kc(reg)=4C kc(eng)=3C  <-- MISMATCH
+  CH6: M1=S0002 M2=S0002 M3=R0005 M4=R0005
+       AR=[28,30,18,18] D1R=[02,15,02,02] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[18,14,30,30]
+       kc(reg)=0C kc(eng)=0C
+  CH7: M1=S0000 M2=R0000 M3=R0000 M4=R0000
+       AR=[28,20,28,28] D1R=[00,02,00,00] D2R=[04,00,04,04] D1L=[15,0,0,0] RR=[15,15,15,15] TL=[18,10,10,10]
+       kc(reg)=35 kc(eng)=29  <-- MISMATCH
+  CH8: M1=S0000 M2=S0002 M3=R0005 M4=R0005
+       AR=[28,28,28,28] D1R=[00,15,00,00] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[24,14,16,16]
+       kc(reg)=3C kc(eng)=30  <-- MISMATCH
+       keyon(reg)=0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_RMS] L=-19.0dB R=-19.9dB
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[PlayerVM] updateDisplay - frame: 960, currentTimeMs: 17842
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_CH] CH1:ON (kc=3D,vol=0C) CH2:ON (kc=19,vol=0C) CH3:ON (kc=31,vol=0C) CH4:ON (kc=28,vol=0C) CH5:ON (kc=3D,vol=0A) CH6:ON (kc=0A,vol=0C) CH7:ON (kc=30,vol=0A) CH8:ON (kc=29,vol=0A) 
+[YMFM_EG]
+  CH1: M1=S0025 M2=S0018 M3=R0000 M4=R0000
+       AR=[15,15,18,18] D1R=[06,06,08,08] D2R=[00,04,00,00] D1L=[4,2,0,0] RR=[15,15,12,12] TL=[27,27,26,26]
+       kc(reg)=51 kc(eng)=3D  <-- MISMATCH
+  CH2: M1=S0043 M2=R0000 M3=R0000 M4=R0000
+       AR=[15,22,18,18] D1R=[06,15,08,08] D2R=[00,00,00,00] D1L=[4,0,0,0] RR=[15,15,12,12] TL=[27,13,26,26]
+       kc(reg)=1D kc(eng)=19  <-- MISMATCH
+  CH3: M1=S0105 M2=S0021 M3=R0003 M4=R0003
+       AR=[15,20,25,25] D1R=[12,08,00,00] D2R=[02,05,02,02] D1L=[15,1,0,0] RR=[15,15,15,15] TL=[40,15,28,28]
+       kc(reg)=3D kc(eng)=31  <-- MISMATCH
+  CH4: M1=S0186 M2=R0559 M3=R0004 M4=R0004
+       AR=[15,30,25,25] D1R=[12,15,00,00] D2R=[02,18,02,02] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[40,14,28,28]
+       kc(reg)=34 kc(eng)=28  <-- MISMATCH
+  CH5: M1=S0004 M2=S0000 M3=R0009 M4=R0009
+       AR=[28,20,18,18] D1R=[02,00,02,02] D2R=[04,05,04,04] D1L=[15,12,0,0] RR=[15,15,15,15] TL=[12,18,30,30]
+       kc(reg)=51 kc(eng)=3D  <-- MISMATCH
+  CH6: M1=S0006 M2=R0559 M3=R0015 M4=R0015
+       AR=[28,30,18,18] D1R=[02,15,02,02] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[18,14,30,30]
+       kc(reg)=0A kc(eng)=0A
+  CH7: M1=S0000 M2=R0000 M3=R0010 M4=R0010
+       AR=[28,20,28,28] D1R=[00,02,00,00] D2R=[04,00,04,04] D1L=[15,0,0,0] RR=[15,15,15,15] TL=[18,10,10,10]
+       kc(reg)=3C kc(eng)=30  <-- MISMATCH
+  CH8: M1=S0000 M2=R0713 M3=R0015 M4=R0015
+       AR=[28,28,28,28] D1R=[00,15,00,00] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[24,14,16,16]
+       kc(reg)=35 kc(eng)=29  <-- MISMATCH
+       keyon(reg)=0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_RMS] L=-21.0dB R=-21.4dB
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[PlayerVM] updateDisplay - frame: 1020, currentTimeMs: 18962
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_CH] CH1:ON (kc=38,vol=0C) CH2:ON (kc=11,vol=0C) CH3:ON (kc=32,vol=0C) CH4:ON (kc=32,vol=0C) CH5:ON (kc=34,vol=0A) CH6:ON (kc=0C,vol=0C) CH7:ON (kc=31,vol=0A) CH8:ON (kc=31,vol=0A) 
+[YMFM_EG]
+  CH1: M1=S0002 M2=S0000 M3=R0000 M4=R0000
+       AR=[15,15,18,18] D1R=[06,06,08,08] D2R=[00,04,00,00] D1L=[4,2,0,0] RR=[15,15,12,12] TL=[27,27,26,26]
+       kc(reg)=48 kc(eng)=38  <-- MISMATCH
+  CH2: M1=S0002 M2=R0000 M3=R0000 M4=R0000
+       AR=[15,22,18,18] D1R=[06,15,08,08] D2R=[00,00,00,00] D1L=[4,0,0,0] RR=[15,15,12,12] TL=[27,13,26,26]
+       kc(reg)=15 kc(eng)=11  <-- MISMATCH
+  CH3: M1=S0001 M2=S0002 M3=R0001 M4=R0001
+       AR=[15,20,25,25] D1R=[12,08,00,00] D2R=[02,05,02,02] D1L=[15,1,0,0] RR=[15,15,15,15] TL=[40,15,28,28]
+       kc(reg)=3E kc(eng)=32  <-- MISMATCH
+  CH4: M1=S0002 M2=S0027 M3=R0010 M4=R0003
+       AR=[15,30,25,25] D1R=[12,15,00,00] D2R=[02,18,02,02] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[40,14,28,28]
+       kc(reg)=42 kc(eng)=32  <-- MISMATCH
+  CH5: M1=S0001 M2=S0000 M3=R0001 M4=R0001
+       AR=[28,20,18,18] D1R=[02,00,02,02] D2R=[04,05,04,04] D1L=[15,12,0,0] RR=[15,15,15,15] TL=[12,18,30,30]
+       kc(reg)=44 kc(eng)=34  <-- MISMATCH
+  CH6: M1=S0001 M2=S0027 M3=R0028 M4=R0008
+       AR=[28,30,18,18] D1R=[02,15,02,02] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[18,14,30,30]
+       kc(reg)=0C kc(eng)=0C
+  CH7: M1=S0000 M2=R0000 M3=R0002 M4=R0001
+       AR=[28,20,28,28] D1R=[00,02,00,00] D2R=[04,00,04,04] D1L=[15,0,0,0] RR=[15,15,15,15] TL=[18,10,10,10]
+       kc(reg)=41 kc(eng)=31  <-- MISMATCH
+  CH8: M1=S0000 M2=S0030 M3=R0028 M4=R0008
+       AR=[28,28,28,28] D1R=[00,15,00,00] D2R=[04,18,04,04] D1L=[15,2,0,0] RR=[15,15,15,15] TL=[24,14,16,16]
+       kc(reg)=41 kc(eng)=31  <-- MISMATCH
+       keyon(reg)=0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_RMS] L=-21.7dB R=-22.0dB
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[PlayerVM.load] START url=/Volumes/990Pro_2TB/MDX/Arsys/Knight_Arms/KNA12.MDX
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[loadMDXFile] Loading: /Volumes/990Pro_2TB/MDX/Arsys/Knight_Arms/KNA12.MDX
+[loadMDXFile] Loaded file, size: 1940
+[PDX] No PDX data provided
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[PlayerVM.load] SUCCESS title=EM"Ｋnight Ａrms (C)Arsys *   Ｇloria in Ｅxcelsis Ｄeo！   *end1* by Yatsube pdxFileName=No PDX
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_CH_INIT] === Initial state burst right after SetData (ymfm) ===
+[YMFM_CH_INIT] CH1:OFF(kc=36,vol=00) CH2:OFF(kc=0D,vol=00) CH3:OFF(kc=36,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=0E,vol=00) CH6:OFF(kc=38,vol=00) CH7:OFF(kc=38,vol=00) CH8:OFF(kc=32,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=36,vol=00) CH2:OFF(kc=0D,vol=00) CH3:OFF(kc=36,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=0E,vol=00) CH6:OFF(kc=38,vol=00) CH7:OFF(kc=38,vol=00) CH8:OFF(kc=32,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=36,vol=00) CH2:OFF(kc=0D,vol=00) CH3:OFF(kc=36,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=0E,vol=00) CH6:OFF(kc=38,vol=00) CH7:OFF(kc=38,vol=00) CH8:OFF(kc=32,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=36,vol=00) CH2:OFF(kc=0D,vol=00) CH3:OFF(kc=36,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=0E,vol=00) CH6:OFF(kc=38,vol=00) CH7:OFF(kc=38,vol=00) CH8:OFF(kc=32,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=36,vol=00) CH2:OFF(kc=0D,vol=00) CH3:OFF(kc=36,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=0E,vol=00) CH6:OFF(kc=38,vol=00) CH7:OFF(kc=38,vol=00) CH8:OFF(kc=32,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=36,vol=00) CH2:OFF(kc=0D,vol=00) CH3:OFF(kc=36,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=0E,vol=00) CH6:OFF(kc=38,vol=00) CH7:OFF(kc=38,vol=00) CH8:OFF(kc=32,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=36,vol=00) CH2:OFF(kc=0D,vol=00) CH3:OFF(kc=36,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=0E,vol=00) CH6:OFF(kc=38,vol=00) CH7:OFF(kc=38,vol=00) CH8:OFF(kc=32,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=36,vol=00) CH2:OFF(kc=0D,vol=00) CH3:OFF(kc=36,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=0E,vol=00) CH6:OFF(kc=38,vol=00) CH7:OFF(kc=38,vol=00) CH8:OFF(kc=32,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=36,vol=00) CH2:OFF(kc=0D,vol=00) CH3:OFF(kc=36,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=0E,vol=00) CH6:OFF(kc=38,vol=00) CH7:OFF(kc=38,vol=00) CH8:OFF(kc=32,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=36,vol=00) CH2:OFF(kc=0D,vol=00) CH3:OFF(kc=36,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=0E,vol=00) CH6:OFF(kc=38,vol=00) CH7:OFF(kc=38,vol=00) CH8:OFF(kc=32,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=36,vol=00) CH2:OFF(kc=0D,vol=00) CH3:OFF(kc=36,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=0E,vol=00) CH6:OFF(kc=38,vol=00) CH7:OFF(kc=38,vol=00) CH8:OFF(kc=32,vol=00) 
+[YMFM_CH_INIT] CH1:OFF(kc=36,vol=00) CH2:OFF(kc=0D,vol=00) CH3:OFF(kc=36,vol=00) CH4:OFF(kc=31,vol=00) CH5:OFF(kc=0E,vol=00) CH6:OFF(kc=38,vol=00) CH7:OFF(kc=38,vol=00) CH8:OFF(kc=32,vol=00) 
+[YMFM_CH_INIT] === End of initial burst ===
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[PlayerVM] startPlayback - START
+[PlayerVM] startEngine succeeded
+[PlayerVM] startPlayback - playStartTimeMs: 0
+[PlayerVM] status set to .playing, display timer started
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x02: ch=3 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7A: ch=3 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[PlayerVM] updateDisplay - frame: 60, currentTimeMs: 1099
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_CH] CH1:ON (kc=40,vol=0D) CH2:ON (kc=1A,vol=0D) CH3:ON (kc=3D,vol=0D) CH4:ON (kc=38,vol=0D) CH5:ON (kc=1A,vol=0D) CH6:ON (kc=3E,vol=09) CH7:ON (kc=38,vol=09) CH8:ON (kc=34,vol=09) 
+[YMFM_EG]
+  CH1: M1=S0000 M2=D0007 M3=R0000 M4=R0000
+       AR=[15,15,18,18] D1R=[06,06,08,08] D2R=[00,04,00,00] D1L=[4,2,0,0] RR=[15,15,12,12] TL=[27,28,27,27]
+       kc(reg)=54 kc(eng)=40  <-- MISMATCH
+  CH2: M1=S0027 M2=S0000 M3=R0000 M4=R0000
+       AR=[15,15,18,18] D1R=[06,06,08,08] D2R=[04,00,00,00] D1L=[2,4,0,0] RR=[15,15,12,12] TL=[28,27,27,27]
+       kc(reg)=1E kc(eng)=1A  <-- MISMATCH
+  CH3: M1=D0035 M2=S0000 M3=R0003 M4=R0000
+       AR=[15,20,20,20] D1R=[12,08,00,00] D2R=[02,05,02,02] D1L=[15,1,0,0] RR=[15,15,15,15] TL=[40,30,28,28]
+       kc(reg)=4D kc(eng)=3D  <-- MISMATCH
+  CH4: M1=R0032 M2=D0032 M3=R0000 M4=R0000
+       AR=[20,15,20,20] D1R=[08,12,00,00] D2R=[05,02,02,02] D1L=[1,15,0,0] RR=[15,15,15,15] TL=[30,40,28,28]
+       kc(reg)=48 kc(eng)=38  <-- MISMATCH
+  CH5: M1=R0000 M2=S0000 M3=R0008 M4=R0000
+       AR=[28,20,18,18] D1R=[00,00,02,02] D2R=[06,05,04,04] D1L=[0,12,0,0] RR=[15,15,15,15] TL=[10,23,30,30]
+       kc(reg)=1E kc(eng)=1A  <-- MISMATCH
+  CH6: M1=S0000 M2=R0000 M3=R0000 M4=R0000
+       AR=[20,28,18,18] D1R=[00,00,02,02] D2R=[05,06,04,04] D1L=[12,0,0,0] RR=[15,15,15,15] TL=[23,20,30,30]
+       kc(reg)=4E kc(eng)=3E  <-- MISMATCH
+  CH7: M1=R0001 M2=R0000 M3=R0008 M4=R0000
+       AR=[28,20,28,28] D1R=[00,02,00,00] D2R=[08,00,04,04] D1L=[0,0,0,0] RR=[15,15,15,15] TL=[16,08,08,08]
+       kc(reg)=48 kc(eng)=38  <-- MISMATCH
+  CH8: M1=R0000 M2=R0001 M3=R0000 M4=R0000
+       AR=[20,28,28,28] D1R=[02,00,00,00] D2R=[00,08,04,04] D1L=[0,0,0,0] RR=[15,15,15,15] TL=[08,26,18,18]
+       kc(reg)=44 kc(eng)=34  <-- MISMATCH
+       keyon(reg)=0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_RMS] L=-20.5dB R=-20.3dB
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x00: ch=1 mask=(none)
+[YMFM_REG_W] 0x08 = 0x78: ch=1 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x03: ch=4 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7B: ch=4 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x06: ch=7 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7E: ch=7 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x05: ch=6 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7D: ch=6 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x07: ch=8 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7F: ch=8 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x01: ch=2 mask=(none)
+[YMFM_REG_W] 0x08 = 0x79: ch=2 mask=M1+M2+C1+C2
+[YMFM_REG_W] 0x08 = 0x04: ch=5 mask=(none)
+[YMFM_REG_W] 0x08 = 0x7C: ch=5 mask=M1+M2+C1+C2

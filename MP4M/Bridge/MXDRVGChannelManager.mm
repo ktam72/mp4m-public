@@ -12,6 +12,16 @@ extern MXDRVGState *g_state;
 extern "C" {
 void OPM_GetChannelStates(MP4MChannelState* states, int max_channels);
 int MXDRVG_GetPCM8ChannelMode(int ch);
+// F案: ymfm エンベロープ状態・RMS 観測用
+int OPM_GetOpEgState(int ch, int opnum);
+int OPM_GetOpEgAttenuation(int ch, int opnum);
+double OPM_GetCurrentRmsL(void);
+double OPM_GetCurrentRmsR(void);
+int OPM_IsOpmDebugEnabled(void);
+// A案: ymfm の KC レジスタ (0x28-0x2F) を直接読み取り
+int OPM_GetRegKc(int ch);
+// D案: 任意レジスタ値 (0x00-0xFF) の読み取り
+int OPM_GetRegValue(int addr);
 }
 
 @implementation MXDRVGChannelManager
@@ -48,6 +58,75 @@ int MXDRVG_GetPCM8ChannelMode(int ch);
                         opmStates[i].volume);
             }
             fprintf(stderr, "\n");
+
+            // A案+D案: ymfm 限定のエンベロープ状態・全体 RMS ログ (全 8ch 拡張)
+            // 各 CH の M1/M2/C1/C2 エンベロープ (state, attenuation) + kc の 2 ソース表示 + AR/D1R/D2R/D1L/RR/TL
+            if (engineType == 0 && OPM_IsOpmDebugEnabled()) {
+                static const char* stateChar[] = {"A", "D", "S", "R"};  // ATTACK/DECAY/SUSTAIN/RELEASE
+                fprintf(stderr, "[YMFM_EG]\n");
+                for (int ch = 1; ch <= 8; ch++) {
+                    fprintf(stderr, "  CH%d:", ch);
+                    for (int op = 0; op < 4; op++) {
+                        int s = OPM_GetOpEgState(ch, op);
+                        int a = OPM_GetOpEgAttenuation(ch, op);
+                        if (s < 0 || s > 3) s = 0;
+                        fprintf(stderr, " M%d=%s%04d", op + 1, stateChar[s], a);
+                    }
+                    // D案: AR/D1R/D2R/D1L/RR/TL のオペレーター別値
+                    // opoffs = (ch-1)*4 + opnum
+                    // AR:  addr 0x80+opoffs, bit 0-4
+                    // D1R: addr 0xA0+opoffs, bit 0-4
+                    // D2R: addr 0xC0+opoffs, bit 0-4
+                    // D1L: addr 0xE0+opoffs, bit 4-7 (MSB)
+                    // RR:  addr 0xE0+opoffs, bit 0-3 (LSB)
+                    // TL:  addr 0x60+opoffs, bit 0-6
+                    int ar[4], d1r[4], d2r[4], d1l[4], rr[4], tl[4];
+                    int opoffs_base = (ch - 1) * 4;
+                    for (int op = 0; op < 4; op++) {
+                        int opoffs = opoffs_base + op;
+                        ar[op]  = OPM_GetRegValue(0x80 + opoffs) & 0x1F;
+                        d1r[op] = OPM_GetRegValue(0xA0 + opoffs) & 0x1F;
+                        d2r[op] = OPM_GetRegValue(0xC0 + opoffs) & 0x1F;
+                        int e0 = OPM_GetRegValue(0xE0 + opoffs);
+                        d1l[op] = (e0 >> 4) & 0x0F;
+                        rr[op]  = e0 & 0x0F;
+                        tl[op]  = OPM_GetRegValue(0x60 + opoffs) & 0x7F;
+                    }
+                    bool has_ar0 = false;
+                    for (int op = 0; op < 4; op++) if (ar[op] == 0) { has_ar0 = true; break; }
+                    fprintf(stderr, "\n       AR=[%02d,%02d,%02d,%02d] D1R=[%02d,%02d,%02d,%02d] D2R=[%02d,%02d,%02d,%02d] D1L=[%d,%d,%d,%d] RR=[%d,%d,%d,%d] TL=[%02d,%02d,%02d,%02d]%s",
+                            ar[0], ar[1], ar[2], ar[3],
+                            d1r[0], d1r[1], d1r[2], d1r[3],
+                            d2r[0], d2r[1], d2r[2], d2r[3],
+                            d1l[0], d1l[1], d1l[2], d1l[3],
+                            rr[0], rr[1], rr[2], rr[3],
+                            tl[0], tl[1], tl[2], tl[3],
+                            has_ar0 ? "  <-- AR=0 DETECTED" : "");
+                    int kc_reg = OPM_GetRegKc(ch);
+                    int kc_eng = (int)opmStates[ch - 1].keyCode;
+                    fprintf(stderr, "\n       kc(reg)=%02X kc(eng)=%02X%s\n",
+                            kc_reg, kc_eng,
+                            (kc_reg == kc_eng) ? "" : "  <-- MISMATCH");
+                }
+                // H案: 0x08 KeyOn レジスタの値を表示 (全 CH 共通、最後の 0x08 書き込み値)
+                int keyon_reg = OPM_GetRegValue(0x08);
+                int ko_ch = keyon_reg & 0x07;        // bit 0-2: channel
+                int ko_mask = (keyon_reg >> 3) & 0x0F; // bit 3-6: operator mask
+                static const char* opNames[] = {"M1", "M2", "C1", "C2"};
+                char mask_str[32];
+                mask_str[0] = '\0';
+                for (int i = 0; i < 4; i++) {
+                    if (ko_mask & (1 << i)) {
+                        if (mask_str[0] != '\0') strcat(mask_str, "+");
+                        strcat(mask_str, opNames[i]);
+                    }
+                }
+                if (mask_str[0] == '\0') strcpy(mask_str, "(none)");
+                fprintf(stderr, "       keyon(reg)=0x%02X: ch=%d mask=%s\n",
+                        keyon_reg, ko_ch + 1, mask_str);
+                fprintf(stderr, "[YMFM_RMS] L=%5.1fdB R=%5.1fdB\n",
+                        OPM_GetCurrentRmsL(), OPM_GetCurrentRmsR());
+            }
         }
     }
 

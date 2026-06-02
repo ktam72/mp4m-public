@@ -89,6 +89,15 @@ public:
         OpmWrapper::ForceReleaseAllChannels();
     }
 
+    // F案: ymfm エンベロープ状態・RMS 観測用
+    int GetOpEgState(int ch, int opnum) override { return OpmWrapper::GetOpEgState(ch, opnum); }
+    int GetOpEgAttenuation(int ch, int opnum) override { return OpmWrapper::GetOpEgAttenuation(ch, opnum); }
+    double GetCurrentRmsL() override { return OpmWrapper::GetCurrentRmsL(); }
+    double GetCurrentRmsR() override { return OpmWrapper::GetCurrentRmsR(); }
+    bool IsOpmDebugEnabled() override { return OpmWrapper::IsOpmDebugEnabled(); }
+    int GetRegKc(int ch) override { return OpmWrapper::GetRegKc(ch); }
+    int GetRegValue(int addr) override { return OpmWrapper::GetRegValue(addr); }
+
 protected:
     void Intr(bool irq) override
     {

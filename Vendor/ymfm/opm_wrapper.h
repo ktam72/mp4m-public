@@ -39,6 +39,23 @@ public:
     // Intr callback (overridable by X68OPM)
     virtual void Intr(bool) {}
 
+    // F案: ymfm エンベロープ状態観測用 (ymfm のみ有効)
+    int GetOpEgState(int ch, int opnum);
+    int GetOpEgAttenuation(int ch, int opnum);
+
+    // A案: ymfm の KC レジスタ (0x28) を直接読み取る。1-indexed ch (1-8)
+    int GetRegKc(int ch);
+
+    // D案: 任意のレジスタ値 (0x00-0xFF) を読み取る。SetReg() で書き込まれた値がキャッシュされる
+    int GetRegValue(int addr);
+
+    // F案: 現在の L/R RMS (dB)。Mix() 内で 1024 sample ごとに更新される
+    double GetCurrentRmsL() const { return m_current_rms_l_db; }
+    double GetCurrentRmsR() const { return m_current_rms_r_db; }
+
+    // F案: 環境変数 MP4M_YMFM_DEBUG がセットされているか
+    bool IsOpmDebugEnabled() const { return m_opm_debug_enabled; }
+
 private:
     // ymfm_interface overrides
     virtual void ymfm_set_timer(uint32_t tnum, int32_t duration_in_clocks) override;
@@ -61,6 +78,18 @@ private:
 
     // Output volume factor (fmgen compatible)
     int m_fmvolume;
+
+    // D案: SetReg() で書き込まれた全レジスタのキャッシュ (D案で読み取り用)
+    uint8_t m_regdata[256];
+
+    // F案: RMS 観測用 (Mix() 内で 1024 sample ごとに更新)
+    bool m_opm_debug_enabled;
+    int64_t m_rms_accum_l;
+    int64_t m_rms_accum_r;
+    int m_rms_sample_count;
+    static constexpr int kRmsWindowSamples = 1024;
+    double m_current_rms_l_db;
+    double m_current_rms_r_db;
 };
 
 #endif // OPM_WRAPPER_H

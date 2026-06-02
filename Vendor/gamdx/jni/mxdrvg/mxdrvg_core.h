@@ -167,6 +167,64 @@ void OPM_GetChannelStates(void* states, int max_channels) {
     if (engine_locked) s_engine_mtx.unlock();
 
 }
+
+// F案: ymfm エンベロープ状態・RMS 観測用 C インターフェース
+// ymfm 限定のため、エンジン切替時に engine_locked で安全にアクセス
+int OPM_GetOpEgState(int ch, int opnum) {
+    bool locked = s_engine_mtx.try_lock();
+    if (!locked) return 0;
+    int result = g_engine ? g_engine->GetOpEgState(ch, opnum) : 0;
+    s_engine_mtx.unlock();
+    return result;
+}
+int OPM_GetOpEgAttenuation(int ch, int opnum) {
+    bool locked = s_engine_mtx.try_lock();
+    if (!locked) return 0;
+    int result = g_engine ? g_engine->GetOpEgAttenuation(ch, opnum) : 0;
+    s_engine_mtx.unlock();
+    return result;
+}
+double OPM_GetCurrentRmsL(void) {
+    bool locked = s_engine_mtx.try_lock();
+    if (!locked) return 0.0;
+    double result = g_engine ? g_engine->GetCurrentRmsL() : 0.0;
+    s_engine_mtx.unlock();
+    return result;
+}
+double OPM_GetCurrentRmsR(void) {
+    bool locked = s_engine_mtx.try_lock();
+    if (!locked) return 0.0;
+    double result = g_engine ? g_engine->GetCurrentRmsR() : 0.0;
+    s_engine_mtx.unlock();
+    return result;
+}
+int OPM_IsOpmDebugEnabled(void) {
+    bool locked = s_engine_mtx.try_lock();
+    if (!locked) return 0;
+    int result = g_engine ? (g_engine->IsOpmDebugEnabled() ? 1 : 0) : 0;
+    s_engine_mtx.unlock();
+    return result;
+}
+
+// A案: 0x28-0x2F KEY CODE レジスタの 8bit 値を直接読み取る (SetReg でキャッシュされた値)
+// H1/H3 仮説検証用 (CH3 の kc 値が正しく書き込まれているか)
+int OPM_GetRegKc(int ch) {
+    bool locked = s_engine_mtx.try_lock();
+    if (!locked) return 0;
+    int result = g_engine ? g_engine->GetRegKc(ch) : 0;
+    s_engine_mtx.unlock();
+    return result;
+}
+
+// D案: 任意のレジスタ値 (0x00-0xFF) を読み取る (SetReg でキャッシュされた値)
+// AR (0x80-0x9F) や D1L/RR (0xE0-0xFF) 等の解析用
+int OPM_GetRegValue(int addr) {
+    bool locked = s_engine_mtx.try_lock();
+    if (!locked) return 0;
+    int result = g_engine ? g_engine->GetRegValue(addr) : 0;
+    s_engine_mtx.unlock();
+    return result;
+}
 }
 
 // PCM8 チャンネルの Mode を取得する C インターフェース

@@ -70,3 +70,7 @@ VULNERABILITY_FIX_LOG_*.md
 
 # Icon source files (generated icns already in Resources)
 mp4m.iconset/
+
+# Debug log files (large, regenerated on demand)
+kna03_ymfm*.log
+kna*_ymfm*.log

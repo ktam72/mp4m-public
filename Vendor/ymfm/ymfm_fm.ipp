@@ -525,7 +525,15 @@ void fm_operator<RegisterType>::keyonoff(uint32_t on, keyon_type type)
 	if (on && (prev & (1 << int(type))) == 0)
 	{
 		if (m_env_state != EG_ATTACK)
+		{
+			// N+案: start_attack() の前に m_cache を最新化する。
+			// m_cache は prepare() でしか更新されないため、AR レジスタ書き込み
+			// 後の KeyOn で m_cache.eg_rate[EG_ATTACK] が古い値のまま判定され、
+			// start_attack() 内の `>= 62` ジャンプ条件を満たせず attack が
+			// 開始できない問題（KNA03.MDX で CH3 M1 が無音になる）の対策。
+			m_regs.cache_operator_data(m_choffs, m_opoffs, m_cache);
 			start_attack();
+		}
 	}
 }
 
@@ -714,10 +722,14 @@ void fm_operator<RegisterType>::clock_envelope(uint32_t env_counter)
 	// attack is the only one that increases
 	if (m_env_state == EG_ATTACK)
 	{
-		// glitch means that attack rates of 62/63 don't increment if
-		// changed after the initial key on (where they are handled
-		// specially); nukeykt confirms this happens on OPM, OPN, OPL/OPLL
-		// at least so assuming it is true for everyone
+		// ymfm original: AR=62/63 (ymfm rate >= 62) は YM2151 実機の glitch で
+		// attack increment がスキップされる仕様 (nukeykt 確認)。
+		// KNA03.MDX 対策: 撤退案として ymfm original に戻す。
+		// N案 (rate <= 62) は m_env_attenuation = 0 ジャンプ直後に
+		// increment 計算で wrap して 0x3FF (1023) に上書きされる副作用が
+		// 判明したため、AR=31 で increment をスキップして m_env_attenuation=0
+		// を維持し、EG_DECAY → EG_SUSTAIN へ正しく遷移させる必要がある。
+		// AR=31 で start_attack() の `>= 62` ジャンプが効くのは N+案で保証。
 		if (rate < 62)
 			m_env_attenuation += (~m_env_attenuation * increment) >> 4;
 	}

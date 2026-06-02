@@ -1,6 +1,8 @@
 #include "opm_wrapper.h"
 #include <algorithm>
 #include <cmath>
+#include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 OpmWrapper::OpmWrapper() :
@@ -9,13 +11,26 @@ OpmWrapper::OpmWrapper() :
     m_rate(0),
     m_chip_clocks(0),
     m_fmgen_compat_timer(true),
-    m_fmvolume(16384)
+    m_fmvolume(16384),
+    m_opm_debug_enabled(false),
+    m_rms_accum_l(0),
+    m_rms_accum_r(0),
+    m_rms_sample_count(0),
+    m_current_rms_l_db(-120.0),
+    m_current_rms_r_db(-120.0)
 {
     m_timer_expire[0] = 0;
     m_timer_expire[1] = 0;
     m_timer_active[0] = false;
     m_timer_active[1] = false;
     memset(m_kc, 0, sizeof(m_kc));
+    memset(m_regdata, 0, sizeof(m_regdata));  // D案: 全レジスタキャッシュ初期化
+
+    // F案: 環境変数 MP4M_YMFM_DEBUG がセットされていればデバッグログ有効化
+    const char* env = std::getenv("MP4M_YMFM_DEBUG");
+    if (env != nullptr && env[0] != '\0' && env[0] != '0') {
+        m_opm_debug_enabled = true;
+    }
 }
 
 bool OpmWrapper::Init(uint clock, uint rate, bool filter)
@@ -84,6 +99,26 @@ void OpmWrapper::SetReg(uint addr, uint data)
     if (addr >= 0x28 && addr <= 0x2F)
         m_kc[addr & 7] = (uint8_t)data;
 
+    m_regdata[addr] = (uint8_t)data;  // D案: 全レジスタキャッシュ
+
+    // K案: 0x08 KeyOn レジスタ書き込みを時系列ログ (KNA03 原因切り分け用)
+    if (m_opm_debug_enabled && addr == 0x08) {
+        int ch = data & 0x07;             // bit 0-2: channel
+        int mask = (data >> 3) & 0x0F;    // bit 3-6: operator mask
+        static const char* opNames[] = {"M1", "M2", "C1", "C2"};
+        char mask_str[32];
+        mask_str[0] = '\0';
+        for (int i = 0; i < 4; i++) {
+            if (mask & (1 << i)) {
+                if (mask_str[0] != '\0') strcat(mask_str, "+");
+                strcat(mask_str, opNames[i]);
+            }
+        }
+        if (mask_str[0] == '\0') strcpy(mask_str, "(none)");
+        fprintf(stderr, "[YMFM_REG_W] 0x08 = 0x%02X: ch=%d mask=%s\n",
+                (unsigned)data, ch + 1, mask_str);
+    }
+
     m_ymfm.write_address((uint8_t)addr);
     m_ymfm.write_data((uint8_t)data);
 }
@@ -114,7 +149,66 @@ void OpmWrapper::Mix(int16_t* buffer, int nsamples)
 
         buffer[i * 2]     = (int16_t)ymfm::clamp(l, -32768, 32767);
         buffer[i * 2 + 1] = (int16_t)ymfm::clamp(r, -32768, 32767);
+
+        // F案: 出力 RMS 累積（デバッグ有効時のみ）
+        if (m_opm_debug_enabled)
+        {
+            m_rms_accum_l += (int64_t)l * (int64_t)l;
+            m_rms_accum_r += (int64_t)r * (int64_t)r;
+            m_rms_sample_count++;
+        }
     }
+
+    // F案: 一定 sample 数ごとに RMS を dB に変換して保持
+    if (m_opm_debug_enabled && m_rms_sample_count >= kRmsWindowSamples)
+    {
+        double rms_l = std::sqrt((double)m_rms_accum_l / m_rms_sample_count);
+        double rms_r = std::sqrt((double)m_rms_accum_r / m_rms_sample_count);
+        // 16bit フルスケール (32768) に対する dB
+        m_current_rms_l_db = (rms_l > 0.0) ? 20.0 * std::log10(rms_l / 32768.0) : -120.0;
+        m_current_rms_r_db = (rms_r > 0.0) ? 20.0 * std::log10(rms_r / 32768.0) : -120.0;
+        m_rms_accum_l = 0;
+        m_rms_accum_r = 0;
+        m_rms_sample_count = 0;
+    }
+}
+
+int OpmWrapper::GetOpEgState(int ch, int opnum)
+{
+    if (ch < 1 || ch > 8) return 0;
+    if (opnum < 0 || opnum >= 4) return 0;
+    auto& fm = m_ymfm.debug_get_fm_engine();
+    uint32_t opoffs = (ch - 1) * 4 + opnum;
+    if (auto* op = fm.debug_operator(opoffs)) {
+        return (int)op->debug_eg_state();
+    }
+    return 0;
+}
+
+int OpmWrapper::GetOpEgAttenuation(int ch, int opnum)
+{
+    if (ch < 1 || ch > 8) return 0;
+    if (opnum < 0 || opnum >= 4) return 0;
+    auto& fm = m_ymfm.debug_get_fm_engine();
+    uint32_t opoffs = (ch - 1) * 4 + opnum;
+    if (auto* op = fm.debug_operator(opoffs)) {
+        return (int)op->debug_eg_attenuation();
+    }
+    return 0;
+}
+
+int OpmWrapper::GetRegKc(int ch)
+{
+    if (ch < 1 || ch > 8) return 0;
+    // m_kc[ch-1] は 0x28-0x2F レジスタの 8bit (KC+KF など)
+    // SetReg() で書き込まれた生のレジスタ値
+    return (int)m_kc[ch - 1];
+}
+
+int OpmWrapper::GetRegValue(int addr)
+{
+    if (addr >= 0x100) return 0;
+    return (int)m_regdata[addr];
 }
 
 void OpmWrapper::SetVolume(int db)
