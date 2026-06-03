@@ -77,7 +77,7 @@ targets:
           - "*.cpp"
           - "*.h"
           - "*.ipp"
-      - path: Vendor/fmgen
+      - path: Vendor/gamdx/jni/fmgen
         includes:
           - "*.cpp"
           - "*.h"
