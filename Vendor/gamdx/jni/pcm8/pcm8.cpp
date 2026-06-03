@@ -331,6 +331,12 @@ int Pcm8::Out(void *adrs, int mode, int len) {
 			return 0;
 		}
 	}
+	// ポインタがNULLの場合は無効として扱う
+	if ( adrs == NULL ) {
+		AdpcmReg = 0xC7;  // ADPCM 停止
+		DmaMtc = 0;
+		return 1;
+	}
 	AdpcmReg = 0xC7;  // ADPCM 停止
 	DmaMtc = 0;
 	DmaMar = (unsigned char *)adrs;

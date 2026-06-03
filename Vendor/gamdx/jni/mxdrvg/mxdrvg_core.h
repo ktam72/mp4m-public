@@ -4772,6 +4772,10 @@ L000ef4:;
 	A0 += 2;
 	D3 = GETBWORD(A0); A0 += 2;
 	if ( D3 == 0x0000 ) goto L000f26;
+	// ポインタ範囲チェック（68Kオリジナルのïsóvバリデーションに相当）
+	if ( G.PDXBUF == NULL ) goto L000f26;
+	if ( (UBYTE *)A1 < (UBYTE *)G.PDXBUF ) goto L000f26;
+	if ( (UBYTE *)A1 + D3 > (UBYTE *)G.PDXBUF + G.PDXSIZE ) goto L000f26;
 	ADPCMMOD_END();
 	D1 = D2;
 	D2 = D3;
@@ -4831,6 +4835,10 @@ L000f28:;
 	D3 = GETBLONG( A0+4 );
 	if ( D3 == 0 ) goto L000f26;
 	A1 += GETBLONG( A0 );
+	// ポインタ範囲チェック（68Kオリジナルのïsóvバリデーションに相当）
+	if ( G.PDXBUF == NULL ) goto L000f26;
+	if ( (UBYTE *)A1 < (UBYTE *)G.PDXBUF ) goto L000f26;
+	if ( (UBYTE *)A1 + D3 > (UBYTE *)G.PDXBUF + G.PDXSIZE ) goto L000f26;
 	D0 = A6->S0018;
 	D0 &= 0x0007;
 	D1 = 0x00;
