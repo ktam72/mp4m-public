@@ -1,0 +1,172 @@
+import AVFoundation
+import Foundation
+import os
+
+/// MXDRVGBridge + AVAudioEngine を組み合わせたオーディオエンジン実装
+final class MXDRVAudioEngine: AudioEngineService {
+    private let sampleRate: Int = 44100
+    private var engine = AVAudioEngine()
+    private var node: AVAudioSourceNode?
+
+    // C++エンジンアクセスの排他制御（オーディオスレッドとメインスレッド間）
+    private var engineLock = os_unfair_lock()
+
+    // オーディオスレッド用バッファ
+    private static let maxFrameCount = 1024
+    private static let pcmBufferSize = maxFrameCount * 2
+    nonisolated(unsafe) private var pcmBuffer: [Int16] = [Int16](repeating: 0, count: pcmBufferSize)
+
+    init() {
+        print("[MXDRVAudioEngine] init - START")
+        print("[MXDRVAudioEngine] init - END")
+    }
+
+    var sourceNode: AVAudioSourceNode? { node }
+
+    func start(sampleRate: Int32) {
+        print("[MXDRVAudioEngine] start - sampleRate: \(sampleRate)")
+        MXDRVGBridge.start(withSampleRate: sampleRate)
+        setupAudioEngine()
+        print("[MXDRVAudioEngine] start - END")
+    }
+
+    func end() {
+        engine.stop()
+        MXDRVGBridge.end()
+    }
+
+    func loadMDXFile(path: String) throws -> String? {
+        let title = MXDRVGBridge.loadMDXFile(path)
+        if title == nil {
+            if !FileManager.default.fileExists(atPath: path) {
+                throw MP4MError.fileAccessDenied("File not found at path: \(path)")
+            } else {
+                throw MP4MError.mdxLoadFailed(
+                    "Failed to load MDX file. The file may be corrupt or in an unsupported format."
+                )
+            }
+        }
+        return title
+    }
+
+    func pdxFileName() -> String? {
+        MXDRVGBridge.pdxFileName()
+    }
+
+    func pdxLoadError() -> MP4MError? {
+        guard let errorStr = MXDRVGBridge.pdxLoadError() else { return nil }
+        return .pdxLoadFailed(errorStr)
+    }
+
+    func playWithLoopCount(_ loopCount: Int32) -> Int {
+        MXDRVGBridge.play(withLoopCount: loopCount)
+        return Int(MXDRVGBridge.totalPlayTimeMs())
+    }
+
+    func stop() {
+        MXDRVGBridge.stop()
+        engine.stop()
+    }
+
+    func pause() {
+        MXDRVGBridge.pause()
+    }
+
+    func resume() {
+        MXDRVGBridge.resume()
+    }
+
+    func isTerminated() -> Bool {
+        return MXDRVGBridge.isTerminated()
+    }
+
+    func currentPlayTimeMs() -> Int {
+        return Int(MXDRVGBridge.currentPlayTimeMs())
+    }
+
+    func getChannelStates() -> [ChannelDisplayState] {
+        os_unfair_lock_lock(&engineLock)
+        defer { os_unfair_lock_unlock(&engineLock) }
+
+        var raw = [MP4MChannelState](repeating: MP4MChannelState(), count: AudioConstants.channelCount)
+        MXDRVGBridge.getChannelStates(&raw)
+
+        return (0..<AudioConstants.channelCount).map { channelIndex in
+            ChannelDisplayState(
+                keyCode: raw[channelIndex].keyCode,
+                velocity: raw[channelIndex].velocity,
+                keyOn: raw[channelIndex].keyOn != 0,
+                volume: raw[channelIndex].volume,
+                bend: raw[channelIndex].bend,
+                pan: raw[channelIndex].pan,
+                keyOffset: raw[channelIndex].keyOffset
+            )
+        }
+    }
+
+    func renderPCM(into buffer: UnsafeMutablePointer<Int16>, frameCount: Int32) -> Int32 {
+        return MXDRVGBridge.getPCM(buffer, frameCount: frameCount)
+    }
+
+    func startEngine() throws {
+        guard !engine.isRunning else { return }
+        do {
+            try engine.start()
+        } catch {
+            throw MP4MError.audioEngineFailed(error.localizedDescription)
+        }
+    }
+
+    func setVolume(_ volume: Float) {
+        engine.mainMixerNode.outputVolume = max(0.0, min(volume, 1.0))
+    }
+
+    func setChannelMute(_ ch: Int, isMuted: Bool) {
+        MXDRVGBridge.setChannelMute(Int32(ch), isMuted: isMuted)
+    }
+
+    private func setupAudioEngine() {
+        guard let format = AVAudioFormat(
+            commonFormat: .pcmFormatFloat32,
+            sampleRate: Double(sampleRate),
+            channels: 2,
+            interleaved: false
+        ) else {
+            print("[MXDRVAudioEngine] ERROR: Failed to create audio format")
+            return
+        }
+
+        let source = AVAudioSourceNode(format: format) { [weak self] _, _, frameCount, audioBufferList in
+            self?.renderAudioCallback(frameCount: Int(frameCount), audioBufferList: audioBufferList)
+            return noErr
+        }
+
+        node = source
+        engine.attach(source)
+        engine.connect(source, to: engine.mainMixerNode, format: format)
+    }
+
+    private func renderAudioCallback(frameCount: Int, audioBufferList: UnsafeMutablePointer<AudioBufferList>) {
+        let ablPointer = UnsafeMutableAudioBufferListPointer(audioBufferList)
+        guard ablPointer.count >= 2,
+              let leftPtr  = ablPointer[0].mData?.assumingMemoryBound(to: Float.self),
+              let rightPtr = ablPointer[1].mData?.assumingMemoryBound(to: Float.self)
+        else { return }
+
+        guard frameCount <= Self.maxFrameCount,
+              frameCount * 2 <= Self.pcmBufferSize
+        else { return }
+
+        if os_unfair_lock_trylock(&engineLock) {
+            let ret = renderPCM(into: &pcmBuffer, frameCount: Int32(frameCount))
+            os_unfair_lock_unlock(&engineLock)
+
+            guard ret > 0 else { return }
+
+            for frameIndex in 0..<frameCount {
+                leftPtr[frameIndex]  = Float(pcmBuffer[frameIndex * 2])     * (1.0 / 32768.0)
+                rightPtr[frameIndex] = Float(pcmBuffer[frameIndex * 2 + 1]) * (1.0 / 32768.0)
+            }
+        }
+    }
+}

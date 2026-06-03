@@ -1,0 +1,143 @@
+name: MP4M
+options:
+  bundleIdPrefix: com.ktam
+  deploymentTarget:
+    macOS: "14.0"
+    iOS: "17.0"
+  createIntermediateGroups: true
+  xcodeVersion: "16.0"
+  defaultConfig: Debug
+
+configs:
+  Debug: debug
+  Release: release
+
+targets:
+  MP4M:
+    type: application
+    platform: macOS
+    deploymentTarget: "14.0"
+
+    info:
+      path: MP4M/Resources/Info.plist
+      properties:
+        CFBundleName: MP4M
+        CFBundleDisplayName: MP4M
+        CFBundleIdentifier: com.ktam.MP4M
+        CFBundleShortVersionString: "2.7.0"
+        CFBundleVersion: "13"
+        CFBundleIconFile: MP4M
+        NSPrincipalClass: NSApplication
+        NSHumanReadableCopyright: "Copyright © 2026 ktam"
+
+    entitlements:
+      path: MP4M/Resources/MP4M.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.files.user-selected.read-only: true
+
+    sources:
+      - path: MP4M
+        excludes:
+          - "**/.DS_Store"
+          - "**/MP4M.entitlements"
+          - "**/Info.plist"
+          - Bridge
+          - Services
+          - Utilities
+      - path: MP4M/Services
+        includes:
+          - "*.swift"
+      - path: MP4M/Utilities
+        includes:
+          - "*.swift"
+      - path: MP4M/Bridge
+        includes:
+          - "*.mm"
+          - "*.h"
+          - "*.modulemap"
+      - path: Vendor/gamdx/jni/mxdrvg
+        includes:
+          - "*.cpp"
+          - "*.h"
+      - path: Vendor/gamdx/jni/pcm8
+        includes:
+          - "*.cpp"
+          - "*.h"
+      - path: Vendor/gamdx/jni/downsample
+        includes:
+          - "*.cpp"
+          - "*.h"
+      - path: Vendor/lzx
+        includes:
+          - "*.cpp"
+          - "*.h"
+      - path: Vendor/ymfm
+        includes:
+          - "*.cpp"
+          - "*.h"
+          - "*.ipp"
+      - path: Vendor/gamdx/jni/fmgen
+        includes:
+          - "*.cpp"
+          - "*.h"
+          - "fmgeninl.h"
+
+    settings:
+      BRIDGING_HEADER: MP4M/Bridge/MP4M-Bridging-Header.h
+      HEADER_SEARCH_PATHS: $(SRCROOT) $(SRCROOT)/Vendor $(SRCROOT)/Vendor/gamdx/jni $(SRCROOT)/Vendor/ymfm $(SRCROOT)/MP4M/Bridge
+      USER_HEADER_SEARCH_PATHS: $(SRCROOT)/MP4M/Bridge
+      CLANG_CXX_LANGUAGE_DIALECT: gnu++17
+      CLANG_CXX_LIBRARY: libc++
+      GCC_C_LANGUAGE_DIALECT: gnu17
+      WARNING_CFLAGS: -Wall -Wextra
+      CLANG_ENABLE_OBJC_ARC: YES
+      SWIFT_OBJC_BRIDGING_HEADER: MP4M/Bridge/MP4M-Bridging-Header.h
+      FRAMEWORK_SEARCH_PATHS: $(inherited)
+      LINK_FLAGS: -framework AVFoundation -framework CoreGraphics
+      SUPPORTED_PLATFORMS: macosx iphoneos iphonesimulator
+      MACOSX_DEPLOYMENT_TARGET: "14.0"
+      IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+      CODE_SIGN_IDENTITY: ""
+      CODE_SIGNING_REQUIRED: NO
+      CODE_SIGNING_ALLOWED: NO
+
+    dependencies: []
+
+  MP4MTests:
+    type: bundle.unit-test
+    platform: macOS
+    deploymentTarget: "14.0"
+    testTarget: MP4M
+    sources:
+      - path: Tests
+        includes:
+          - "*.swift"
+    settings:
+      ENABLE_TESTABILITY: YES
+      SWIFT_OBJC_BRIDGING_HEADER: MP4M/Bridge/MP4M-Bridging-Header.h
+      HEADER_SEARCH_PATHS: $(SRCROOT) $(SRCROOT)/Vendor $(SRCROOT)/Vendor/gamdx/jni $(SRCROOT)/Vendor/ymfm $(SRCROOT)/MP4M/Bridge
+      USER_HEADER_SEARCH_PATHS: $(SRCROOT)/MP4M/Bridge
+      CLANG_CXX_LANGUAGE_DIALECT: gnu++17
+      CLANG_CXX_LIBRARY: libc++
+      GCC_C_LANGUAGE_DIALECT: gnu17
+      WARNING_CFLAGS: -Wall -Wextra
+      CLANG_ENABLE_OBJC_ARC: YES
+      FRAMEWORK_SEARCH_PATHS: $(inherited)
+      LINK_FLAGS: -framework AVFoundation -framework CoreGraphics
+      SUPPORTED_PLATFORMS: macosx
+      MACOSX_DEPLOYMENT_TARGET: "14.0"
+      CODE_SIGN_IDENTITY: ""
+      CODE_SIGNING_REQUIRED: NO
+      CODE_SIGNING_ALLOWED: NO
+    dependencies:
+      - target: MP4M
+
+    resources:
+      - path: MP4M/Resources
+        includes:
+          - "*.ttf"
+          - "*.otf"
+          - "*.dat"
+          - "*.xcassets"
+          - "*.icns"

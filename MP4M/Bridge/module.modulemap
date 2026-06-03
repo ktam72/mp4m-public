@@ -1,0 +1,4 @@
+module MXDRVGBridge {
+    header "MXDRVGBridge.h"
+    export *
+}

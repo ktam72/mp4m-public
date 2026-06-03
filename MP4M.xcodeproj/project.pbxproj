@@ -1,0 +1,854 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		07E9FD81E7B00786965D8A2B /* MonaspaceNeon-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = DFAC4101AA6188F4E1AA598E /* MonaspaceNeon-Bold.otf */; };
+		0A9AB802F2EB1D5F1D803E20 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 2F7E253F9D1E01D567EF30F8 /* Assets.xcassets */; };
+		0C0AEF18D5B6C25416D41787 /* LevelMeterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1C6BE76EB05622192BEF33 /* LevelMeterView.swift */; };
+		0CFAD6A1369650E68C32307B /* mp4m.png in Resources */ = {isa = PBXBuildFile; fileRef = 62F354685349E5E13D35B146 /* mp4m.png */; };
+		130789DE7D8940977869B0C7 /* ymfm_opm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DDEE1108AF152A5BB740EDE4 /* ymfm_opm.cpp */; };
+		13BC2AB7FBA5BE40329B0662 /* so.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0A1B17879EE898BEE56195F2 /* so.cpp */; };
+		1DCFA7CC033DE3DD3B735AD3 /* SpectrumComputeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB3FA449144B702ABD0CE5A1 /* SpectrumComputeTests.swift */; };
+		225FBB7CE1177FA1FFFCF5D9 /* PlayerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE9918BE0D8009A4BE466E79 /* PlayerViewModel.swift */; };
+		266BE72AA383D673D052C35C /* SpectrumAnalyzerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89674E6DC3E1102B04F0CB18 /* SpectrumAnalyzerView.swift */; };
+		29027CD471E1F3675DDF530F /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B50E840AA4B0F48A4D7C7F78 /* ContentView.swift */; };
+		35C663C8450CEDC02DAB2ADF /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD2D830E551A0A68363D7408 /* KeyboardView.swift */; };
+		36C145B8B7F22E2A03D44314 /* s2utbl.dat in Resources */ = {isa = PBXBuildFile; fileRef = AD7B216277CE5CC41AC4E376 /* s2utbl.dat */; };
+		4062176C3DBF7418D3FB034D /* MonaspaceNeon-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BBC438AB95BD9E9D8C2F95C8 /* MonaspaceNeon-Regular.otf */; };
+		514F9E10FF31952B11F23AA4 /* ControlPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA6AAFEF1CB99F63AF258B1 /* ControlPanelView.swift */; };
+		52B6F2390E4C2DF583B5D9EE /* MXDRVGChannelManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = EF8DFC0DFF9D1686F0A36109 /* MXDRVGChannelManager.mm */; };
+		54A8B99D88D8C55099A692C5 /* FileBrowserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47C6718DA9D41E3C6D06D1AB /* FileBrowserViewModel.swift */; };
+		55D39A3A0126C51235507EBA /* TrackTransitionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 75065856BF01A5F699CA1270 /* TrackTransitionManager.swift */; };
+		604D419FDD17A2E96A4D56A4 /* MXDRVAudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84173DEA7AC9BF78F068529C /* MXDRVAudioEngine.swift */; };
+		6827F906B4BA17536F13BC06 /* AudioModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF45E8FBEE91675BA7E130B /* AudioModels.swift */; };
+		6F636B71301F1A381DD56BBE /* opm_wrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8659B17E243990B07472A8 /* opm_wrapper.cpp */; };
+		6F6D2713623F9C09777F7D4B /* Spectrum.metal in Sources */ = {isa = PBXBuildFile; fileRef = 37EFDA01E28625A5E70BC68F /* Spectrum.metal */; };
+		73E592BF90745AD6A73F0647 /* pcm8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9BC13A250DB70829092A1D3 /* pcm8.cpp */; };
+		774F5CE0F2E99096B063A216 /* ThreadSafetyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E37064ECD6A0E9C782F8E1 /* ThreadSafetyTests.swift */; };
+		77EC714BA081CCEBB761D4FF /* MP4MError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CEC9B579D9D7E5B54FA0647 /* MP4MError.swift */; };
+		8CCC6991AB7A7583FAFFB608 /* fmgen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72EEC4698333B77F77CDC0C2 /* fmgen.cpp */; };
+		92BA0655F86F19425D416E5E /* SpectrumComputeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DF7205C988572C605FD02 /* SpectrumComputeService.swift */; };
+		9388F263550B98C6B014CB5A /* MXDRVGBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4E830C6988B4C094B4B1A89A /* MXDRVGBridge.mm */; };
+		9536D025E5ADABD27E9963BA /* x68pcm8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D57BAB8E275F9E4D4B297D69 /* x68pcm8.cpp */; };
+		96413BE2278E5FEB1521D11B /* MetalSpectrumCompute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D75A453FF05F5A5B68FBA09 /* MetalSpectrumCompute.swift */; };
+		9D3BEBB9760D4059C3D7B191 /* FileSelectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F68B6FBB4BE310609A92B99 /* FileSelectionStrategy.swift */; };
+		A0C53DDDF610D019EE4A8DEC /* DisplayUpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD96AECEDFF970B9DBF941CB /* DisplayUpdateManager.swift */; };
+		A63AEDB7B183BC498D31FA8E /* opm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03CACB580C58C461F80D1182 /* opm.cpp */; };
+		AC50399C3FC5D94AAFDADA9C /* FileItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9FFB1D84A531BA7DF60C374B /* FileItem.swift */; };
+		AC57DD08C07BE398B5A676CF /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4934851D4AB7D22F553AB4A /* Theme.swift */; };
+		B05AEF76799699B93E6F3E7D /* fmtimer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 485817F4C8A0E62C403C2FD2 /* fmtimer.cpp */; };
+		B2053BD1B679B705B840CD92 /* UserDefaultsConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1CA338319A21A6FDA39D987 /* UserDefaultsConstants.swift */; };
+		B800D4C1A87A4DF696C403D0 /* MP4M.icns in Resources */ = {isa = PBXBuildFile; fileRef = 4EE84CE6E5FCFB47EB4FB4E4 /* MP4M.icns */; };
+		BD9BEA726256252DB56C4064 /* TrackInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4C5C7F7B14917D806A693EE /* TrackInfoView.swift */; };
+		C288D7A21521F823CFDE4A8A /* MXDRVGState.mm in Sources */ = {isa = PBXBuildFile; fileRef = F0971576387EBB58816A3A75 /* MXDRVGState.mm */; };
+		C4A4E85B7F50F50DB19BEABC /* AudioConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEBD665F0ED88C64B3EB1998 /* AudioConstants.swift */; };
+		D1150A55BCF6D46A7C273B89 /* FileSelectorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 439C4546F924F01F12E88ECF /* FileSelectorView.swift */; };
+		D2C3FEEEE7D7E59DF055D23F /* AudioEngineService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CE13E03D7614AE2A27989CB /* AudioEngineService.swift */; };
+		D86601CFCFCCEDEC0FCFF6ED /* downsample.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 622A8DBC26B257EDAD3C48C4 /* downsample.cpp */; };
+		E4F8B65B41CB526734585495 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F076D1C080A736FAEF5BADA /* AboutView.swift */; };
+		E50CB607A55D460CB4610C9D /* ChannelStateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB1A9614EB47BF54A9E848AF /* ChannelStateService.swift */; };
+		E621B9334B391CDC08927371 /* ChannelStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 536E41C097102FADE1AE875E /* ChannelStateTests.swift */; };
+		E9F306ED2DD58E3346995EC6 /* lzx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ACE017786724523C47487EFD /* lzx.cpp */; };
+		EFB8F9B513BB3167D12F9673 /* MP4MApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A666DDB8DE4E697DC4E31A51 /* MP4MApp.swift */; };
+		F4C37C86F304481D557C6708 /* MDXFileLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = A4BB2DEFFEC9418C248E0CE7 /* MDXFileLoader.mm */; };
+		FA1836A58225F1ACDEF6C98C /* PDXHandlingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBF31E6F21EEA7AB1D14F443 /* PDXHandlingTests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		8C74335394746B9CAF46400D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7C61A210B12B3BE974E73777 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EA6F6BAFE4032FB296926D11;
+			remoteInfo = MP4M;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		03CACB580C58C461F80D1182 /* opm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = opm.cpp; sourceTree = "<group>"; };
+		0A1B17879EE898BEE56195F2 /* so.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = so.cpp; sourceTree = "<group>"; };
+		0AF45E8FBEE91675BA7E130B /* AudioModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioModels.swift; sourceTree = "<group>"; };
+		0F10E93C8B32441F4F0CD54C /* lzx.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = lzx.h; sourceTree = "<group>"; };
+		0F3A52340DA8BD1E54C8D11D /* mxdrvg_core.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mxdrvg_core.h; sourceTree = "<group>"; };
+		20E37064ECD6A0E9C782F8E1 /* ThreadSafetyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadSafetyTests.swift; sourceTree = "<group>"; };
+		267BC0DA2505BF8DCA8AFDD7 /* fmgeninl.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fmgeninl.h; sourceTree = "<group>"; };
+		2F7E253F9D1E01D567EF30F8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		2F9EBD5532DEF3925677A3F0 /* MP4M-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MP4M-Bridging-Header.h"; sourceTree = "<group>"; };
+		30B76EDDCA94E3FA671FDD9E /* MXDRVGBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MXDRVGBridge.h; sourceTree = "<group>"; };
+		37C0814C9F62E24A73660F12 /* fmgen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fmgen.h; sourceTree = "<group>"; };
+		37EFDA01E28625A5E70BC68F /* Spectrum.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Spectrum.metal; sourceTree = "<group>"; };
+		439C4546F924F01F12E88ECF /* FileSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSelectorView.swift; sourceTree = "<group>"; };
+		47C6718DA9D41E3C6D06D1AB /* FileBrowserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileBrowserViewModel.swift; sourceTree = "<group>"; };
+		485817F4C8A0E62C403C2FD2 /* fmtimer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = fmtimer.cpp; sourceTree = "<group>"; };
+		4E830C6988B4C094B4B1A89A /* MXDRVGBridge.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MXDRVGBridge.mm; sourceTree = "<group>"; };
+		4EE84CE6E5FCFB47EB4FB4E4 /* MP4M.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = MP4M.icns; sourceTree = "<group>"; };
+		4F076D1C080A736FAEF5BADA /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		536E41C097102FADE1AE875E /* ChannelStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelStateTests.swift; sourceTree = "<group>"; };
+		54CB430AFEA170347597CC1E /* MXDRVGBridge.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = MXDRVGBridge.modulemap; sourceTree = "<group>"; };
+		5CFA1EF8A56A555AAC83047B /* fmtimer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fmtimer.h; sourceTree = "<group>"; };
+		622A8DBC26B257EDAD3C48C4 /* downsample.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = downsample.cpp; sourceTree = "<group>"; };
+		62F354685349E5E13D35B146 /* mp4m.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = mp4m.png; sourceTree = "<group>"; };
+		72EEC4698333B77F77CDC0C2 /* fmgen.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = fmgen.cpp; sourceTree = "<group>"; };
+		75065856BF01A5F699CA1270 /* TrackTransitionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackTransitionManager.swift; sourceTree = "<group>"; };
+		77A152DD835D95930EC34407 /* opm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opm.h; sourceTree = "<group>"; };
+		77C8B12F85817B76A37213E0 /* OpmEngineFmgen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpmEngineFmgen.h; sourceTree = "<group>"; };
+		7CE13E03D7614AE2A27989CB /* AudioEngineService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioEngineService.swift; sourceTree = "<group>"; };
+		84173DEA7AC9BF78F068529C /* MXDRVAudioEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MXDRVAudioEngine.swift; sourceTree = "<group>"; };
+		89674E6DC3E1102B04F0CB18 /* SpectrumAnalyzerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpectrumAnalyzerView.swift; sourceTree = "<group>"; };
+		8A3F37F87BD25FE9028E84C5 /* ymfm_fm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ymfm_fm.h; sourceTree = "<group>"; };
+		8DC1BFFEE8D42AD0CC387C52 /* headers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = headers.h; sourceTree = "<group>"; };
+		8FD8F122AD9FE84CED3E64B9 /* MDXFileLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MDXFileLoader.h; sourceTree = "<group>"; };
+		9CEC9B579D9D7E5B54FA0647 /* MP4MError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MP4MError.swift; sourceTree = "<group>"; };
+		9D75A453FF05F5A5B68FBA09 /* MetalSpectrumCompute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalSpectrumCompute.swift; sourceTree = "<group>"; };
+		9F68B6FBB4BE310609A92B99 /* FileSelectionStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSelectionStrategy.swift; sourceTree = "<group>"; };
+		9FFB1D84A531BA7DF60C374B /* FileItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileItem.swift; sourceTree = "<group>"; };
+		A4BB2DEFFEC9418C248E0CE7 /* MDXFileLoader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MDXFileLoader.mm; sourceTree = "<group>"; };
+		A666DDB8DE4E697DC4E31A51 /* MP4MApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MP4MApp.swift; sourceTree = "<group>"; };
+		ACE017786724523C47487EFD /* lzx.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = lzx.cpp; sourceTree = "<group>"; };
+		AD1C6BE76EB05622192BEF33 /* LevelMeterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelMeterView.swift; sourceTree = "<group>"; };
+		AD7B216277CE5CC41AC4E376 /* s2utbl.dat */ = {isa = PBXFileReference; path = s2utbl.dat; sourceTree = "<group>"; };
+		AE4D989BCC05A1F23F3332CE /* MP4MTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MP4MTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		AFA910917D43B902B11CDFF0 /* ymfm_opm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ymfm_opm.h; sourceTree = "<group>"; };
+		B39CD7DAC82FB3829F3BCA41 /* pcm8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = pcm8.h; sourceTree = "<group>"; };
+		B40CFCA685B5E7C17E7470E7 /* MXDRVGChannelManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MXDRVGChannelManager.h; sourceTree = "<group>"; };
+		B45EEE17DCAA63E29DFD7E54 /* ymfm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ymfm.h; sourceTree = "<group>"; };
+		B4C5C7F7B14917D806A693EE /* TrackInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackInfoView.swift; sourceTree = "<group>"; };
+		B4ED2D7DD4F1FF795E965DA2 /* MXDRVGState.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MXDRVGState.h; sourceTree = "<group>"; };
+		B50E840AA4B0F48A4D7C7F78 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B7B6800FC37AD323C32D89AA /* OpmEngineYmfm.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = OpmEngineYmfm.h; sourceTree = "<group>"; };
+		BBC438AB95BD9E9D8C2F95C8 /* MonaspaceNeon-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MonaspaceNeon-Regular.otf"; sourceTree = "<group>"; };
+		BBF31E6F21EEA7AB1D14F443 /* PDXHandlingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PDXHandlingTests.swift; sourceTree = "<group>"; };
+		BD2D830E551A0A68363D7408 /* KeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardView.swift; sourceTree = "<group>"; };
+		BDE9FFF6AFD0FB68955B0569 /* mxdrvg_depend.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mxdrvg_depend.h; sourceTree = "<group>"; };
+		C1CA338319A21A6FDA39D987 /* UserDefaultsConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsConstants.swift; sourceTree = "<group>"; };
+		C282C6C0C9F49DF2BE49167D /* misc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = misc.h; sourceTree = "<group>"; };
+		C4D8F5AC901A5AA8D7850E4F /* downsample.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = downsample.h; sourceTree = "<group>"; };
+		C67DA2DFC9F66A7BCE0BB388 /* ymfm_fm.ipp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = ymfm_fm.ipp; sourceTree = "<group>"; };
+		C756256E1AE4225639D395E1 /* module.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = module.modulemap; sourceTree = "<group>"; };
+		CD96AECEDFF970B9DBF941CB /* DisplayUpdateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayUpdateManager.swift; sourceTree = "<group>"; };
+		CE9918BE0D8009A4BE466E79 /* PlayerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerViewModel.swift; sourceTree = "<group>"; };
+		D57BAB8E275F9E4D4B297D69 /* x68pcm8.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = x68pcm8.cpp; sourceTree = "<group>"; };
+		D7C621B1B312DFCEB2881BA9 /* global.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = global.h; sourceTree = "<group>"; };
+		DB3FA449144B702ABD0CE5A1 /* SpectrumComputeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpectrumComputeTests.swift; sourceTree = "<group>"; };
+		DDEE1108AF152A5BB740EDE4 /* ymfm_opm.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = ymfm_opm.cpp; sourceTree = "<group>"; };
+		DEA6AAFEF1CB99F63AF258B1 /* ControlPanelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ControlPanelView.swift; sourceTree = "<group>"; };
+		DEBD665F0ED88C64B3EB1998 /* AudioConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioConstants.swift; sourceTree = "<group>"; };
+		DFAC4101AA6188F4E1AA598E /* MonaspaceNeon-Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MonaspaceNeon-Bold.otf"; sourceTree = "<group>"; };
+		E10BBC767932C0F7F7464FA0 /* mxdrvg.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mxdrvg.h; sourceTree = "<group>"; };
+		E10FC2D8DBF9AD4303AAD474 /* IOpmEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOpmEngine.h; sourceTree = "<group>"; };
+		E4ABD6CCB21E17F7D79D867E /* MP4M.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MP4M.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E77DF7205C988572C605FD02 /* SpectrumComputeService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpectrumComputeService.swift; sourceTree = "<group>"; };
+		EA7A65FA50A1FEBE5D43F0DB /* x68pcm8.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = x68pcm8.h; sourceTree = "<group>"; };
+		EAF9ED071E655597720E23D8 /* opm_wrapper.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = opm_wrapper.h; sourceTree = "<group>"; };
+		EB1A9614EB47BF54A9E848AF /* ChannelStateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelStateService.swift; sourceTree = "<group>"; };
+		EF8DFC0DFF9D1686F0A36109 /* MXDRVGChannelManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MXDRVGChannelManager.mm; sourceTree = "<group>"; };
+		F0971576387EBB58816A3A75 /* MXDRVGState.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MXDRVGState.mm; sourceTree = "<group>"; };
+		F4934851D4AB7D22F553AB4A /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		F8C078BD2A5ED30276D30568 /* global.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = global.h; sourceTree = "<group>"; };
+		F9BC13A250DB70829092A1D3 /* pcm8.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = pcm8.cpp; sourceTree = "<group>"; };
+		FC8659B17E243990B07472A8 /* opm_wrapper.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = opm_wrapper.cpp; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		13C37CA838F6CC6456E878CD /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				DEBD665F0ED88C64B3EB1998 /* AudioConstants.swift */,
+				C1CA338319A21A6FDA39D987 /* UserDefaultsConstants.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		1F3E65A61F6074419AA53F6E /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				7CE13E03D7614AE2A27989CB /* AudioEngineService.swift */,
+				EB1A9614EB47BF54A9E848AF /* ChannelStateService.swift */,
+				CD96AECEDFF970B9DBF941CB /* DisplayUpdateManager.swift */,
+				9F68B6FBB4BE310609A92B99 /* FileSelectionStrategy.swift */,
+				9D75A453FF05F5A5B68FBA09 /* MetalSpectrumCompute.swift */,
+				84173DEA7AC9BF78F068529C /* MXDRVAudioEngine.swift */,
+				E77DF7205C988572C605FD02 /* SpectrumComputeService.swift */,
+				75065856BF01A5F699CA1270 /* TrackTransitionManager.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		3D06A0EF0DC3DE98BDE9EFE0 /* Bridge */ = {
+			isa = PBXGroup;
+			children = (
+				8FD8F122AD9FE84CED3E64B9 /* MDXFileLoader.h */,
+				A4BB2DEFFEC9418C248E0CE7 /* MDXFileLoader.mm */,
+				C756256E1AE4225639D395E1 /* module.modulemap */,
+				2F9EBD5532DEF3925677A3F0 /* MP4M-Bridging-Header.h */,
+				30B76EDDCA94E3FA671FDD9E /* MXDRVGBridge.h */,
+				4E830C6988B4C094B4B1A89A /* MXDRVGBridge.mm */,
+				54CB430AFEA170347597CC1E /* MXDRVGBridge.modulemap */,
+				B40CFCA685B5E7C17E7470E7 /* MXDRVGChannelManager.h */,
+				EF8DFC0DFF9D1686F0A36109 /* MXDRVGChannelManager.mm */,
+				B4ED2D7DD4F1FF795E965DA2 /* MXDRVGState.h */,
+				F0971576387EBB58816A3A75 /* MXDRVGState.mm */,
+			);
+			path = Bridge;
+			sourceTree = "<group>";
+		};
+		441D178D8DC6AF62F3D617A2 /* fmgen */ = {
+			isa = PBXGroup;
+			children = (
+				72EEC4698333B77F77CDC0C2 /* fmgen.cpp */,
+				37C0814C9F62E24A73660F12 /* fmgen.h */,
+				267BC0DA2505BF8DCA8AFDD7 /* fmgeninl.h */,
+				485817F4C8A0E62C403C2FD2 /* fmtimer.cpp */,
+				5CFA1EF8A56A555AAC83047B /* fmtimer.h */,
+				8DC1BFFEE8D42AD0CC387C52 /* headers.h */,
+				C282C6C0C9F49DF2BE49167D /* misc.h */,
+				03CACB580C58C461F80D1182 /* opm.cpp */,
+				77A152DD835D95930EC34407 /* opm.h */,
+				77C8B12F85817B76A37213E0 /* OpmEngineFmgen.h */,
+			);
+			path = fmgen;
+			sourceTree = "<group>";
+		};
+		53468018111601674F7E6A97 /* ymfm */ = {
+			isa = PBXGroup;
+			children = (
+				E10FC2D8DBF9AD4303AAD474 /* IOpmEngine.h */,
+				FC8659B17E243990B07472A8 /* opm_wrapper.cpp */,
+				EAF9ED071E655597720E23D8 /* opm_wrapper.h */,
+				B7B6800FC37AD323C32D89AA /* OpmEngineYmfm.h */,
+				8A3F37F87BD25FE9028E84C5 /* ymfm_fm.h */,
+				C67DA2DFC9F66A7BCE0BB388 /* ymfm_fm.ipp */,
+				DDEE1108AF152A5BB740EDE4 /* ymfm_opm.cpp */,
+				AFA910917D43B902B11CDFF0 /* ymfm_opm.h */,
+				B45EEE17DCAA63E29DFD7E54 /* ymfm.h */,
+			);
+			path = ymfm;
+			sourceTree = "<group>";
+		};
+		5D74389451FF40B20CA66099 /* pcm8 */ = {
+			isa = PBXGroup;
+			children = (
+				F8C078BD2A5ED30276D30568 /* global.h */,
+				F9BC13A250DB70829092A1D3 /* pcm8.cpp */,
+				B39CD7DAC82FB3829F3BCA41 /* pcm8.h */,
+				D57BAB8E275F9E4D4B297D69 /* x68pcm8.cpp */,
+				EA7A65FA50A1FEBE5D43F0DB /* x68pcm8.h */,
+			);
+			path = pcm8;
+			sourceTree = "<group>";
+		};
+		616A80494E9ABE011C8F1AC0 /* jni */ = {
+			isa = PBXGroup;
+			children = (
+				6AC4CD77DBDD913C2FBB58A7 /* downsample */,
+				441D178D8DC6AF62F3D617A2 /* fmgen */,
+				F457D94F28F9604DCC451108 /* mxdrvg */,
+				5D74389451FF40B20CA66099 /* pcm8 */,
+			);
+			path = jni;
+			sourceTree = "<group>";
+		};
+		6A222E8605EE72B88EC130E1 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				2F7E253F9D1E01D567EF30F8 /* Assets.xcassets */,
+				DFAC4101AA6188F4E1AA598E /* MonaspaceNeon-Bold.otf */,
+				BBC438AB95BD9E9D8C2F95C8 /* MonaspaceNeon-Regular.otf */,
+				4EE84CE6E5FCFB47EB4FB4E4 /* MP4M.icns */,
+				62F354685349E5E13D35B146 /* mp4m.png */,
+				AD7B216277CE5CC41AC4E376 /* s2utbl.dat */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		6AC4CD77DBDD913C2FBB58A7 /* downsample */ = {
+			isa = PBXGroup;
+			children = (
+				622A8DBC26B257EDAD3C48C4 /* downsample.cpp */,
+				C4D8F5AC901A5AA8D7850E4F /* downsample.h */,
+				D7C621B1B312DFCEB2881BA9 /* global.h */,
+			);
+			path = downsample;
+			sourceTree = "<group>";
+		};
+		A5362ACE0344E9F787435207 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				47C6718DA9D41E3C6D06D1AB /* FileBrowserViewModel.swift */,
+				CE9918BE0D8009A4BE466E79 /* PlayerViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		A55F4F655B3E386388E034AF /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E4ABD6CCB21E17F7D79D867E /* MP4M.app */,
+				AE4D989BCC05A1F23F3332CE /* MP4MTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		A9FDD976F2E7199830C0B902 /* Shaders */ = {
+			isa = PBXGroup;
+			children = (
+				37EFDA01E28625A5E70BC68F /* Spectrum.metal */,
+			);
+			path = Shaders;
+			sourceTree = "<group>";
+		};
+		B93C25D24FDBC8FC0511DCE3 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				0AF45E8FBEE91675BA7E130B /* AudioModels.swift */,
+				9FFB1D84A531BA7DF60C374B /* FileItem.swift */,
+				9CEC9B579D9D7E5B54FA0647 /* MP4MError.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		C13188465DB9B96F035AF740 /* gamdx */ = {
+			isa = PBXGroup;
+			children = (
+				616A80494E9ABE011C8F1AC0 /* jni */,
+			);
+			path = gamdx;
+			sourceTree = "<group>";
+		};
+		D4F5CC2C22437AE994486B2D /* MP4M */ = {
+			isa = PBXGroup;
+			children = (
+				E7A708E47EBA4ED5DA7A4B88 /* App */,
+				3D06A0EF0DC3DE98BDE9EFE0 /* Bridge */,
+				B93C25D24FDBC8FC0511DCE3 /* Models */,
+				6A222E8605EE72B88EC130E1 /* Resources */,
+				1F3E65A61F6074419AA53F6E /* Services */,
+				A9FDD976F2E7199830C0B902 /* Shaders */,
+				13C37CA838F6CC6456E878CD /* Utilities */,
+				A5362ACE0344E9F787435207 /* ViewModels */,
+				D71B30D6BFDC8C485CC6AB16 /* Views */,
+			);
+			path = MP4M;
+			sourceTree = "<group>";
+		};
+		D71B30D6BFDC8C485CC6AB16 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				4F076D1C080A736FAEF5BADA /* AboutView.swift */,
+				B50E840AA4B0F48A4D7C7F78 /* ContentView.swift */,
+				DEA6AAFEF1CB99F63AF258B1 /* ControlPanelView.swift */,
+				439C4546F924F01F12E88ECF /* FileSelectorView.swift */,
+				BD2D830E551A0A68363D7408 /* KeyboardView.swift */,
+				AD1C6BE76EB05622192BEF33 /* LevelMeterView.swift */,
+				89674E6DC3E1102B04F0CB18 /* SpectrumAnalyzerView.swift */,
+				F4934851D4AB7D22F553AB4A /* Theme.swift */,
+				B4C5C7F7B14917D806A693EE /* TrackInfoView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		D87BE539F4A737F86D7DB016 /* Vendor */ = {
+			isa = PBXGroup;
+			children = (
+				C13188465DB9B96F035AF740 /* gamdx */,
+				E778FE0E8596BCBFB6CF89D9 /* lzx */,
+				53468018111601674F7E6A97 /* ymfm */,
+			);
+			path = Vendor;
+			sourceTree = "<group>";
+		};
+		E778FE0E8596BCBFB6CF89D9 /* lzx */ = {
+			isa = PBXGroup;
+			children = (
+				ACE017786724523C47487EFD /* lzx.cpp */,
+				0F10E93C8B32441F4F0CD54C /* lzx.h */,
+			);
+			path = lzx;
+			sourceTree = "<group>";
+		};
+		E7A708E47EBA4ED5DA7A4B88 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				A666DDB8DE4E697DC4E31A51 /* MP4MApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		EA36BF7FAE650BDB1EF88AFA /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				536E41C097102FADE1AE875E /* ChannelStateTests.swift */,
+				BBF31E6F21EEA7AB1D14F443 /* PDXHandlingTests.swift */,
+				DB3FA449144B702ABD0CE5A1 /* SpectrumComputeTests.swift */,
+				20E37064ECD6A0E9C782F8E1 /* ThreadSafetyTests.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		ED4BFB455E4AEDF10F57B966 = {
+			isa = PBXGroup;
+			children = (
+				D4F5CC2C22437AE994486B2D /* MP4M */,
+				EA36BF7FAE650BDB1EF88AFA /* Tests */,
+				D87BE539F4A737F86D7DB016 /* Vendor */,
+				A55F4F655B3E386388E034AF /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		F457D94F28F9604DCC451108 /* mxdrvg */ = {
+			isa = PBXGroup;
+			children = (
+				0F3A52340DA8BD1E54C8D11D /* mxdrvg_core.h */,
+				BDE9FFF6AFD0FB68955B0569 /* mxdrvg_depend.h */,
+				E10BBC767932C0F7F7464FA0 /* mxdrvg.h */,
+				0A1B17879EE898BEE56195F2 /* so.cpp */,
+			);
+			path = mxdrvg;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B7F8AD3EC34A1175E08593EB /* MP4MTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8928E00E5D7F0F3256A84E84 /* Build configuration list for PBXNativeTarget "MP4MTests" */;
+			buildPhases = (
+				518A34F39D379716B345FCC0 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				04E601BDDD5746F69067B069 /* PBXTargetDependency */,
+			);
+			name = MP4MTests;
+			packageProductDependencies = (
+			);
+			productName = MP4MTests;
+			productReference = AE4D989BCC05A1F23F3332CE /* MP4MTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		EA6F6BAFE4032FB296926D11 /* MP4M */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3943DAF2F17DCECA982AE54C /* Build configuration list for PBXNativeTarget "MP4M" */;
+			buildPhases = (
+				A7CB9A5FCC9F98149FBD5A11 /* Sources */,
+				9CF3D5AAFAA52A0DBC14388A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MP4M;
+			packageProductDependencies = (
+			);
+			productName = MP4M;
+			productReference = E4ABD6CCB21E17F7D79D867E /* MP4M.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7C61A210B12B3BE974E73777 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = FB91575480B08AD7DF94D9A1 /* Build configuration list for PBXProject "MP4M" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = ED4BFB455E4AEDF10F57B966;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A55F4F655B3E386388E034AF /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				EA6F6BAFE4032FB296926D11 /* MP4M */,
+				B7F8AD3EC34A1175E08593EB /* MP4MTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		9CF3D5AAFAA52A0DBC14388A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0A9AB802F2EB1D5F1D803E20 /* Assets.xcassets in Resources */,
+				B800D4C1A87A4DF696C403D0 /* MP4M.icns in Resources */,
+				07E9FD81E7B00786965D8A2B /* MonaspaceNeon-Bold.otf in Resources */,
+				4062176C3DBF7418D3FB034D /* MonaspaceNeon-Regular.otf in Resources */,
+				0CFAD6A1369650E68C32307B /* mp4m.png in Resources */,
+				36C145B8B7F22E2A03D44314 /* s2utbl.dat in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		518A34F39D379716B345FCC0 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E621B9334B391CDC08927371 /* ChannelStateTests.swift in Sources */,
+				FA1836A58225F1ACDEF6C98C /* PDXHandlingTests.swift in Sources */,
+				1DCFA7CC033DE3DD3B735AD3 /* SpectrumComputeTests.swift in Sources */,
+				774F5CE0F2E99096B063A216 /* ThreadSafetyTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A7CB9A5FCC9F98149FBD5A11 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E4F8B65B41CB526734585495 /* AboutView.swift in Sources */,
+				C4A4E85B7F50F50DB19BEABC /* AudioConstants.swift in Sources */,
+				D2C3FEEEE7D7E59DF055D23F /* AudioEngineService.swift in Sources */,
+				6827F906B4BA17536F13BC06 /* AudioModels.swift in Sources */,
+				E50CB607A55D460CB4610C9D /* ChannelStateService.swift in Sources */,
+				29027CD471E1F3675DDF530F /* ContentView.swift in Sources */,
+				514F9E10FF31952B11F23AA4 /* ControlPanelView.swift in Sources */,
+				A0C53DDDF610D019EE4A8DEC /* DisplayUpdateManager.swift in Sources */,
+				54A8B99D88D8C55099A692C5 /* FileBrowserViewModel.swift in Sources */,
+				AC50399C3FC5D94AAFDADA9C /* FileItem.swift in Sources */,
+				9D3BEBB9760D4059C3D7B191 /* FileSelectionStrategy.swift in Sources */,
+				D1150A55BCF6D46A7C273B89 /* FileSelectorView.swift in Sources */,
+				35C663C8450CEDC02DAB2ADF /* KeyboardView.swift in Sources */,
+				0C0AEF18D5B6C25416D41787 /* LevelMeterView.swift in Sources */,
+				F4C37C86F304481D557C6708 /* MDXFileLoader.mm in Sources */,
+				EFB8F9B513BB3167D12F9673 /* MP4MApp.swift in Sources */,
+				77EC714BA081CCEBB761D4FF /* MP4MError.swift in Sources */,
+				604D419FDD17A2E96A4D56A4 /* MXDRVAudioEngine.swift in Sources */,
+				9388F263550B98C6B014CB5A /* MXDRVGBridge.mm in Sources */,
+				52B6F2390E4C2DF583B5D9EE /* MXDRVGChannelManager.mm in Sources */,
+				C288D7A21521F823CFDE4A8A /* MXDRVGState.mm in Sources */,
+				96413BE2278E5FEB1521D11B /* MetalSpectrumCompute.swift in Sources */,
+				225FBB7CE1177FA1FFFCF5D9 /* PlayerViewModel.swift in Sources */,
+				6F6D2713623F9C09777F7D4B /* Spectrum.metal in Sources */,
+				266BE72AA383D673D052C35C /* SpectrumAnalyzerView.swift in Sources */,
+				92BA0655F86F19425D416E5E /* SpectrumComputeService.swift in Sources */,
+				AC57DD08C07BE398B5A676CF /* Theme.swift in Sources */,
+				BD9BEA726256252DB56C4064 /* TrackInfoView.swift in Sources */,
+				55D39A3A0126C51235507EBA /* TrackTransitionManager.swift in Sources */,
+				B2053BD1B679B705B840CD92 /* UserDefaultsConstants.swift in Sources */,
+				D86601CFCFCCEDEC0FCFF6ED /* downsample.cpp in Sources */,
+				8CCC6991AB7A7583FAFFB608 /* fmgen.cpp in Sources */,
+				B05AEF76799699B93E6F3E7D /* fmtimer.cpp in Sources */,
+				E9F306ED2DD58E3346995EC6 /* lzx.cpp in Sources */,
+				A63AEDB7B183BC498D31FA8E /* opm.cpp in Sources */,
+				6F636B71301F1A381DD56BBE /* opm_wrapper.cpp in Sources */,
+				73E592BF90745AD6A73F0647 /* pcm8.cpp in Sources */,
+				13BC2AB7FBA5BE40329B0662 /* so.cpp in Sources */,
+				9536D025E5ADABD27E9963BA /* x68pcm8.cpp in Sources */,
+				130789DE7D8940977869B0C7 /* ymfm_opm.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		04E601BDDD5746F69067B069 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = EA6F6BAFE4032FB296926D11 /* MP4M */;
+			targetProxy = 8C74335394746B9CAF46400D /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		1D70A472CBABCE0586A76122 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_DIALECT = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_C_LANGUAGE_DIALECT = gnu17;
+				HEADER_SEARCH_PATHS = "$(SRCROOT) $(SRCROOT)/Vendor $(SRCROOT)/Vendor/gamdx/jni $(SRCROOT)/Vendor/ymfm $(SRCROOT)/MP4M/Bridge";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				LINK_FLAGS = "-framework AVFoundation -framework CoreGraphics";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ktam.MP4MTests;
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "MP4M/Bridge/MP4M-Bridging-Header.h";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MP4M.app/Contents/MacOS/MP4M";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/MP4M/Bridge";
+				WARNING_CFLAGS = "-Wall -Wextra";
+			};
+			name = Release;
+		};
+		20DC590F4C13FAF5A65DFEE2 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		2FEFC53A12E5F73AF5E77830 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_CXX_LANGUAGE_DIALECT = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_C_LANGUAGE_DIALECT = gnu17;
+				HEADER_SEARCH_PATHS = "$(SRCROOT) $(SRCROOT)/Vendor $(SRCROOT)/Vendor/gamdx/jni $(SRCROOT)/Vendor/ymfm $(SRCROOT)/MP4M/Bridge";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				LINK_FLAGS = "-framework AVFoundation -framework CoreGraphics";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ktam.MP4MTests;
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = macosx;
+				SWIFT_OBJC_BRIDGING_HEADER = "MP4M/Bridge/MP4M-Bridging-Header.h";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MP4M.app/Contents/MacOS/MP4M";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/MP4M/Bridge";
+				WARNING_CFLAGS = "-Wall -Wextra";
+			};
+			name = Debug;
+		};
+		6AAF278B15ECA143F15FC38E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		DBD1D2B8FA3ECBD2FAB4741A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				BRIDGING_HEADER = "MP4M/Bridge/MP4M-Bridging-Header.h";
+				CLANG_CXX_LANGUAGE_DIALECT = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_ENTITLEMENTS = MP4M/Resources/MP4M.entitlements;
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_C_LANGUAGE_DIALECT = gnu17;
+				HEADER_SEARCH_PATHS = "$(SRCROOT) $(SRCROOT)/Vendor $(SRCROOT)/Vendor/gamdx/jni $(SRCROOT)/Vendor/ymfm $(SRCROOT)/MP4M/Bridge";
+				INFOPLIST_FILE = MP4M/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				LINK_FLAGS = "-framework AVFoundation -framework CoreGraphics";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ktam.MP4M;
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SWIFT_OBJC_BRIDGING_HEADER = "MP4M/Bridge/MP4M-Bridging-Header.h";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/MP4M/Bridge";
+				WARNING_CFLAGS = "-Wall -Wextra";
+			};
+			name = Release;
+		};
+		FDBF5DD3749594C558F6DA8A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				BRIDGING_HEADER = "MP4M/Bridge/MP4M-Bridging-Header.h";
+				CLANG_CXX_LANGUAGE_DIALECT = "gnu++17";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CODE_SIGN_ENTITLEMENTS = MP4M/Resources/MP4M.entitlements;
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_C_LANGUAGE_DIALECT = gnu17;
+				HEADER_SEARCH_PATHS = "$(SRCROOT) $(SRCROOT)/Vendor $(SRCROOT)/Vendor/gamdx/jni $(SRCROOT)/Vendor/ymfm $(SRCROOT)/MP4M/Bridge";
+				INFOPLIST_FILE = MP4M/Resources/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				LINK_FLAGS = "-framework AVFoundation -framework CoreGraphics";
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ktam.MP4M;
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator";
+				SWIFT_OBJC_BRIDGING_HEADER = "MP4M/Bridge/MP4M-Bridging-Header.h";
+				USER_HEADER_SEARCH_PATHS = "$(SRCROOT)/MP4M/Bridge";
+				WARNING_CFLAGS = "-Wall -Wextra";
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3943DAF2F17DCECA982AE54C /* Build configuration list for PBXNativeTarget "MP4M" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FDBF5DD3749594C558F6DA8A /* Debug */,
+				DBD1D2B8FA3ECBD2FAB4741A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		8928E00E5D7F0F3256A84E84 /* Build configuration list for PBXNativeTarget "MP4MTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2FEFC53A12E5F73AF5E77830 /* Debug */,
+				1D70A472CBABCE0586A76122 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		FB91575480B08AD7DF94D9A1 /* Build configuration list for PBXProject "MP4M" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6AAF278B15ECA143F15FC38E /* Debug */,
+				20DC590F4C13FAF5A65DFEE2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 7C61A210B12B3BE974E73777 /* Project object */;
+}

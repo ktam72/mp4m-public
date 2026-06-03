@@ -1,0 +1,84 @@
+# Build artifacts
+build/
+*.o
+*.profraw
+*.a
+*.so
+*.dylib
+*.exe
+mdx_player_cli_original
+mdx_player_cli_fmgen
+mdx_player_cli_test
+output.wav
+
+# Xcode
+*.xcodeproj/
+*.xcworkspace/
+DerivedData/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Temporary files
+*.tmp
+/tmp/
+
+# Test binaries and sources
+test_*
+mdx_player_cli
+mdx_player_cli.cpp
+opm_interface.cpp
+opm_interface.h
+fmgen_wrapper.h
+compile_and_test_lzx.sh
+
+# Vendor backups
+Vendor/opm/backup/
+
+# Test directory
+build_test/
+
+# Development notes
+docs/
+evidence/
+technical_docs/
+my_fixes.md
+
+# Dependencies (if any)
+node_modules/
+release-app/
+CLAUDE.md
+
+# Claude local config
+.claude/
+
+# Ruff cache (Python linter)
+.ruff_cache/
+
+# Temporary analysis/reports
+FADEOUT_*.md
+SECURITY_ASSESSMENT_*.md
+SPECTRUM_REVIEW.md
+VULNERABILITY_FIX_LOG_*.md
+
+# Technical documentation (some files are public)
+
+# Icon source files (generated icns already in Resources)
+mp4m.iconset/
+
+# Debug log files (large, regenerated on demand)
+kna03_ymfm*.log
+kna*_ymfm*.log
+tests/
+Tests/
+
