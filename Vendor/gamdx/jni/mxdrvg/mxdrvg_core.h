@@ -79,7 +79,7 @@ static void OPMINTFUNC(
 //   1 = fmgen
 #include "../../ymfm/IOpmEngine.h"
 #include "../../ymfm/OpmEngineYmfm.h"
-#include "../fmgen/OpmEngineFmgen.h"
+#include "../../../fmgen/OpmEngineFmgen.h"
 
 static int g_opm_engine_type = 0;     // 0:ymfm, 1:fmgen
 static IOpmEngine* g_engine = nullptr;

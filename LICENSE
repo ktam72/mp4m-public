@@ -398,7 +398,30 @@ Copyright (c) GORRY
 [Same terms as MXDRVG — see section (3) above]
 
 ========================================
-(5) LZX Decompression
+(5) fmgen — FM Sound Generator with OPN/OPM Interface
+========================================
+
+Copyright (c) cisc 1998, 2003
+Author: cisc (cisc@retropc.net)
+Repository: https://github.com/kichikuou/fmgen
+
+This software is provided "as is", without any express or implied warranty.
+In no event shall the author be held liable for any damages arising from
+the use of this software.
+
+Permission is granted to freely copy, modify, distribute, and use this
+software, provided that the following conditions are met:
+
+1. The origin of this software (author, copyright) must be clearly credited.
+2. Redistribution must be as free software.
+3. Modified source code must clearly indicate the nature of the changes.
+4. When distributing source code, this license text must be included
+   without modification.
+5. Prior consent from the author is required if incorporating this software
+   (in whole or in part) into commercial software.
+
+========================================
+(6) LZX Decompression
 ========================================
 
 Zero Clause BSD License (0BSD)
@@ -423,6 +446,7 @@ Project Code:        MIT License
 ymfm:                BSD 3-Clause License (商用利用可能)
 MXDRVG:              Apache 2.0 License
 pcm8/x68pcm8:        Apache 2.0 License
+fmgen:               cisc オリジナルライセンス (フリーソフト配布可、商用は要同意)
 LZX Decompression:   0BSD License (商用利用可能)
 
 ========================================
@@ -450,5 +474,5 @@ For ymfm licensing questions:
 https://github.com/aaronsgiles/ymfm
 
 ========================================
-Last Updated: 2026-05-26
+Last Updated: 2026-06-04
 ========================================

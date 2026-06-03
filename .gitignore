@@ -51,6 +51,7 @@ build_test/
 # Development notes
 docs/
 evidence/
+technical_docs/
 my_fixes.md
 
 # Dependencies (if any)
@@ -60,6 +61,9 @@ CLAUDE.md
 
 # Claude local config
 .claude/
+
+# Ruff cache (Python linter)
+.ruff_cache/
 
 # Temporary analysis/reports
 FADEOUT_*.md
@@ -75,3 +79,6 @@ mp4m.iconset/
 # Debug log files (large, regenerated on demand)
 kna03_ymfm*.log
 kna*_ymfm*.log
+tests/
+Tests/
+
