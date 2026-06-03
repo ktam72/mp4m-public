@@ -49,6 +49,8 @@ Vendor/opm/backup/
 build_test/
 
 # Development notes
+docs/
+evidence/
 my_fixes.md
 
 # Dependencies (if any)
