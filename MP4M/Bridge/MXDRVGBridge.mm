@@ -1,6 +1,6 @@
 //
 //  MXDRVGBridge.m
-//  ObjC wrapper for MXDRVG + LZX (MDXPlayer-main から流用)
+//  ObjC wrapper for MXDRVG + LZX
 //
 
 #import "MXDRVGBridge.h"
