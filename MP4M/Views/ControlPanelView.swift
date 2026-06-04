@@ -20,12 +20,14 @@ struct ControlPanelView: View {
                     Text("-").font(.mp4mMono).foregroundColor(Color.mp4mAmber)
                 }
                 .buttonStyle(.plain)
+                .focusable(false)
                 Text(viewModel?.loopCount == 0 ? "∞" : "\(viewModel?.loopCount ?? 2)")
                     .font(.mp4mMono).foregroundColor(Color.mp4mBright).frame(width: 20)
                 Button { viewModel?.setLoopCount((viewModel?.loopCount ?? 2) + 1) } label: {
                     Text("+").font(.mp4mMono).foregroundColor(Color.mp4mAmber)
                 }
                 .buttonStyle(.plain)
+                .focusable(false)
             }
             .padding(.horizontal, 10)
             Divider().background(Color.mp4mBorder)
@@ -44,6 +46,7 @@ struct ControlPanelView: View {
                             .background(viewModel?.autoMode == mode ? Color.mp4mSelected : Color.clear)
                     }
                     .buttonStyle(.plain)
+                    .focusable(false)
                 }
             }
             .padding(.horizontal, 8)
