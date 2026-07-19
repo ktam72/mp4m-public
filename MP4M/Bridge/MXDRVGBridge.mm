@@ -17,6 +17,11 @@ extern "C" void OPM_GetChannelStates(MP4MChannelState* states, int max_channels)
 // グローバル状態（MXDRVGState に集約、MXDRVGChannelManager からも参照）
 MXDRVGState *g_state = nil;
 
+// 総再生時間キャッシュ（キー: "MDXパス|ループ回数"）
+// MXDRVG_MeasurePlayTime は曲全体をシーケンス実行するため長曲では数百msかかる。
+// 結果はシーケンサ駆動でエンジン非依存のため、同一曲・同一ループ回数なら再計測不要。
+static NSMutableDictionary<NSString *, NSNumber *> *g_playTimeCache = nil;
+
 // MXDRVG エンジンをリセット（初期化・開始）
 static void resetMXDRVGEngine(int sampleRate) {
     // UserDefaults からエンジン種別を復元（初回起動時はデフォルト=ymfm）
@@ -347,19 +352,32 @@ static void resetMXDRVGEngine(int sampleRate) {
         return;
     }
 
-    // 総再生時間計測（内部状態を曲終端まで進めるため、直後に SetData で再初期化が必要）
-    g_state.totalPlayTimeMs = MXDRVG_MeasurePlayTime(loopCount, 0);
+    // 総再生時間の取得（キャッシュヒット時は計測をスキップ）
+    NSString *cacheKey = [NSString stringWithFormat:@"%@|%d",
+                          g_state.lastLoadedMDXPath ?: @"", loopCount];
+    NSNumber *cachedTime = g_playTimeCache[cacheKey];
+    if (cachedTime) {
+        g_state.totalPlayTimeMs = cachedTime.intValue;
+        // REQ-006: 前回再生の残留状態による発音抜けを防ぐため、
+        // 計測をスキップする場合もエンジンのランタイム状態はクリアする
+        MXDRVG_ResetEngine();
+    } else {
+        // 総再生時間計測（内部状態を曲終端まで進めるため、直後に SetData で再初期化が必要）
+        g_state.totalPlayTimeMs = MXDRVG_MeasurePlayTime(loopCount, 0);
+        if (!g_playTimeCache) g_playTimeCache = [NSMutableDictionary dictionary];
+        g_playTimeCache[cacheKey] = @(g_state.totalPlayTimeMs);
 
-    // MeasurePlayTime でシーケンスが終端まで進んだため SetData で冒頭へリセット
-    MXDRVG_SetData(
-        (void*)g_state.mdxData.bytes, (ULONG)g_state.mdxData.length,
-        g_state.pdxData ? (void*)g_state.pdxData.bytes : NULL,
-        g_state.pdxData ? (ULONG)g_state.pdxData.length : 0
-    );
+        // MeasurePlayTime でシーケンスが終端まで進んだため SetData で冒頭へリセット
+        MXDRVG_SetData(
+            (void*)g_state.mdxData.bytes, (ULONG)g_state.mdxData.length,
+            g_state.pdxData ? (void*)g_state.pdxData.bytes : NULL,
+            g_state.pdxData ? (ULONG)g_state.pdxData.length : 0
+        );
 
-    // REQ-006: MeasurePlayTime の Count ループ残留状態をクリア
-    // (未初期化キャッシュによる発音抜け防止)
-    MXDRVG_ResetEngine();
+        // REQ-006: MeasurePlayTime の Count ループ残留状態をクリア
+        // (未初期化キャッシュによる発音抜け防止)
+        MXDRVG_ResetEngine();
+    }
 
     // 【一時停止中】A-2 強制リセット（KNA03.MDX 等で一部パートが発音されなくなる副作用確認のため）
     // 初回音色不良対策として有効だったが、他の曲に悪影響が出るため一旦無効化。
@@ -423,13 +441,13 @@ static void resetMXDRVGEngine(int sampleRate) {
 }
 
 + (int)getPCM:(int16_t *)buf frameCount:(int)frameCount {
-    // PDX ロード失敗時はサイレンスを返す
+    if (frameCount > 1024) frameCount = 1024;
+
+    // PDX ロード失敗時はサイレンスを返す（ステレオ: 1フレーム = int16_t × 2）
     if (g_state->pdxLoadError[0] != '\0') {
-        memset(buf, 0, frameCount * sizeof(int16_t));
+        memset(buf, 0, frameCount * 2 * sizeof(int16_t));
         return frameCount;
     }
-
-    if (frameCount > 1024) frameCount = 1024;
 
     // 例外安全対策：C++ 側で例外が投げられてもオーディオスレッドを落とさない
     try {
@@ -438,7 +456,7 @@ static void resetMXDRVGEngine(int sampleRate) {
         #ifdef DEBUG
         fprintf(stderr, "[MXDRVGBridge] EXCEPTION in MXDRVG_GetPCM! Returning silence.\n");
         #endif
-        memset(buf, 0, frameCount * sizeof(int16_t));
+        memset(buf, 0, frameCount * 2 * sizeof(int16_t));
         return frameCount;
     }
 }

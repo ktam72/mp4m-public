@@ -27,7 +27,6 @@
 		604D419FDD17A2E96A4D56A4 /* MXDRVAudioEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84173DEA7AC9BF78F068529C /* MXDRVAudioEngine.swift */; };
 		6827F906B4BA17536F13BC06 /* AudioModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AF45E8FBEE91675BA7E130B /* AudioModels.swift */; };
 		6F636B71301F1A381DD56BBE /* opm_wrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FC8659B17E243990B07472A8 /* opm_wrapper.cpp */; };
-		6F6D2713623F9C09777F7D4B /* Spectrum.metal in Sources */ = {isa = PBXBuildFile; fileRef = 37EFDA01E28625A5E70BC68F /* Spectrum.metal */; };
 		73E592BF90745AD6A73F0647 /* pcm8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F9BC13A250DB70829092A1D3 /* pcm8.cpp */; };
 		774F5CE0F2E99096B063A216 /* ThreadSafetyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E37064ECD6A0E9C782F8E1 /* ThreadSafetyTests.swift */; };
 		77EC714BA081CCEBB761D4FF /* MP4MError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9CEC9B579D9D7E5B54FA0647 /* MP4MError.swift */; };
@@ -35,7 +34,6 @@
 		92BA0655F86F19425D416E5E /* SpectrumComputeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DF7205C988572C605FD02 /* SpectrumComputeService.swift */; };
 		9388F263550B98C6B014CB5A /* MXDRVGBridge.mm in Sources */ = {isa = PBXBuildFile; fileRef = 4E830C6988B4C094B4B1A89A /* MXDRVGBridge.mm */; };
 		9536D025E5ADABD27E9963BA /* x68pcm8.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D57BAB8E275F9E4D4B297D69 /* x68pcm8.cpp */; };
-		96413BE2278E5FEB1521D11B /* MetalSpectrumCompute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9D75A453FF05F5A5B68FBA09 /* MetalSpectrumCompute.swift */; };
 		9D3BEBB9760D4059C3D7B191 /* FileSelectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F68B6FBB4BE310609A92B99 /* FileSelectionStrategy.swift */; };
 		A0C53DDDF610D019EE4A8DEC /* DisplayUpdateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD96AECEDFF970B9DBF941CB /* DisplayUpdateManager.swift */; };
 		A63AEDB7B183BC498D31FA8E /* opm.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 03CACB580C58C461F80D1182 /* opm.cpp */; };
@@ -81,7 +79,6 @@
 		2F9EBD5532DEF3925677A3F0 /* MP4M-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MP4M-Bridging-Header.h"; sourceTree = "<group>"; };
 		30B76EDDCA94E3FA671FDD9E /* MXDRVGBridge.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MXDRVGBridge.h; sourceTree = "<group>"; };
 		37C0814C9F62E24A73660F12 /* fmgen.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = fmgen.h; sourceTree = "<group>"; };
-		37EFDA01E28625A5E70BC68F /* Spectrum.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Spectrum.metal; sourceTree = "<group>"; };
 		439C4546F924F01F12E88ECF /* FileSelectorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSelectorView.swift; sourceTree = "<group>"; };
 		47C6718DA9D41E3C6D06D1AB /* FileBrowserViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileBrowserViewModel.swift; sourceTree = "<group>"; };
 		485817F4C8A0E62C403C2FD2 /* fmtimer.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = fmtimer.cpp; sourceTree = "<group>"; };
@@ -104,7 +101,6 @@
 		8DC1BFFEE8D42AD0CC387C52 /* headers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = headers.h; sourceTree = "<group>"; };
 		8FD8F122AD9FE84CED3E64B9 /* MDXFileLoader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MDXFileLoader.h; sourceTree = "<group>"; };
 		9CEC9B579D9D7E5B54FA0647 /* MP4MError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MP4MError.swift; sourceTree = "<group>"; };
-		9D75A453FF05F5A5B68FBA09 /* MetalSpectrumCompute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalSpectrumCompute.swift; sourceTree = "<group>"; };
 		9F68B6FBB4BE310609A92B99 /* FileSelectionStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSelectionStrategy.swift; sourceTree = "<group>"; };
 		9FFB1D84A531BA7DF60C374B /* FileItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileItem.swift; sourceTree = "<group>"; };
 		A4BB2DEFFEC9418C248E0CE7 /* MDXFileLoader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MDXFileLoader.mm; sourceTree = "<group>"; };
@@ -171,7 +167,6 @@
 				EB1A9614EB47BF54A9E848AF /* ChannelStateService.swift */,
 				CD96AECEDFF970B9DBF941CB /* DisplayUpdateManager.swift */,
 				9F68B6FBB4BE310609A92B99 /* FileSelectionStrategy.swift */,
-				9D75A453FF05F5A5B68FBA09 /* MetalSpectrumCompute.swift */,
 				84173DEA7AC9BF78F068529C /* MXDRVAudioEngine.swift */,
 				E77DF7205C988572C605FD02 /* SpectrumComputeService.swift */,
 				75065856BF01A5F699CA1270 /* TrackTransitionManager.swift */,
@@ -294,14 +289,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		A9FDD976F2E7199830C0B902 /* Shaders */ = {
-			isa = PBXGroup;
-			children = (
-				37EFDA01E28625A5E70BC68F /* Spectrum.metal */,
-			);
-			path = Shaders;
-			sourceTree = "<group>";
-		};
 		B93C25D24FDBC8FC0511DCE3 /* Models */ = {
 			isa = PBXGroup;
 			children = (
@@ -328,7 +315,6 @@
 				B93C25D24FDBC8FC0511DCE3 /* Models */,
 				6A222E8605EE72B88EC130E1 /* Resources */,
 				1F3E65A61F6074419AA53F6E /* Services */,
-				A9FDD976F2E7199830C0B902 /* Shaders */,
 				13C37CA838F6CC6456E878CD /* Utilities */,
 				A5362ACE0344E9F787435207 /* ViewModels */,
 				D71B30D6BFDC8C485CC6AB16 /* Views */,
@@ -534,9 +520,7 @@
 				9388F263550B98C6B014CB5A /* MXDRVGBridge.mm in Sources */,
 				52B6F2390E4C2DF583B5D9EE /* MXDRVGChannelManager.mm in Sources */,
 				C288D7A21521F823CFDE4A8A /* MXDRVGState.mm in Sources */,
-				96413BE2278E5FEB1521D11B /* MetalSpectrumCompute.swift in Sources */,
 				225FBB7CE1177FA1FFFCF5D9 /* PlayerViewModel.swift in Sources */,
-				6F6D2713623F9C09777F7D4B /* Spectrum.metal in Sources */,
 				266BE72AA383D673D052C35C /* SpectrumAnalyzerView.swift in Sources */,
 				92BA0655F86F19425D416E5E /* SpectrumComputeService.swift in Sources */,
 				AC57DD08C07BE398B5A676CF /* Theme.swift in Sources */,

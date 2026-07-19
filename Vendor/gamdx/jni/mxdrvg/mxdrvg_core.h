@@ -514,7 +514,8 @@ int MXDRVG_GetPCM(
 	// エンジン切替中は無音を返す（ノンブロッキング）
 	if (!s_engine_mtx.try_lock())
 	{
-		memset(buf, 0, len * (int)sizeof(SWORD));
+		// ステレオインターリーブ: 1フレーム = SWORD × 2
+		memset(buf, 0, len * 2 * (int)sizeof(SWORD));
 		return len;
 	}
 	std::lock_guard<std::mutex> lock(s_engine_mtx, std::adopt_lock);

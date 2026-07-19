@@ -293,7 +293,7 @@ final class PlayerViewModel {
             Log.debug("[PlayerVM] updateDisplay - frame: \(frameCount), currentTimeMs: \(ms)")
         }
 
-        // チャンネル状態の取得（キーボード・レベルメーター: 毎フレーム 120fps）
+        // チャンネル状態の取得（キーボード・レベルメーター: 60fps）
         let fmChannels = channelService.getChannels(currentTimeMs: ms)
 
         // スペアナ計算（メインループと同じ60fps）

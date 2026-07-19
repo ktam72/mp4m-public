@@ -1,12 +1,13 @@
 import Foundation
-import Metal
 
 /// スペクトラムアナライザーの計算を担当するサービス
-/// GPU (Metal) または CPU でビンマッピング + 拡散を計算
+/// CPU でビンマッピング + 拡散を計算
+///
+/// 計算は 16ch × 数演算と極小のため CPU が最速
+/// （GPU 同期ディスパッチは往復オーバーヘッドが計算本体の千倍以上になるため不採用）
 ///
 /// スペアナの計算ロジックをViewから分離し、テスト可能性を高める
 final class SpectrumComputeService {
-    private let metalCompute: MetalSpectrumCompute?
     private let routeTable: [Float] = [
         0, 1, 4, 9, 16, 24, 35, 47, 61, 77, 94,
         113, 133, 155, 179, 204, 230, 258, 287, 317, 348,
@@ -15,20 +16,15 @@ final class SpectrumComputeService {
     private let riseTable: [Int] = [1, 1, 2, 2, 4, 4, 4, 4, 8, 8, 8, 8, 8, 8, 8,
                                      8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8]
 
-    init() {
-        self.metalCompute = MetalSpectrumCompute()
-    }
-
     /// チャンネル状態からスペクトラムバー状態を計算
     ///
     /// - Parameters:
     ///   - channels: チャンネル表示状態（最大16ch）
     ///   - currentBars: 現在のバー状態（UIに表示中の状態）
     /// - Returns: 更新されたスペクトラムバー状態（32バー分）
-    /// - Note: GPU (Metal) が利用可能な場合はGPUで計算、不可時はCPUで計算
     func computeSpectrum(for channels: [ChannelDisplayState], currentBars: [SpectrumBarState]) -> [SpectrumBarState] {
-        // GPU または CPU でビンマッピング + 拡散を計算
-        let speaBuf = metalCompute?.computeSpectrum(channels: channels) ?? computeSpectrumCPU(channels: channels)
+        // ビンマッピング + 拡散を計算
+        let speaBuf = computeSpectrumCPU(channels: channels)
 
         // バー状態更新
         var newBars = currentBars
@@ -66,28 +62,33 @@ final class SpectrumComputeService {
         return newBars
     }
 
-    /// CPU版スペクトラム計算（ビンマッピング + 拡散）
-    /// Metal が利用不可時のフォールバック用
+    /// スペクトラム計算（ビンマッピング + 拡散）
+    /// 旧 Spectrum.metal (computeSpectrum カーネル) と同一のロジック
     private func computeSpectrumCPU(channels: [ChannelDisplayState]) -> [Float] {
         var bins = [Float](repeating: 0, count: AudioConstants.spectrumBinCount)
 
+        // 拡散係数（中心から ±1..±5 ビンへ左右対称に分散）
+        let spreadFactors: [Float] = [0.75, 0.3125, 0.125, 0.25, 0.0625]
+
         for channel in channels {
             guard channel.keyOn else { continue }
-            let midiNote = Int(channel.keyCode)
-            let velocity = Float(channel.velocity) / 127.0
 
-            // MIDI ノート → 周波数ビンマッピング
-            let binIndex = midiNote / 12 * 4 + (midiNote % 12) / 3
-            guard binIndex >= 0, binIndex < bins.count else { continue }
+            // キーコード + オフセット → ビンマッピング（3 半音 = 1 ビン）
+            let binIndex = (Int(channel.keyCode) + Int(channel.keyOffset)) / 3
+            guard binIndex >= 0, binIndex < 42 else { continue }
 
-            // 拡散ロジック：周辺ビンに振幅を分散
-            let spreadFactors: [Float] = [1.0, 3.0 / 4.0, 5.0 / 16.0, 1.0 / 8.0, 1.0 / 4.0, 1.0 / 16.0]
-            let offsets = [0, -1, -2, 1, 2, 3]
+            // velocity は正規化せず生値（routeTable の閾値 0〜600 に対応）
+            let amplitude = Float(channel.velocity)
 
-            for (offset, factor) in zip(offsets, spreadFactors) {
-                let targetBin = binIndex + offset
-                guard targetBin >= 0, targetBin < bins.count else { continue }
-                bins[targetBin] += velocity * factor
+            bins[binIndex] += amplitude
+            for (distance, factor) in spreadFactors.enumerated() {
+                let offset = distance + 1
+                if binIndex - offset >= 0 {
+                    bins[binIndex - offset] += amplitude * factor
+                }
+                if binIndex + offset < bins.count {
+                    bins[binIndex + offset] += amplitude * factor
+                }
             }
         }
 
