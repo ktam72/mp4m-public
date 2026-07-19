@@ -31,6 +31,12 @@
 #include "ymfm_opm.h"
 #include "ymfm_fm.ipp"
 
+// OpmWrapper::ResetRuntimeState() が別翻訳単位から参照するため、
+// Release ビルド（最適化でインライン化されシンボルが出力されない）でも
+// リンクできるよう明示的にインスタンス化する
+template void ymfm::fm_operator<ymfm::opm_registers>::reset();
+template void ymfm::fm_channel<ymfm::opm_registers>::reset();
+
 namespace ymfm
 {
 
