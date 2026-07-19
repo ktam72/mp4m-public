@@ -4,6 +4,14 @@
 namespace X68K
 {
 
+// DMA 読み出し (MemRead) の有効メモリ範囲を登録する。
+// 範囲外アクセスは実機同様バスエラー (-1) となり ADPCM が安全に停止する。
+// MDX の不正なサンプル長・アドレスによるホストメモリの範囲外読み出し
+// (EXC_BAD_ACCESS) を防ぐため、MXDRVG 内部バッファ (MDXBUF/PDXBUF) を
+// 確保するエンジン初期化時 (MXDRVG_Start) に設定し、MXDRVG_End でクリアする。
+void Pcm8SetValidMemory(const void *mdx, unsigned long mdxsize,
+                        const void *pdx, unsigned long pdxsize);
+
 
 class Pcm8 {
 	static const int TotalVolume = 256;

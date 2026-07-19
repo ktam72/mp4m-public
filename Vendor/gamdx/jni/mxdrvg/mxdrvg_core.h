@@ -471,6 +471,9 @@ MXDRVG_EXPORT
 void MXDRVG_End(
 	void
 ) {
+	// バッファ解放後の DMA 読み出しを防ぐため有効範囲をクリア
+	X68K::Pcm8SetValidMemory(0, 0, 0, 0);
+
 	if ( G.MDXBUF ) {
 		free( (void*)G.MDXBUF );
 		G.MDXBUF = NULL;
@@ -7334,6 +7337,12 @@ static int Initialize(
 		return (!0);
 	}
 	memset( (void *)G.L001bac, 0, G.L001ba8 );
+
+	// PCM8 DMA 読み出し (MemRead) の有効範囲を登録。
+	// 実行時の PCM ポインタは内部バッファ MDXBUF / PDXBUF 内を指すため、
+	// この範囲外の読み出しは実機のバスエラー相当 (-1) として安全に停止させる。
+	X68K::Pcm8SetValidMemory((const void *)G.MDXBUF, G.MDXSIZE,
+	                         (const void *)G.PDXBUF, G.PDXSIZE);
 
 	return (0);
 }

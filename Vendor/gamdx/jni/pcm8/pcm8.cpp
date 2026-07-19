@@ -9,8 +9,26 @@ namespace X68K
 {
 
 
+// MemRead の有効メモリ範囲（MXDRVG 内部の MDXBUF/PDXBUF）
+// オーディオスレッドから読まれるが、設定はエンジン初期化時 (MXDRVG_Start) のみ
+static const unsigned char *s_mdx_base = 0;
+static unsigned long s_mdx_size = 0;
+static const unsigned char *s_pdx_base = 0;
+static unsigned long s_pdx_size = 0;
+
+void Pcm8SetValidMemory(const void *mdx, unsigned long mdxsize,
+                        const void *pdx, unsigned long pdxsize) {
+	s_mdx_base = (const unsigned char *)mdx;
+	s_mdx_size = mdx ? mdxsize : 0;
+	s_pdx_base = (const unsigned char *)pdx;
+	s_pdx_size = pdx ? pdxsize : 0;
+}
+
 inline int MemRead(unsigned char *adrs) {
-	return *adrs;
+	// 実機のバスエラー相当：MDX/PDX バッファ外は -1 を返し呼び出し側で停止させる
+	if (adrs >= s_pdx_base && adrs < s_pdx_base + s_pdx_size) return *adrs;
+	if (adrs >= s_mdx_base && adrs < s_mdx_base + s_mdx_size) return *adrs;
+	return -1;
 }
 
 
