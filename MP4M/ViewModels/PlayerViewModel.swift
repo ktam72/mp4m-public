@@ -41,6 +41,9 @@ final class PlayerViewModel {
     private let channelService: ChannelStateService
     private let displayManager: DisplayUpdateManager
     private let transitionManager: TrackTransitionManager
+
+    // 曲終端検出用の表示非依存クロック（ディスプレイオフでも動作）
+    private var playbackClockTask: Task<Void, Never>?
     weak var browserVM: FileBrowserViewModel? {
         didSet { transitionManager.browserVM = browserVM }
     }
@@ -84,6 +87,7 @@ final class PlayerViewModel {
     /// 明示的クリーンアップ (deinit ではなく View の onDisappear で呼ぶ)
     func cleanup() {
         displayManager.stop()
+        stopPlaybackClock()
         transitionManager.cancelFadeOut()
         audioService.setVolume(1.0)
         audioService.end()
@@ -171,12 +175,14 @@ final class PlayerViewModel {
         audioService.pause()
         status = .paused
         displayManager.stop()
+        stopPlaybackClock()
     }
 
     /// 停止
     func stop() {
         audioService.stop()
         displayManager.stop()
+        stopPlaybackClock()
         transitionManager.cancelFadeOut()
         status = .stopped
         currentTimeMs = 0
@@ -274,7 +280,8 @@ final class PlayerViewModel {
                 self?.updateDisplay(frameCount: frameCount)
             }
         )
-        Log.debug("[PlayerVM] status set to .playing, display timer started")
+        startPlaybackClock()
+        Log.debug("[PlayerVM] status set to .playing, display timer + playback clock started")
     }
 
     private func updateDisplay(frameCount: Int) {
@@ -297,22 +304,44 @@ final class PlayerViewModel {
         let fmChannels = channelService.getChannels(currentTimeMs: ms)
 
         // スペアナ計算（メインループと同じ60fps）
-        let shouldUpdateSpectrum = true
-        if shouldUpdateSpectrum {
-            let newBars = spectrumService.computeSpectrum(for: fmChannels, currentBars: spectrumBars)
-            currentTimeMs = ms
-            if newBars != spectrumBars {
-                spectrumBars = newBars
-            }
-
-            if totalTimeMs > 0 && currentTimeMs >= totalTimeMs {
-                transitionManager.handleTrackEnd()
-            }
+        let newBars = spectrumService.computeSpectrum(for: fmChannels, currentBars: spectrumBars)
+        currentTimeMs = ms
+        if newBars != spectrumBars {
+            spectrumBars = newBars
         }
+
+        // 曲終端検出はここでは行わない。CADisplayLink はディスプレイオフで
+        // 停止するため、終端検出・自動遷移は playbackClock（表示非依存）が担う。
 
         if fmChannels != channels {
             channels = fmChannels
         }
+    }
+
+    // MARK: - 再生クロック（表示非依存）
+
+    /// 曲終端検出をディスプレイ更新から分離した独立クロック。
+    ///
+    /// 表示ループ（CADisplayLink）はディスプレイオフで停止するが、
+    /// オーディオは鳴り続けるため、AUTO/RANDOM の自動遷移が止まらないよう
+    /// エンジンの再生位置を表示非依存で監視して終端を検出する。
+    private func startPlaybackClock() {
+        playbackClockTask?.cancel()
+        playbackClockTask = Task { @MainActor [weak self] in
+            while !Task.isCancelled {
+                guard let self, self.status == .playing else { break }
+                let ms = self.audioService.currentPlayTimeMs()
+                if self.totalTimeMs > 0 && ms >= self.totalTimeMs {
+                    self.transitionManager.handleTrackEnd()
+                }
+                try? await Task.sleep(for: .seconds(0.25))
+            }
+        }
+    }
+
+    private func stopPlaybackClock() {
+        playbackClockTask?.cancel()
+        playbackClockTask = nil
     }
 
     // MARK: - 内部
