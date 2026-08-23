@@ -71,9 +71,18 @@ final class FileBrowserViewModel {
     /// ディレクトリ移動
     func navigate(to item: FileItem) {
         guard item.isDirectory else { return }
+        let previousDirectory = currentDirectory
         currentDirectory = item.url
         fileItems = FileItem.items(in: item.url)
-        selectedIndex = 0
+        // 親へ戻った場合は、直前にいたフォルダを選択状態にする
+        if let previous = previousDirectory,
+           let index = fileItems.firstIndex(where: {
+               $0.name != ".." && $0.url.standardizedFileURL == previous.standardizedFileURL
+           }) {
+            selectedIndex = index
+        } else {
+            selectedIndex = 0
+        }
         playingIndex = -1
     }
 

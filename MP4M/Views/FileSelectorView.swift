@@ -39,20 +39,36 @@ struct FileSelectorView: View {
             }
             .background(Color.mp4mBackground.opacity(0.8))
             Divider().background(Color.mp4mBorder)
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(Array(browserVM.fileItems.enumerated()), id: \.element.id) { idx, item in
-                        FileRowView(
-                            item: item,
-                            isSelected: idx == browserVM.selectedIndex,
-                            isPlaying: item.url == browserVM.playingURL
-                        )
-                        .onTapGesture(count: 2) { doubleTap(item: item) }
-                        .onTapGesture(count: 1) { browserVM.selectItem(at: idx) }
+            ScrollViewReader { proxy in
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(Array(browserVM.fileItems.enumerated()), id: \.element.id) { idx, item in
+                            FileRowView(
+                                item: item,
+                                isSelected: idx == browserVM.selectedIndex,
+                                isPlaying: item.url == browserVM.playingURL
+                            )
+                            .onTapGesture(count: 2) { doubleTap(item: item) }
+                            .onTapGesture(count: 1) { browserVM.selectItem(at: idx) }
+                        }
                     }
                 }
+                .background(Color.mp4mBackground)
+                // ディレクトリ移動後、選択項目を表示エリアの先頭に合わせる
+                .onChange(of: browserVM.currentDirectory) {
+                    scrollToSelection(proxy)
+                }
             }
-            .background(Color.mp4mBackground)
+        }
+    }
+
+    private func scrollToSelection(_ proxy: ScrollViewProxy) {
+        let index = browserVM.selectedIndex
+        guard index >= 0, index < browserVM.fileItems.count else { return }
+        let id = browserVM.fileItems[index].id
+        // LazyVStack の再構築後にスクロールさせるため次のループへ回す
+        DispatchQueue.main.async {
+            proxy.scrollTo(id, anchor: .top)
         }
     }
 

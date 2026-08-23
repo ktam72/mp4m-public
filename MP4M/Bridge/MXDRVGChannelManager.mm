@@ -24,6 +24,18 @@ int OPM_GetRegKc(int ch);
 int OPM_GetRegValue(int addr);
 }
 
+/// PCM チャンネル (0=PCM1 ... 7=PCM8) に対応するワークエリア要素を返す
+///
+/// mxdrvg のワーク配置は CHBUF_FM[9] = FM1-8 + PCM1、CHBUF_PCM[8] = PCM2-8（末尾要素は未使用）。
+/// そのため PCM1 だけは FM 側ワークの 9 番目に存在する。
+static MXDRVG_WORK_CH* MP4MPcmWorkForIndex(int pcmIndex, MXDRVG_WORK_CH* fmWork, MXDRVG_WORK_CH* pcmWork) {
+    if (pcmIndex < 0 || pcmIndex >= 8) return NULL;
+    if (pcmIndex == 0) {
+        return fmWork ? &fmWork[8] : NULL;
+    }
+    return pcmWork ? &pcmWork[pcmIndex - 1] : NULL;
+}
+
 @implementation MXDRVGChannelManager
 
 + (void)getChannelStates:(MP4MChannelState *)states {
@@ -38,6 +50,7 @@ int OPM_GetRegValue(int addr);
 
         // Get PCM8 channel states (channels 8-15) from MXDRVG work area
         MXDRVG_WORK_CH* pcmCh = (MXDRVG_WORK_CH*)MXDRVG_GetWork(MXDRVG_WORKADR_PCM);
+        MXDRVG_WORK_CH* fmWork = (MXDRVG_WORK_CH*)MXDRVG_GetWork(MXDRVG_WORKADR_FM);
         MXDRVG_WORK_GLOBAL* globalWork = (MXDRVG_WORK_GLOBAL*)MXDRVG_GetWork(MXDRVG_WORKADR_GLOBAL);
 
         OPM_GetChannelStates(opmStates, 8);
@@ -142,29 +155,31 @@ int OPM_GetRegValue(int addr);
         states[i].active = opmStates[i].active;
     }
 
-    if (pcmCh) {
+    if (pcmCh || fmWork) {
         // チャンネルマスクから有効な PCM チャンネル数を判定
         // L001e1a のビット 8-15 が PCM チャンネルに対応
         // bit 8: PCM1, bit 9: PCM2, ..., bit 15: PCM8
         uint16_t channelMask = globalWork ? globalWork->L001e1a : 0;
 
         for (int i = 0; i < 8; i++) {
-            // 配列インデックス i がそのまま PCM1-8ch に対応
+            // i がそのまま PCM1-8ch に対応
             // i=0 → PDX1ch (ch9), i=1 → PDX2ch (ch10), ..., i=7 → PDX8ch (ch16)
-            int chIdx = 8 + i;  // Map array index directly to display positions
+            // ワークの実体は MP4MPcmWorkForIndex() が FM 側 / PCM 側に振り分ける
+            int chIdx = 8 + i;
             int pcmBit = 8 + i;  // PCM channel bit position (bit 8-15)
 
             // チャンネルマスクでこの PCM チャンネルが有効か確認
             int isChannelEnabled = (channelMask & (1 << pcmBit)) ? 1 : 0;
 
-            UBYTE volatile* S0000 = pcmCh[i].S0000;  // Ptr フィールド
+            MXDRVG_WORK_CH* work = MP4MPcmWorkForIndex(i, fmWork, pcmCh);
+            UBYTE volatile* S0000 = work ? work->S0000 : NULL;  // Ptr フィールド
 
             // 実際に割り当て済みか判定：S0000 ポインタが有効（非ゼロ）
             // S0000 はサンプルデータへのポインタ。ゼロなら割り当てなし
             uint8_t isPlaying = (S0000 != NULL && S0000 != 0) ? 1 : 0;
 
-            if (!isChannelEnabled || !g_state.hasPDX) {
-                // このチャンネルはマスクで無効化されている、または PDX がない
+            if (!work || !isChannelEnabled || !g_state.hasPDX) {
+                // ワーク未取得、マスクで無効化されている、または PDX がない
                 states[chIdx].keyOn = 0;
                 states[chIdx].active = 0;
                 states[chIdx].volume = 0;
@@ -176,7 +191,7 @@ int OPM_GetRegValue(int addr);
             states[chIdx].active = isPlaying;
 
             // note+D is UWORD, lower bits = note
-            uint16_t noteD = pcmCh[i].S0012;
+            uint16_t noteD = work->S0012;
             states[chIdx].keyCode = noteD & 0x7F;
             states[chIdx].keyOffset = 0;
 
@@ -236,23 +251,24 @@ int OPM_GetRegValue(int addr);
     } else {
         // PCM チャンネル (8-15): volume で制御
         MXDRVG_WORK_CH* pcmCh = (MXDRVG_WORK_CH*)MXDRVG_GetWork(MXDRVG_WORKADR_PCM);
-        if (!pcmCh) return;
+        MXDRVG_WORK_CH* fmWork = (MXDRVG_WORK_CH*)MXDRVG_GetWork(MXDRVG_WORKADR_FM);
 
         int pcmIdx = ch - 8;
-        if (pcmIdx < 0 || pcmIdx >= 8) return;
+        MXDRVG_WORK_CH* work = MP4MPcmWorkForIndex(pcmIdx, fmWork, pcmCh);
+        if (!work) return;
 
         if (isMuted) {
             if (!g_state->pcmMuteState[pcmIdx]) {
                 // ミュート開始：元の volume を保存して 0 に設定
-                uint8_t currentVol = pcmCh[pcmIdx].S0022;
+                uint8_t currentVol = work->S0022;
                 g_state->pcmMutedVol[pcmIdx] = currentVol;
                 g_state->pcmMuteState[pcmIdx] = 1;
-                pcmCh[pcmIdx].S0022 = 0;  // 無音
+                work->S0022 = 0;  // 無音
             }
         } else {
             if (g_state->pcmMuteState[pcmIdx]) {
                 // ミュート解除：保存した volume に復元
-                pcmCh[pcmIdx].S0022 = g_state->pcmMutedVol[pcmIdx];
+                work->S0022 = g_state->pcmMutedVol[pcmIdx];
                 g_state->pcmMuteState[pcmIdx] = 0;
             }
         }

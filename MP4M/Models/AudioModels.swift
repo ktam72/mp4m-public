@@ -50,12 +50,12 @@ struct ChannelDisplayState: Equatable {
 extension ChannelDisplayState {
     func displayPan(isPCMChannel: Bool) -> String {
         guard keyOn else { return "" }
-        if isPCMChannel && pan == 3 { return "C" }
+        if isPCMChannel && pan == 3 { return "\u{25B2}" }
         switch pan {
-        case 0: return "L"
-        case 2: return "R"
-        case 3: return "LR"
-        default: return "C"
+        case 0: return "\u{25C0}"
+        case 2: return "\u{25B6}"
+        case 3: return "\u{25C0}\u{25B6}"
+        default: return "\u{25B2}"
         }
     }
 
