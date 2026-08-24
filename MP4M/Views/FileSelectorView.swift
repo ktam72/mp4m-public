@@ -46,7 +46,8 @@ struct FileSelectorView: View {
                             FileRowView(
                                 item: item,
                                 isSelected: idx == browserVM.selectedIndex,
-                                isPlaying: item.url == browserVM.playingURL
+                                isPlaying: item.url == browserVM.playingURL,
+                                nameColumnWidth: nameColumnWidth
                             )
                             .onTapGesture(count: 2) { doubleTap(item: item) }
                             .onTapGesture(count: 1) { browserVM.selectItem(at: idx) }
@@ -61,6 +62,26 @@ struct FileSelectorView: View {
             }
         }
     }
+
+    /// ファイル名カラムの幅（タイトルの先頭を縦に揃えるため、一覧内の最長ファイル名に合わせる）
+    private var nameColumnWidth: CGFloat {
+        let longest = browserVM.fileItems
+            .filter { !$0.isDirectory }
+            .map(\.name.count)
+            .max() ?? 0
+        guard longest > 0 else { return 0 }
+        // 名前とタイトルの間に 2 文字分の余白を確保する
+        return min(CGFloat(longest + 2) * Self.monoAdvance, Self.maxNameColumnWidth)
+    }
+
+    /// 等幅フォント 1 文字分の送り幅
+    private static let monoAdvance: CGFloat = {
+        let font = NSFont(name: "MonaspaceNeon-Regular", size: 18) ?? .monospacedSystemFont(ofSize: 18, weight: .regular)
+        return ("0" as NSString).size(withAttributes: [.font: font]).width
+    }()
+
+    /// ファイル名カラムの上限幅（極端に長い名前でタイトルが押し出されるのを防ぐ）
+    private static let maxNameColumnWidth: CGFloat = 420
 
     private func scrollToSelection(_ proxy: ScrollViewProxy) {
         let index = browserVM.selectedIndex
@@ -101,6 +122,8 @@ private struct FileRowView: View {
     let item: FileItem
     let isSelected: Bool
     let isPlaying: Bool
+    /// ファイル名カラムの幅（0 ならタイトル列なし）
+    let nameColumnWidth: CGFloat
 
     var body: some View {
         HStack(spacing: 6) {
@@ -108,14 +131,19 @@ private struct FileRowView: View {
                 .font(.mp4mTiny)
                 .foregroundColor(item.isDirectory ? Color.mp4mAmber : Color.mp4mText.opacity(0.5))
                 .frame(width: 14)
-            Text(item.displayName)
-                .font(.mp4mText)
-                .foregroundColor(isPlaying ? Color.mp4mBright : Color.mp4mText)
-                .shadow(color: isPlaying ? Color.mp4mBright.opacity(0.6) : .clear, radius: isPlaying ? 12 : 0)
-                .shadow(color: isPlaying ? Color.mp4mBright.opacity(0.3) : .clear, radius: isPlaying ? 24 : 0)
-                .lineLimit(1)
-                .truncationMode(.tail)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            HStack(spacing: 0) {
+                // ファイル名は固定幅カラムに置き、タイトルの先頭を縦に揃える
+                rowText(item.name)
+                    .frame(
+                        width: nameColumnWidth > 0 && !item.isDirectory ? nameColumnWidth : nil,
+                        alignment: .leading
+                    )
+                if let title = item.title, !title.isEmpty {
+                    rowText(title)
+                }
+                Spacer(minLength: 0)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
             if isPlaying {
                 Text("▶")
                     .font(.mp4mTiny)
@@ -127,5 +155,16 @@ private struct FileRowView: View {
         .padding(.horizontal, 8)
         .padding(.vertical, 3)
         .background(isSelected ? Color.mp4mSelected : Color.clear)
+    }
+
+    /// 行内テキストの共通スタイル（再生中はグロー）
+    private func rowText(_ text: String) -> some View {
+        Text(text)
+            .font(.mp4mText)
+            .foregroundColor(isPlaying ? Color.mp4mBright : Color.mp4mText)
+            .shadow(color: isPlaying ? Color.mp4mBright.opacity(0.6) : .clear, radius: isPlaying ? 12 : 0)
+            .shadow(color: isPlaying ? Color.mp4mBright.opacity(0.3) : .clear, radius: isPlaying ? 24 : 0)
+            .lineLimit(1)
+            .truncationMode(.tail)
     }
 }

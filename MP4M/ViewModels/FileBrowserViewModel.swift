@@ -17,6 +17,16 @@ final class FileBrowserViewModel {
         }
     }
     var fileItems: [FileItem] = []
+
+    /// 並び替え基準（File = ファイル名順 / Title = MDX 内部タイトル順）
+    var sortOrder: FileSortOrder = .file {
+        didSet { UserDefaults.standard.set(sortOrder.rawValue, forKey: UserDefaultsKey.fileSortOrder) }
+    }
+    /// 並び替え方向（true = 昇順）
+    var sortAscending: Bool = true {
+        didSet { UserDefaults.standard.set(sortAscending, forKey: UserDefaultsKey.fileSortAscending) }
+    }
+
     var selectedIndex: Int = -1
     var playingIndex: Int = -1
 
@@ -30,6 +40,14 @@ final class FileBrowserViewModel {
         print("[FileBrowserViewModel] MP4MApp.pendingPath: \(MP4MApp.pendingPath ?? "nil")")
         self.selectionStrategy = BrowserFileSelectionStrategy()
 
+        if let savedSortRaw = UserDefaults.standard.string(forKey: UserDefaultsKey.fileSortOrder),
+           let savedSort = FileSortOrder(rawValue: savedSortRaw) {
+            sortOrder = savedSort
+        }
+        if UserDefaults.standard.object(forKey: UserDefaultsKey.fileSortAscending) != nil {
+            sortAscending = UserDefaults.standard.bool(forKey: UserDefaultsKey.fileSortAscending)
+        }
+
         if let pendingPath = MP4MApp.pendingPath {
             Log.debug("[BrowserVM] pendingPath=\(pendingPath)")
             let url = URL(fileURLWithPath: pendingPath)
@@ -37,17 +55,17 @@ final class FileBrowserViewModel {
             guard FileManager.default.fileExists(atPath: pendingPath, isDirectory: &isDir) else { return }
             if isDir.boolValue {
                 currentDirectory = url
-                fileItems = FileItem.items(in: url)
+                fileItems = loadItems(in: url)
                 Log.debug("[BrowserVM] Set currentDirectory to: \(url.path)")
             } else {
                 currentDirectory = url.deletingLastPathComponent()
-                fileItems = FileItem.items(in: url.deletingLastPathComponent())
+                fileItems = loadItems(in: url.deletingLastPathComponent())
                 launchFileURL = url
                 Log.debug("[BrowserVM] launchFileURL set to: \(url.path)")
             }
         } else if let savedURL = UserDefaults.standard.url(forKey: UserDefaultsKey.currentDirectory) {
             currentDirectory = savedURL
-            fileItems = FileItem.items(in: savedURL)
+            fileItems = loadItems(in: savedURL)
             Log.debug("[BrowserVM] Restored saved directory: \(savedURL.path)")
         }
         print("[FileBrowserViewModel] init - END")
@@ -63,7 +81,7 @@ final class FileBrowserViewModel {
     /// ディレクトリを開く
     func openDirectory(_ url: URL) {
         currentDirectory = url
-        fileItems = FileItem.items(in: url)
+        fileItems = loadItems(in: url)
         selectedIndex = 0
         playingIndex = -1
     }
@@ -73,7 +91,7 @@ final class FileBrowserViewModel {
         guard item.isDirectory else { return }
         let previousDirectory = currentDirectory
         currentDirectory = item.url
-        fileItems = FileItem.items(in: item.url)
+        fileItems = loadItems(in: item.url)
         // 親へ戻った場合は、直前にいたフォルダを選択状態にする
         if let previous = previousDirectory,
            let index = fileItems.firstIndex(where: {
@@ -84,6 +102,41 @@ final class FileBrowserViewModel {
             selectedIndex = 0
         }
         playingIndex = -1
+    }
+
+    /// 並び替え基準を設定する
+    ///
+    /// 同じ基準を再度指定した場合は昇順・降順を反転する。
+    func setSortOrder(_ order: FileSortOrder) {
+        if sortOrder == order {
+            sortAscending.toggle()
+        } else {
+            sortOrder = order
+            sortAscending = true
+        }
+        applySort()
+    }
+
+    /// 現在の並び替え設定で一覧を並べ替える（選択・再生位置は同じファイルを指し続ける）
+    func applySort() {
+        let selectedURL = (selectedIndex >= 0 && selectedIndex < fileItems.count)
+            ? fileItems[selectedIndex].url
+            : nil
+        let currentPlayingURL = playingURL
+
+        fileItems = FileItem.sorted(fileItems, sortOrder: sortOrder, ascending: sortAscending)
+
+        selectedIndex = selectedURL.flatMap { url in
+            fileItems.firstIndex { $0.url == url }
+        } ?? -1
+        playingIndex = currentPlayingURL.flatMap { url in
+            playableFiles.firstIndex { $0.url == url }
+        } ?? -1
+    }
+
+    /// 現在の並び替え設定でディレクトリを読み込む
+    private func loadItems(in url: URL) -> [FileItem] {
+        FileItem.items(in: url, sortOrder: sortOrder, ascending: sortAscending)
     }
 
     /// ファイル選択

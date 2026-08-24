@@ -1,5 +1,13 @@
 import Foundation
 
+/// ファイルセレクターの並び替え基準
+enum FileSortOrder: String, CaseIterable {
+    /// ファイル名順
+    case file  = "File"
+    /// MDX 内部タイトル順
+    case title = "Title"
+}
+
 struct FileItem: Identifiable, Hashable {
     let id = UUID()
     let url: URL
@@ -14,7 +22,9 @@ struct FileItem: Identifiable, Hashable {
         return name
     }
 
-    static func items(in directory: URL) -> [FileItem] {
+    static func items(in directory: URL,
+                      sortOrder: FileSortOrder = .file,
+                      ascending: Bool = true) -> [FileItem] {
         let fm = FileManager.default
         guard let contents = try? fm.contentsOfDirectory(
             at: directory,
@@ -47,7 +57,40 @@ struct FileItem: Identifiable, Hashable {
            parent != directory {
             result.append(FileItem(url: parent, name: "..", isDirectory: true))
         }
-        return result + dirs + files
+        return result + dirs + sortedFiles(files, sortOrder: sortOrder, ascending: ascending)
+    }
+
+    /// 既存の一覧を並び替える（`..`・ディレクトリの位置は変えず、ファイルのみ並び替え）
+    ///
+    /// 読み込み済みの MDX タイトルを保持したまま並び替えるため、ディレクトリの再読み込みは行わない。
+    static func sorted(_ items: [FileItem],
+                       sortOrder: FileSortOrder,
+                       ascending: Bool) -> [FileItem] {
+        let head = items.filter { $0.isDirectory }
+        let files = items.filter { !$0.isDirectory }
+        return head + sortedFiles(files, sortOrder: sortOrder, ascending: ascending)
+    }
+
+    /// ファイル項目のみを並び替える
+    ///
+    /// Title 順ではタイトル未取得のファイルを常に末尾へ回し、その中はファイル名順とする。
+    private static func sortedFiles(_ files: [FileItem],
+                                    sortOrder: FileSortOrder,
+                                    ascending: Bool) -> [FileItem] {
+        func compare(_ lhs: String, _ rhs: String) -> Bool {
+            let result = lhs.localizedStandardCompare(rhs)
+            return ascending ? result == .orderedAscending : result == .orderedDescending
+        }
+
+        switch sortOrder {
+        case .file:
+            return files.sorted { compare($0.name, $1.name) }
+        case .title:
+            let titled = files.filter { !($0.title ?? "").isEmpty }
+            let untitled = files.filter { ($0.title ?? "").isEmpty }
+            return titled.sorted { compare($0.title ?? "", $1.title ?? "") }
+                + untitled.sorted { compare($0.name, $1.name) }
+        }
     }
 
 

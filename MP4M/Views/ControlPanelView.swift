@@ -51,6 +51,24 @@ struct ControlPanelView: View {
             }
             .padding(.horizontal, 8)
             Divider().background(Color.mp4mBorder)
+            HStack(spacing: 6) {
+                ForEach(FileSortOrder.allCases, id: \.self) { order in
+                    let isSelected = browserVM?.sortOrder == order
+                    Button { browserVM?.setSortOrder(order) } label: {
+                        Text(sortLabel(for: order, isSelected: isSelected))
+                            .font(.mp4mTiny)
+                            .foregroundColor(isSelected ? Color.mp4mBright : Color.mp4mText.opacity(0.5))
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 3)
+                            .background(isSelected ? Color.mp4mSelected : Color.clear)
+                    }
+                    .buttonStyle(.plain)
+                    .focusable(false)
+                    .help(isSelected ? "もう一度押すと昇順・降順が切り替わります" : "")
+                }
+            }
+            .padding(.horizontal, 8)
+            Divider().background(Color.mp4mBorder)
             Spacer()
             Text(adjustedPdxFileName)
                 .font(.mp4mSmall)
@@ -61,6 +79,12 @@ struct ControlPanelView: View {
                 .padding(.horizontal, 12)
         }
         .background(Color.mp4mBackground.opacity(0.95))
+    }
+
+    /// 並び替えボタンのラベル（選択中のみ昇順・降順の矢印を付ける）
+    private func sortLabel(for order: FileSortOrder, isSelected: Bool) -> String {
+        guard isSelected else { return order.rawValue }
+        return "\(order.rawValue) \(browserVM?.sortAscending == false ? "▼" : "▲")"
     }
 
     /// ファイルが選択されているかどうかを判定

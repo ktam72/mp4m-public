@@ -7,4 +7,6 @@ enum UserDefaultsKey {
     static let mutedChannels = "mp4m_mutedChannels"
     static let currentDirectory = "mp4m_currentDirectory"
     static let opmEngine = "mp4m_opmEngine"
+    static let fileSortOrder = "mp4m_fileSortOrder"
+    static let fileSortAscending = "mp4m_fileSortAscending"
 }
