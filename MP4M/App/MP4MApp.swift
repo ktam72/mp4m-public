@@ -60,6 +60,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         print("[AppDelegate] applicationDidBecomeActive - END")
     }
 
+    /// ウィンドウを閉じたらアプリを終了する（macOS 既定の「閉じても常駐」を無効化）
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        true
+    }
+
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         print("[AppDelegate] applicationShouldHandleReopen - hasVisibleWindows: \(flag)")
         if !flag {

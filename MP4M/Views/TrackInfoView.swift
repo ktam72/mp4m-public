@@ -49,10 +49,13 @@ struct TrackInfoView: View {
                 .padding(.horizontal, 8)
 
             Divider().background(Color.mp4mBorder)
-            HStack(spacing: 4) {
-                Text(elapsedStr).font(.mp4mMono).foregroundColor(Color.mp4mAmber)
-                Text("/").font(.mp4mMono).foregroundColor(Color.mp4mText.opacity(0.5))
-                Text(totalStr).font(.mp4mMono).foregroundColor(Color.mp4mText.opacity(0.7))
+            VStack(spacing: 3) {
+                HStack(spacing: 4) {
+                    Text(elapsedStr).font(.mp4mMono).foregroundColor(Color.mp4mAmber)
+                    Text("/").font(.mp4mMono).foregroundColor(Color.mp4mText.opacity(0.5))
+                    Text(totalStr).font(.mp4mMono).foregroundColor(Color.mp4mText.opacity(0.7))
+                }
+                SeekBarView(viewModel: viewModel)
             }
             .frame(width: 160)
             .padding(.horizontal, 8)
@@ -63,5 +66,66 @@ struct TrackInfoView: View {
     private func formatTime(_ ms: Int) -> String {
         let seconds = ms / 1000
         return String(format: "%02d:%02d", seconds / 60, seconds % 60)
+    }
+}
+
+/// 経過時間のシークバー
+///
+/// クリックでその位置へ、ドラッグ中はつまみが追従し離した時点でシークする。
+private struct SeekBarView: View {
+    let viewModel: PlayerViewModel?
+
+    /// ドラッグ中の位置（0.0〜1.0）。ドラッグしていないときは nil
+    @State private var dragProgress: Double?
+
+    private static let barHeight: CGFloat = 6
+
+    private var isEnabled: Bool {
+        guard let vm = viewModel else { return false }
+        return vm.totalTimeMs > 0 && vm.status != .stopped
+    }
+
+    private var progress: Double {
+        if let dragProgress { return dragProgress }
+        guard let vm = viewModel, vm.totalTimeMs > 0 else { return 0 }
+        return min(max(Double(vm.currentTimeMs) / Double(vm.totalTimeMs), 0), 1)
+    }
+
+    var body: some View {
+        GeometryReader { geo in
+            let width = geo.size.width
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(Color.mp4mDim.opacity(0.25))
+                Capsule()
+                    .fill(isEnabled ? Color.mp4mAmber : Color.mp4mDim.opacity(0.4))
+                    .frame(width: width * progress)
+                    .opacity(viewModel?.isSeeking == true ? 0.5 : 1.0)
+            }
+            .frame(height: Self.barHeight)
+            .contentShape(Rectangle())
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { value in
+                        guard isEnabled else { return }
+                        dragProgress = min(max(value.location.x / width, 0), 1)
+                    }
+                    .onEnded { value in
+                        guard isEnabled, let vm = viewModel else { return }
+                        let ratio = min(max(value.location.x / width, 0), 1)
+                        dragProgress = nil
+                        Task { await vm.seek(toMs: Int(Double(vm.totalTimeMs) * ratio)) }
+                    }
+            )
+            .onHover { isHovered in
+                guard isEnabled else { return }
+                if isHovered {
+                    NSCursor.pointingHand.push()
+                } else {
+                    NSCursor.pop()
+                }
+            }
+        }
+        .frame(height: Self.barHeight)
     }
 }

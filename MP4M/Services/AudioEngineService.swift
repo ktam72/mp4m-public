@@ -21,6 +21,10 @@ protocol AudioEngineService: AnyObject {
     /// - Returns: PDX ファイル名、未設定時は nil
     func pdxFileName() -> String?
 
+    /// MDX が要求した PDX が見つからなかったか
+    /// - Returns: 見つからない場合 true（PDX 指定自体がない場合は false）
+    func isPDXMissing() -> Bool
+
     /// PDX ロード失敗時のエラー
     /// - Returns: エラーがあれば MP4MError、なければ nil
     func pdxLoadError() -> MP4MError?
@@ -29,6 +33,12 @@ protocol AudioEngineService: AnyObject {
     /// - Parameter loopCount: ループ回数
     /// - Returns: 総再生時間 (ミリ秒、0 は未設定)
     func playWithLoopCount(_ loopCount: Int32) -> Int
+
+    /// 指定位置へシークする（呼び出しスレッドをブロックするためメインスレッド以外から呼ぶこと）
+    /// - Parameters:
+    ///   - ms: シーク先（ミリ秒）
+    ///   - loopCount: ループ回数
+    func seek(toMs ms: Int, loopCount: Int32)
 
     /// 停止
     func stop()

@@ -53,6 +53,10 @@ final class MXDRVAudioEngine: AudioEngineService {
         MXDRVGBridge.pdxFileName()
     }
 
+    func isPDXMissing() -> Bool {
+        MXDRVGBridge.isPDXMissing()
+    }
+
     func pdxLoadError() -> MP4MError? {
         guard let errorStr = MXDRVGBridge.pdxLoadError() else { return nil }
         return .pdxLoadFailed(errorStr)
@@ -66,6 +70,13 @@ final class MXDRVAudioEngine: AudioEngineService {
     func stop() {
         MXDRVGBridge.stop()
         engine.stop()
+    }
+
+    func seek(toMs ms: Int, loopCount: Int32) {
+        // シーク中はオーディオコールバックが trylock に失敗して無音になる
+        os_unfair_lock_lock(&engineLock)
+        defer { os_unfair_lock_unlock(&engineLock) }
+        MXDRVGBridge.seek(toMs: Int32(ms), loopCount: loopCount)
     }
 
     func pause() {
@@ -85,7 +96,10 @@ final class MXDRVAudioEngine: AudioEngineService {
     }
 
     func getChannelStates() -> [ChannelDisplayState] {
-        os_unfair_lock_lock(&engineLock)
+        // シーク中はロックが長時間保持されるため、待たずに空状態を返す
+        guard os_unfair_lock_trylock(&engineLock) else {
+            return [ChannelDisplayState](repeating: ChannelDisplayState(), count: AudioConstants.channelCount)
+        }
         defer { os_unfair_lock_unlock(&engineLock) }
 
         var raw = [MP4MChannelState](repeating: MP4MChannelState(), count: AudioConstants.channelCount)

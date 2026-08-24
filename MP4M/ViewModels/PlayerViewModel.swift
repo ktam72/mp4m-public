@@ -13,7 +13,11 @@ final class PlayerViewModel {
     var status: PlayStatus = .stopped
     var title: String = ""
     var pdxFileName: String = ""
+    /// MDX が要求した PDX が見つからなかったか（PDX 指定自体がない場合は false）
+    var pdxMissing: Bool = false
     var currentTimeMs: Int = 0
+    /// シーク処理中（バーの操作を抑止し、UI で状態を示すために使用）
+    var isSeeking: Bool = false
     var totalTimeMs: Int = 0
     var loopCount: Int = 2 {
         didSet { UserDefaults.standard.set(loopCount, forKey: UserDefaultsKey.loopCount) }
@@ -108,6 +112,7 @@ final class PlayerViewModel {
 
             title = loadedTitle ?? url.deletingPathExtension().lastPathComponent
             pdxFileName = audioService.pdxFileName() ?? "No PDX"
+            pdxMissing = audioService.isPDXMissing()
 
             if let pdxError = audioService.pdxLoadError() {
                 Log.debug("[PlayerVM.load] PDX load error: \(pdxError.errorDescription ?? "unknown")")
@@ -121,6 +126,7 @@ final class PlayerViewModel {
             currentError = error
             title = url.deletingPathExtension().lastPathComponent
             pdxFileName = "No PDX"
+            pdxMissing = false
             currentTimeMs = 0
             totalTimeMs = 0
             Log.debug("[PlayerVM.load] MP4MError: \(error.errorDescription ?? "unknown")")
@@ -128,6 +134,7 @@ final class PlayerViewModel {
             currentError = MP4MError.mdxLoadFailed(error.localizedDescription)
             title = url.deletingPathExtension().lastPathComponent
             pdxFileName = "No PDX"
+            pdxMissing = false
             currentTimeMs = 0
             totalTimeMs = 0
             Log.debug("[PlayerVM.load] Error: \(error.localizedDescription)")
@@ -167,6 +174,38 @@ final class PlayerViewModel {
 
         startPlayback()
         Log.debug("[PlayerVM.playAsync] playback started, status=\(status)")
+    }
+
+    /// 指定位置へシークする
+    ///
+    /// エンジンは「先頭から無音で早送り」してシークするため時間がかかる。
+    /// メインスレッドを止めないようバックグラウンドで実行する。
+    func seek(toMs ms: Int) async {
+        guard status != .stopped, totalTimeMs > 0, !isSeeking else { return }
+
+        let target = min(max(0, ms), totalTimeMs)
+        let wasPaused = (status == .paused)
+        // エンジン内部でロックしているため、バックグラウンド実行のために安全に受け渡す
+        let service = UncheckedSendableBox(audioService)
+        let loops = Int32(loopCount)
+
+        isSeeking = true
+        currentTimeMs = target
+
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            DispatchQueue.global(qos: .userInitiated).async {
+                service.value.seek(toMs: target, loopCount: loops)
+                continuation.resume()
+            }
+        }
+
+        isSeeking = false
+        currentTimeMs = audioService.currentPlayTimeMs()
+
+        // 一時停止中にシークした場合は、位置だけ移動して停止状態を保つ
+        if wasPaused {
+            audioService.pause()
+        }
     }
 
     /// 一時停止
@@ -367,4 +406,13 @@ extension PlayerViewModel: TrackTransitionManagerDelegate {
     func setAudioVolume(_ volume: Float) {
         audioService.setVolume(volume)
     }
+}
+
+/// 別スレッドへ安全に受け渡すためのラッパー
+///
+/// `AudioEngineService` の実装（`MXDRVAudioEngine`）は内部でロックにより
+/// スレッド安全性を確保しているため、明示的に Sendable として扱う。
+private struct UncheckedSendableBox<T>: @unchecked Sendable {
+    let value: T
+    init(_ value: T) { self.value = value }
 }

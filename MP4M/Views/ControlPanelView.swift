@@ -94,6 +94,9 @@ struct ControlPanelView: View {
     }
 
     /// PDXファイル名の調整：拡張子がない場合は .pdx を補完（"No PDX" はブリッジ側で正規化済み）
+    ///
+    /// MDX が PDX を要求しているのに見つからない場合は「<ファイル名> 不明」と表示し、
+    /// PDX 指定自体がない場合の "No PDX" と区別する。
     private var adjustedPdxFileName: String {
         guard let raw = viewModel?.pdxFileName, !raw.isEmpty else {
             return "No PDX"
@@ -102,11 +105,8 @@ struct ControlPanelView: View {
         if raw == "No PDX" {
             return "No PDX"
         }
-        if raw.lowercased().hasSuffix(".pdx") {
-            return raw
-        } else {
-            return raw + ".pdx"
-        }
+        let name = raw.lowercased().hasSuffix(".pdx") ? raw : raw + ".pdx"
+        return viewModel?.pdxMissing == true ? "\(name) 不明" : name
     }
 
     private var playPauseLabel: String {

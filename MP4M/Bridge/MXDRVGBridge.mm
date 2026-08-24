@@ -94,6 +94,10 @@ static void resetMXDRVGEngine(int sampleRate) {
     return name;
 }
 
++ (BOOL)isPDXMissing {
+    return g_state.pdxMissing != 0;
+}
+
 + (nullable NSString *)pdxLoadError {
     if (g_state->pdxLoadError[0] == '\0') return nil;
     return [NSString stringWithUTF8String:g_state->pdxLoadError];
@@ -104,6 +108,7 @@ static void resetMXDRVGEngine(int sampleRate) {
     g_state.lastLoadedMDXPath = [mdxPath copy];
 
     // 最初に "No PDX" を設定（PDX未指定や読み込み失敗時に使用）
+    g_state.pdxMissing = 0;
     strncpy(g_state->lastPDXFileName, "No PDX", sizeof(g_state->lastPDXFileName) - 1);
     g_state->lastPDXFileName[sizeof(g_state->lastPDXFileName) - 1] = '\0';
     #ifdef DEBUG
@@ -220,17 +225,19 @@ static void resetMXDRVGEngine(int sampleRate) {
                                 #ifdef DEBUG
                                 fprintf(stderr, "[PDX] Failed to load PDX file\n");
                                 #endif
-                                // 失敗："No PDX" を設定
-                                strncpy(g_state->lastPDXFileName, "No PDX", sizeof(g_state->lastPDXFileName) - 1);
+                                // 失敗：要求された PDX 名を保持し「不明」として扱う
+                                strncpy(g_state->lastPDXFileName, [pdxFileName UTF8String], sizeof(g_state->lastPDXFileName) - 1);
                                 g_state->lastPDXFileName[sizeof(g_state->lastPDXFileName) - 1] = '\0';
+                                g_state.pdxMissing = 1;
                             }
                         } else {
                             #ifdef DEBUG
                             fprintf(stderr, "[PDX] PDX file not found (case-insensitive search)\n");
                             #endif
-                            // 失敗："No PDX" を設定
-                            strncpy(g_state->lastPDXFileName, "No PDX", sizeof(g_state->lastPDXFileName) - 1);
+                            // 失敗：要求された PDX 名を保持し「不明」として扱う
+                            strncpy(g_state->lastPDXFileName, [pdxFileName UTF8String], sizeof(g_state->lastPDXFileName) - 1);
                             g_state->lastPDXFileName[sizeof(g_state->lastPDXFileName) - 1] = '\0';
+                            g_state.pdxMissing = 1;
                         }
                     }
                 } else {
@@ -417,6 +424,20 @@ static void resetMXDRVGEngine(int sampleRate) {
 
 + (void)stop {
     MXDRVG_Stop();
+}
+
++ (void)seekToMs:(int)ms loopCount:(int)loopCount {
+    if (ms < 0) ms = 0;
+    // MXDRVG_PlayAt は先頭から演奏し直して指定位置まで無音で早送りする
+    // （前方・後方どちらのシークでも同じ経路）
+    try {
+        MXDRVG_PlayAt((ULONG)ms, loopCount, 1);
+    } catch (...) {
+        #ifdef DEBUG
+        fprintf(stderr, "[MXDRVGBridge] EXCEPTION in seekToMs! Stopping playback.\n");
+        #endif
+        MXDRVG_Stop();
+    }
 }
 
 + (void)pause {

@@ -30,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong, nullable) NSData *pdxData;
 @property (nonatomic) int totalPlayTimeMs;
 @property (nonatomic) int hasPDX;                               // BOOL 的に 0/1
+@property (nonatomic) int pdxMissing;                           // MDX が要求した PDX が見つからない場合に 1
 @property (nonatomic, copy, nullable) NSString *lastLoadedMDXPath;
 
 // MARK: - ymfm デバッグ用

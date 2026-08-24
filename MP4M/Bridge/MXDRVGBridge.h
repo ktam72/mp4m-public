@@ -24,6 +24,14 @@ NS_ASSUME_NONNULL_BEGIN
 + (int)getPCM:(int16_t *)buf frameCount:(int)frameCount;
 + (void)getChannelStates:(MP4MChannelState *)states;
 + (nullable NSString *)pdxFileName;
+
+/// MDX が要求した PDX が見つからなかったか
++ (BOOL)isPDXMissing;
+
+/// 指定位置へシークする（先頭から高速演奏して到達させる）
+/// @param ms シーク先（ミリ秒）
+/// @param loopCount ループ回数
++ (void)seekToMs:(int)ms loopCount:(int)loopCount;
 + (nullable NSString *)pdxLoadError;
 + (void)setChannelMute:(int)ch isMuted:(BOOL)isMuted;
 

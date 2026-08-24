@@ -51,6 +51,9 @@ struct FileSelectorView: View {
                             )
                             .onTapGesture(count: 2) { doubleTap(item: item) }
                             .onTapGesture(count: 1) { browserVM.selectItem(at: idx) }
+                            .contextMenu {
+                                Button("Copy Path") { copyPath(of: item) }
+                            }
                         }
                     }
                 }
@@ -107,6 +110,12 @@ struct FileSelectorView: View {
                 playerVM.play()
             }
         }
+    }
+
+    /// 項目のフルパスをクリップボードにコピーする
+    private func copyPath(of item: FileItem) {
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(item.url.path, forType: .string)
     }
 
     private func openFolder() {
