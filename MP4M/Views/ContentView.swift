@@ -3,7 +3,7 @@ import Foundation
 
 struct ContentView: View {
     @State private var playerVM: PlayerViewModel?
-    @State private var browserVM = FileBrowserViewModel()
+    @State private var browserVM = AppServices.shared.browserVM
     @State private var showAbout = false
     @State private var ipcFileURL: URL?
     @State private var isAppActivated = false
@@ -46,11 +46,9 @@ struct ContentView: View {
                     return
                 }
 
-                // 二重生成するとオーディオエンジンが増えて再生速度が倍になるため一度だけ生成する
-                if playerVM == nil {
-                    playerVM = PlayerViewModel(audioService: MXDRVAudioEngine())
-                }
-                playerVM?.browserVM = browserVM
+                // アプリで共有するインスタンスを使う（二重生成による再生速度の倍増と、
+                // ウィンドウ再構成でエンジンが破棄されるのを防ぐ）
+                playerVM = AppServices.shared.playerVM
                 MP4MApp.setupFileOpenObserver()
                 print("[ContentView] PlayerViewModel initialized")
 
@@ -92,9 +90,6 @@ struct ContentView: View {
             .onReceive(NotificationCenter.default.publisher(for: .appDidActivate)) { _ in
                 print("[ContentView] Received appDidActivate notification")
                 isAppActivated = true
-            }
-            .onDisappear {
-                playerVM?.cleanup()
             }
             .onDrop(of: [.fileURL], isTargeted: nil) { providers in
                 handleDrop(providers: providers)

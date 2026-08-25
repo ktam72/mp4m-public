@@ -20,6 +20,7 @@
 		35C663C8450CEDC02DAB2ADF /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD2D830E551A0A68363D7408 /* KeyboardView.swift */; };
 		36C145B8B7F22E2A03D44314 /* s2utbl.dat in Resources */ = {isa = PBXBuildFile; fileRef = AD7B216277CE5CC41AC4E376 /* s2utbl.dat */; };
 		4062176C3DBF7418D3FB034D /* MonaspaceNeon-Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = BBC438AB95BD9E9D8C2F95C8 /* MonaspaceNeon-Regular.otf */; };
+		4EE8F956DCBDE32B131136B4 /* AppServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = A16D2A6DAE67BE110FF77854 /* AppServices.swift */; };
 		514F9E10FF31952B11F23AA4 /* ControlPanelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA6AAFEF1CB99F63AF258B1 /* ControlPanelView.swift */; };
 		52B6F2390E4C2DF583B5D9EE /* MXDRVGChannelManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = EF8DFC0DFF9D1686F0A36109 /* MXDRVGChannelManager.mm */; };
 		54A8B99D88D8C55099A692C5 /* FileBrowserViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 47C6718DA9D41E3C6D06D1AB /* FileBrowserViewModel.swift */; };
@@ -105,6 +106,7 @@
 		9CEC9B579D9D7E5B54FA0647 /* MP4MError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MP4MError.swift; sourceTree = "<group>"; };
 		9F68B6FBB4BE310609A92B99 /* FileSelectionStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileSelectionStrategy.swift; sourceTree = "<group>"; };
 		9FFB1D84A531BA7DF60C374B /* FileItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileItem.swift; sourceTree = "<group>"; };
+		A16D2A6DAE67BE110FF77854 /* AppServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppServices.swift; sourceTree = "<group>"; };
 		A4BB2DEFFEC9418C248E0CE7 /* MDXFileLoader.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = MDXFileLoader.mm; sourceTree = "<group>"; };
 		A666DDB8DE4E697DC4E31A51 /* MP4MApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MP4MApp.swift; sourceTree = "<group>"; };
 		ACE017786724523C47487EFD /* lzx.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = lzx.cpp; sourceTree = "<group>"; };
@@ -362,6 +364,7 @@
 		E7A708E47EBA4ED5DA7A4B88 /* App */ = {
 			isa = PBXGroup;
 			children = (
+				A16D2A6DAE67BE110FF77854 /* AppServices.swift */,
 				A666DDB8DE4E697DC4E31A51 /* MP4MApp.swift */,
 			);
 			path = App;
@@ -504,6 +507,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E4F8B65B41CB526734585495 /* AboutView.swift in Sources */,
+				4EE8F956DCBDE32B131136B4 /* AppServices.swift in Sources */,
 				C4A4E85B7F50F50DB19BEABC /* AudioConstants.swift in Sources */,
 				D2C3FEEEE7D7E59DF055D23F /* AudioEngineService.swift in Sources */,
 				6827F906B4BA17536F13BC06 /* AudioModels.swift in Sources */,

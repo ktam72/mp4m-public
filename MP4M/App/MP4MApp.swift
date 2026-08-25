@@ -126,6 +126,13 @@ struct MP4MApp: App {
             true
         }
 
+        func applicationWillTerminate(_ notification: Notification) {
+            // View のライフサイクルではなくアプリ終了時にオーディオを解放する
+            MainActor.assumeIsolated {
+                AppServices.shared.cleanup()
+            }
+        }
+
         func application(_ sender: NSApplication, openFile path: String) -> Bool {
             Log.debug("[AppDelegate] application:openFile: \(path)")
             MP4MApp.requestOpen(path: path)

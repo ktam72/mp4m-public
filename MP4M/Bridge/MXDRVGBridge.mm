@@ -22,6 +22,9 @@ MXDRVGState *g_state = nil;
 // 結果はシーケンサ駆動でエンジン非依存のため、同一曲・同一ループ回数なら再計測不要。
 static NSMutableDictionary<NSString *, NSNumber *> *g_playTimeCache = nil;
 
+/// MXDRVG_Start 済みか（未開始のまま再生するとエンジン未生成でクラッシュするため）
+static BOOL g_engineStarted = NO;
+
 // MXDRVG エンジンをリセット（初期化・開始）
 static void resetMXDRVGEngine(int sampleRate) {
     // UserDefaults からエンジン種別を復元（初回起動時はデフォルト=ymfm）
@@ -72,12 +75,15 @@ static void resetMXDRVGEngine(int sampleRate) {
                 g_state.ymfmDebugHighResInterval);
     }
 
+    g_engineStarted = YES;
+
     #ifdef DEBUG
     fprintf(stderr, "[MXDRVGBridge] MXDRVG_Start done\n");
     #endif
 }
 
 + (void)end {
+    g_engineStarted = NO;
     MXDRVG_End();
     g_state.mdxData = nil;
     g_state.pdxData = nil;
@@ -349,6 +355,10 @@ static void resetMXDRVGEngine(int sampleRate) {
 }
 
 + (void)playWithLoopCount:(int)loopCount {
+    if (!g_engineStarted) {
+        fprintf(stderr, "[MXDRVGBridge] playWithLoopCount called before start; ignoring\n");
+        return;
+    }
     if (!g_state.mdxData) return;
 
     // PDX ロード失敗時は再生を実行しない
@@ -427,6 +437,7 @@ static void resetMXDRVGEngine(int sampleRate) {
 }
 
 + (void)seekToMs:(int)ms loopCount:(int)loopCount {
+    if (!g_engineStarted) return;
     if (ms < 0) ms = 0;
     // MXDRVG_PlayAt は先頭から演奏し直して指定位置まで無音で早送りする
     // （前方・後方どちらのシークでも同じ経路）
@@ -463,6 +474,11 @@ static void resetMXDRVGEngine(int sampleRate) {
 
 + (int)getPCM:(int16_t *)buf frameCount:(int)frameCount {
     if (frameCount > 1024) frameCount = 1024;
+
+    if (!g_engineStarted) {
+        memset(buf, 0, frameCount * 2 * sizeof(int16_t));
+        return frameCount;
+    }
 
     // PDX ロード失敗時はサイレンスを返す（ステレオ: 1フレーム = int16_t × 2）
     if (g_state->pdxLoadError[0] != '\0') {
