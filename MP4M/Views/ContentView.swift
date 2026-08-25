@@ -49,8 +49,12 @@ struct ContentView: View {
                 activateWindow()
 
                 // アプリがアクティベートされた後に再生を開始
+                // 以降の openFile 要求は通知で受け取れる
+                MP4MApp.isUIReady = true
+
                 if let fileURL = browserVM.launchFileURL {
                     Log.debug("[Launch] launchFileURL detected: \(fileURL.path)")
+                    MP4MApp.pendingPath = nil
                     let resolvedURL = fileURL.resolvingSymlinksInPath()
                     if let index = browserVM.playableFiles.firstIndex(where: { $0.url.resolvingSymlinksInPath().path == resolvedURL.path }) {
                         browserVM.playingIndex = index
@@ -58,6 +62,7 @@ struct ContentView: View {
                     } else {
                         Log.debug("[Launch] file not found in playableFiles, skipping index")
                     }
+                    selectRow(for: fileURL)
                     Task {
                         Log.debug("[Launch] Starting load+playAsync for URL: \(fileURL.path)")
                         await playerVM?.load(url: fileURL)
@@ -65,6 +70,11 @@ struct ContentView: View {
                         await playerVM?.playAsync()
                         Log.debug("[Launch] playAsync returned")
                     }
+                } else if let pendingPath = MP4MApp.pendingPath {
+                    // FileBrowserViewModel の生成後に Finder から openFile が届いたケース
+                    Log.debug("[Launch] pendingPath detected after browser init: \(pendingPath)")
+                    MP4MApp.pendingPath = nil
+                    handleIncomingFile(path: pendingPath)
                 } else {
                     print("[ContentView] No launchFileURL, skipping auto-play")
                 }
@@ -110,14 +120,14 @@ struct ContentView: View {
     }
 
     private func handleDrop(providers: [NSItemProvider]) -> Bool {
-        guard let provider = providers.first, let playerVM else { return false }
+        guard let provider = providers.first else { return false }
         provider.loadItem(forTypeIdentifier: "public.file-url", options: nil) { item, _ in
             guard let data = item as? Data,
                   let url = URL(dataRepresentation: data, relativeTo: nil),
                   url.pathExtension.lowercased() == "mdx" else { return }
             Task { @MainActor in
-                await playerVM.load(url: url)
-                playerVM.play()
+                // Finder からの起動と同じ経路に寄せ、ファイルセレクターも移動させる
+                handleIncomingFile(path: url.path)
             }
         }
         return true
@@ -146,6 +156,7 @@ struct ContentView: View {
         if let index = browserVM.playableFiles.firstIndex(where: { $0.url.resolvingSymlinksInPath().path == resolvedURL.path }) {
             browserVM.playingIndex = index
         }
+        selectRow(for: url)
 
         NSApp.activate(ignoringOtherApps: true)
 
@@ -159,6 +170,16 @@ struct ContentView: View {
                 Log.debug("[IPC] load completed, now calling playAsync")
             await playerVM.playAsync()
                 Log.debug("[IPC] playAsync returned")
+        }
+    }
+
+    /// ファイルセレクターの選択行を指定 URL に合わせる
+    private func selectRow(for url: URL) {
+        let resolved = url.resolvingSymlinksInPath().path
+        if let index = browserVM.fileItems.firstIndex(where: {
+            $0.url.resolvingSymlinksInPath().path == resolved
+        }) {
+            browserVM.selectedIndex = index
         }
     }
 

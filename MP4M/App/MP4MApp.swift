@@ -83,6 +83,12 @@ struct MP4MApp: App {
     /// コマンドライン引数で渡されたパス（FileBrowserViewModel が init で参照する）
     static var pendingPath: String?
 
+    /// ContentView が表示され、ファイル開封通知を受け取れる状態か
+    ///
+    /// Finder のダブルクリックでは `application:openFile:` が起動シーケンスのどこで
+    /// 呼ばれるか一定しないため、UI 準備前は pendingPath に積み、準備後は通知で渡す。
+    static var isUIReady = false
+
     init() {
         setbuf(stdout, nil)
         Self.pendingPath = Self.parseCLIArg()
@@ -109,12 +115,33 @@ struct MP4MApp: App {
             Log.debug("[AppDelegate] applicationWillFinishLaunching pendingPath=\(MP4MApp.pendingPath ?? "nil")")
         }
 
+        /// ウィンドウを閉じたらアプリを終了する（macOS 既定の「閉じても常駐」を無効化）
+        func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+            true
+        }
+
         func application(_ sender: NSApplication, openFile path: String) -> Bool {
             Log.debug("[AppDelegate] application:openFile: \(path)")
-            if MP4MApp.pendingPath == nil {
-                MP4MApp.pendingPath = path
-            }
+            MP4MApp.requestOpen(path: path)
             return true
+        }
+
+        func application(_ application: NSApplication, open urls: [URL]) {
+            Log.debug("[AppDelegate] application:open urls: \(urls.map(\.path))")
+            for url in urls where url.isFileURL {
+                MP4MApp.requestOpen(path: url.path)
+            }
+        }
+    }
+
+    /// ファイル開封要求を UI へ渡す
+    ///
+    /// UI 準備前は pendingPath に積み、ContentView の onAppear で拾わせる。
+    static func requestOpen(path: String) {
+        if isUIReady {
+            NotificationCenter.default.post(name: .mp4mOpenFile, object: path)
+        } else if pendingPath == nil {
+            pendingPath = path
         }
     }
 
