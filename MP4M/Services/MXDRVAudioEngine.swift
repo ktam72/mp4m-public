@@ -62,8 +62,17 @@ final class MXDRVAudioEngine: AudioEngineService {
         return .pdxLoadFailed(errorStr)
     }
 
-    func playWithLoopCount(_ loopCount: Int32) -> Int {
-        MXDRVGBridge.play(withLoopCount: loopCount)
+    func playWithLoopCount(_ loopCount: Int32) throws -> Int {
+        // 計測中はオーディオコールバックが trylock に失敗して無音になる
+        os_unfair_lock_lock(&engineLock)
+        let started = MXDRVGBridge.play(withLoopCount: loopCount)
+        os_unfair_lock_unlock(&engineLock)
+
+        guard started else {
+            throw MP4MError.mdxLoadFailed(
+                "この MDX は再生できません。データが壊れている可能性があります（再生時間を計測できませんでした）。"
+            )
+        }
         return Int(MXDRVGBridge.totalPlayTimeMs())
     }
 

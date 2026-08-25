@@ -32,7 +32,8 @@ protocol AudioEngineService: AnyObject {
     /// 再生開始 (ループ回数指定)
     /// - Parameter loopCount: ループ回数
     /// - Returns: 総再生時間 (ミリ秒、0 は未設定)
-    func playWithLoopCount(_ loopCount: Int32) -> Int
+    /// - Throws: MDX が壊れていて再生時間を計測できない場合に MP4MError
+    func playWithLoopCount(_ loopCount: Int32) throws -> Int
 
     /// 指定位置へシークする（呼び出しスレッドをブロックするためメインスレッド以外から呼ぶこと）
     /// - Parameters:

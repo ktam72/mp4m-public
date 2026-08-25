@@ -14,6 +14,9 @@
 
 extern "C" void OPM_GetChannelStates(MP4MChannelState* states, int max_channels);
 
+/// 再生時間計測が時間制限で打ち切られたか（壊れた MDX の検出に使う）
+extern "C" int MXDRVG_GetMeasureAborted(void);
+
 // グローバル状態（MXDRVGState に集約、MXDRVGChannelManager からも参照）
 MXDRVGState *g_state = nil;
 
@@ -35,7 +38,9 @@ static void resetMXDRVGEngine(int sampleRate) {
         MXDRVG_End();
         MXDRVG_SetOpmEngine((int)engineType);
         MXDRVG_Start(sampleRate, 0, 64 * 1024, 1024 * 1024);
-        MXDRVG_TotalVolume(128);
+        // マスターボリューム（256 = 減衰なし）。従来の 128 は -6dB 相当で音量が小さかった。
+        // レベルメーター／スペアナはチャンネルのボリュームレジスタ値から描画するため表示は変わらない。
+        MXDRVG_TotalVolume(256);
 
         // 【一時停止中】A-2 強制リセット（KNA03.MDX 等で一部パートが発音されなくなる副作用確認のため）
         // 初回音色不良対策として有効だったが、他の曲に悪影響が出るため一旦無効化。
@@ -354,19 +359,19 @@ static void resetMXDRVGEngine(int sampleRate) {
     return title;
 }
 
-+ (void)playWithLoopCount:(int)loopCount {
++ (BOOL)playWithLoopCount:(int)loopCount {
     if (!g_engineStarted) {
         fprintf(stderr, "[MXDRVGBridge] playWithLoopCount called before start; ignoring\n");
-        return;
+        return NO;
     }
-    if (!g_state.mdxData) return;
+    if (!g_state.mdxData) return NO;
 
     // PDX ロード失敗時は再生を実行しない
     if (g_state->pdxLoadError[0] != '\0') {
 #ifdef DEBUG
         fprintf(stderr, "[playWithLoopCount] PDX load error detected, aborting playback\n");
 #endif
-        return;
+        return NO;
     }
 
     // 総再生時間の取得（キャッシュヒット時は計測をスキップ）
@@ -381,6 +386,15 @@ static void resetMXDRVGEngine(int sampleRate) {
     } else {
         // 総再生時間計測（内部状態を曲終端まで進めるため、直後に SetData で再初期化が必要）
         g_state.totalPlayTimeMs = MXDRVG_MeasurePlayTime(loopCount, 0);
+
+        // 壊れた MDX では終端に到達せず、計測が時間制限で打ち切られる
+        if (MXDRVG_GetMeasureAborted()) {
+            fprintf(stderr, "[playWithLoopCount] MeasurePlayTime aborted (broken MDX?)\n");
+            MXDRVG_Stop();
+            g_state.totalPlayTimeMs = 0;
+            return NO;
+        }
+
         if (!g_playTimeCache) g_playTimeCache = [NSMutableDictionary dictionary];
         g_playTimeCache[cacheKey] = @(g_state.totalPlayTimeMs);
 
@@ -430,6 +444,7 @@ static void resetMXDRVGEngine(int sampleRate) {
     }
 
     MXDRVG_PlayAt(0, loopCount, 1);
+    return YES;
 }
 
 + (void)stop {

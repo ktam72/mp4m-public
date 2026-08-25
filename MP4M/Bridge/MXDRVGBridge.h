@@ -14,7 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)end;
 + (nullable NSString *)loadMDXFile:(NSString *)mdxPath;
 + (nullable NSString *)loadMDXData:(NSData *)mdxData pdxData:(nullable NSData *)pdxData;
-+ (void)playWithLoopCount:(int)loopCount;
+/// 再生開始
+/// @return 再生を開始できたら YES。MDX が壊れていて再生時間を計測できない場合は NO
++ (BOOL)playWithLoopCount:(int)loopCount;
 + (void)stop;
 + (void)pause;
 + (void)resume;

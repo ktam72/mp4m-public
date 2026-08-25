@@ -227,6 +227,15 @@ int OPM_GetRegValue(int addr) {
 }
 }
 
+// 再生時間計測が時間制限で打ち切られたか（壊れた MDX で終端に到達しない場合の保護）
+static int g_measure_aborted = 0;
+
+extern "C" {
+int MXDRVG_GetMeasureAborted(void) {
+    return g_measure_aborted;
+}
+}
+
 // PCM8 チャンネルの Mode を取得する C インターフェース
 extern "C" {
 int MXDRVG_GetPCM8ChannelMode(int ch) {
@@ -816,8 +825,14 @@ ULONG MXDRVG_MeasurePlayTime(
 	chmaskback = G.L001e1c;
 	L_PLAY();
 
+	// 壊れた MDX では終端に到達せず無限ループになるため、計測に上限を設ける
+	g_measure_aborted = 0;
 	while ( !TerminatePlay )
 	{
+		if ( G.PLAYTIME >= G.MEASURETIMELIMIT ) {
+			g_measure_aborted = 1;
+			break;
+		}
 		{
 			std::lock_guard<std::mutex> lock(s_engine_mtx);
 			g_engine->Count(1000);
@@ -862,6 +877,8 @@ void MXDRVG_PlayAt(
 	while ( G.PLAYTIME < playat )
 	{
 		if ( TerminatePlay ) break;
+		// 壊れた MDX で早送りが終わらなくなるのを防ぐ
+		if ( G.PLAYTIME >= G.MEASURETIMELIMIT ) break;
 		{
 			std::lock_guard<std::mutex> lock(s_engine_mtx);
 			g_engine->Count(1000);

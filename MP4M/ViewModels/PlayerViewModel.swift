@@ -149,10 +149,28 @@ final class PlayerViewModel {
         if isPaused {
             audioService.resume()
         } else {
-            totalTimeMs = audioService.playWithLoopCount(Int32(loopCount))
+            do {
+                totalTimeMs = try audioService.playWithLoopCount(Int32(loopCount))
+            } catch let error as MP4MError {
+                handlePlaybackStartFailure(error)
+                return
+            } catch {
+                handlePlaybackStartFailure(.mdxLoadFailed(error.localizedDescription))
+                return
+            }
         }
 
         startPlayback()
+    }
+
+    /// 再生開始に失敗したときの後始末（壊れた MDX などでダイアログを表示する）
+    private func handlePlaybackStartFailure(_ error: MP4MError) {
+        Log.debug("[PlayerVM] playback start failed: \(error.errorDescription ?? "unknown")")
+        totalTimeMs = 0
+        currentTimeMs = 0
+        status = .stopped
+        clearVisualState()
+        currentError = error
     }
 
     /// バックグラウンドで再生時間を計測してから再生開始
@@ -168,7 +186,27 @@ final class PlayerViewModel {
             audioService.resume()
         } else {
             print("[PlayerViewModel] playAsync - Starting new playback")
-            totalTimeMs = audioService.playWithLoopCount(Int32(loopCount))
+            // 再生時間の計測は曲によっては時間がかかるため、UI を止めないよう
+            // バックグラウンドで実行する（壊れた MDX では上限で打ち切られて失敗になる）
+            let service = UncheckedSendableBox(audioService)
+            let loops = Int32(loopCount)
+            let result: Result<Int, Error> = await withCheckedContinuation { continuation in
+                DispatchQueue.global(qos: .userInitiated).async {
+                    do {
+                        continuation.resume(returning: .success(try service.value.playWithLoopCount(loops)))
+                    } catch {
+                        continuation.resume(returning: .failure(error))
+                    }
+                }
+            }
+
+            switch result {
+            case .success(let measured):
+                totalTimeMs = measured
+            case .failure(let error):
+                handlePlaybackStartFailure((error as? MP4MError) ?? .mdxLoadFailed(error.localizedDescription))
+                return
+            }
             print("[PlayerViewModel] playAsync - playWithLoopCount done, totalTimeMs: \(totalTimeMs)")
         }
 
