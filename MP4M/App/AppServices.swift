@@ -18,6 +18,9 @@ final class AppServices {
         return viewModel
     }()
 
+    /// 起動時の自動再生を実行済みか（onAppear は複数回発火するため一度だけ実行する）
+    var didRunLaunchSequence = false
+
     /// アプリ終了時のクリーンアップ（View の onDisappear では呼ばない）
     func cleanup() {
         playerVM.cleanup()

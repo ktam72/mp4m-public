@@ -59,7 +59,17 @@ struct ContentView: View {
                 // 以降の openFile 要求は通知で受け取れる
                 MP4MApp.isUIReady = true
 
+                // onAppear は複数回発火するため、起動時の自動再生は一度だけ行う。
+                // 二度目以降に実行すると、Finder から開いた曲を起動時の曲で上書きしてしまう
+                guard !AppServices.shared.didRunLaunchSequence else {
+                    print("[ContentView] launch sequence already done, skipping auto-play")
+                    return
+                }
+                AppServices.shared.didRunLaunchSequence = true
+
                 if let fileURL = browserVM.launchFileURL {
+                    // 一度だけ消費する
+                    browserVM.launchFileURL = nil
                     Log.debug("[Launch] launchFileURL detected: \(fileURL.path)")
                     MP4MApp.pendingPath = nil
                     let resolvedURL = fileURL.resolvingSymlinksInPath()
