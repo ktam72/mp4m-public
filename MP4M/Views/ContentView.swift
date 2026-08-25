@@ -40,7 +40,16 @@ struct ContentView: View {
                 print("[ContentView] pendingPath: \(MP4MApp.pendingPath ?? "nil")")
                 print("[ContentView] launchFileURL: \(browserVM.launchFileURL?.path ?? "nil")")
 
-                playerVM = PlayerViewModel(audioService: MXDRVAudioEngine())
+                // 転送するだけの二重起動インスタンスではオーディオを初期化しない
+                guard !MP4MApp.isSecondaryInstance else {
+                    print("[ContentView] secondary instance, skipping audio setup")
+                    return
+                }
+
+                // 二重生成するとオーディオエンジンが増えて再生速度が倍になるため一度だけ生成する
+                if playerVM == nil {
+                    playerVM = PlayerViewModel(audioService: MXDRVAudioEngine())
+                }
                 playerVM?.browserVM = browserVM
                 MP4MApp.setupFileOpenObserver()
                 print("[ContentView] PlayerViewModel initialized")

@@ -97,7 +97,9 @@ struct MP4MApp: App {
     }
 
     var body: some Scene {
-        WindowGroup {
+        // Window（単一ウィンドウ）を使う。WindowGroup ではドキュメントを開く要求で
+        // ウィンドウが増え、ContentView とオーディオエンジンが二重に生成されてしまう
+        Window("MP4M", id: "main") {
             ContentView()
         }
         .windowStyle(.hiddenTitleBar)
@@ -113,6 +115,10 @@ struct MP4MApp: App {
     final class AppDelegate: NSObject, NSApplicationDelegate {
         func applicationWillFinishLaunching(_ notification: Notification) {
             Log.debug("[AppDelegate] applicationWillFinishLaunching pendingPath=\(MP4MApp.pendingPath ?? "nil")")
+            // 転送するだけの二重起動インスタンスは UI を出さない
+            if MP4MApp.isSecondaryInstance {
+                NSApp.setActivationPolicy(.prohibited)
+            }
         }
 
         /// ウィンドウを閉じたらアプリを終了する（macOS 既定の「閉じても常駐」を無効化）
@@ -138,6 +144,9 @@ struct MP4MApp: App {
     ///
     /// UI 準備前は pendingPath に積み、ContentView の onAppear で拾わせる。
     static func requestOpen(path: String) {
+        if isSecondaryInstance {
+            forwardToFirstInstanceAndExit(path: path)
+        }
         if isUIReady {
             NotificationCenter.default.post(name: .mp4mOpenFile, object: path)
         } else if pendingPath == nil {
@@ -158,6 +167,21 @@ struct MP4MApp: App {
     // MARK: - シングルインスタンス制御
 
     private static var lockFD: Int32 = -1
+
+    /// 先行インスタンスが存在する状態で起動したか（ファイル転送後に終了する）
+    static var isSecondaryInstance = false
+
+    /// 開封要求を先行インスタンスへ転送して自分は終了する
+    static func forwardToFirstInstanceAndExit(path: String) -> Never {
+        Log.debug("[Singleton] Sending MP4MOpenFile notification to first instance: \(path)")
+        let center = CFNotificationCenterGetDistributedCenter()
+        let name = CFNotificationName("MP4MOpenFile" as CFString)
+        let object = Unmanaged.passUnretained(path as CFString).toOpaque()
+        CFNotificationCenterPostNotification(center, name, object, nil, true)
+        // 配送を取りこぼさないよう少し待ってから終了する
+        Thread.sleep(forTimeInterval: 0.2)
+        exit(0)
+    }
 
     static func handleSingleInstance() {
         let cliPath = Self.pendingPath
@@ -182,15 +206,16 @@ struct MP4MApp: App {
         } else {
             if fd >= 0 { close(fd) }
             if let path = cliPath {
-                Log.debug("[Singleton] Sending MP4MOpenFile notification to first instance: \(path)")
-                let center = CFNotificationCenterGetDistributedCenter()
-                let name = CFNotificationName("MP4MOpenFile" as CFString)
-                let object = Unmanaged.passUnretained(path as CFString).toOpaque()
-                CFNotificationCenterPostNotification(center, name, object, nil, true)
-            } else {
-                Log.debug("[Singleton] Second instance with no CLI arg, exiting silently")
+                Self.forwardToFirstInstanceAndExit(path: path)
             }
-            exit(0)
+            // Finder のダブルクリックではパスが application:openFile: で後から届くため、
+            // すぐに exit せず短時間だけ待つ（届けば転送して終了、届かなければ終了）
+            Log.debug("[Singleton] Second instance without CLI arg, waiting for openFile")
+            Self.isSecondaryInstance = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                Log.debug("[Singleton] No openFile arrived, exiting")
+                exit(0)
+            }
         }
     }
 
@@ -224,7 +249,13 @@ struct MP4MApp: App {
         return nil
     }
 
+    private static var fileOpenObserverInstalled = false
+
     static func setupFileOpenObserver() {
+        // ContentView の onAppear からも呼ばれるため、二重登録を防ぐ
+        guard !fileOpenObserverInstalled else { return }
+        fileOpenObserverInstalled = true
+
         DistributedNotificationCenter.default().addObserver(
             forName: .init("MP4MOpenFile"),
             object: nil,

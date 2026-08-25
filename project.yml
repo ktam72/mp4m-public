@@ -24,8 +24,8 @@ targets:
         CFBundleName: MP4M
         CFBundleDisplayName: MP4M
         CFBundleIdentifier: com.ktam.MP4M
-        CFBundleShortVersionString: "3.3.0"
-        CFBundleVersion: "19"
+        CFBundleShortVersionString: "3.3.1"
+        CFBundleVersion: "20"
         CFBundleIconFile: MP4M
         NSPrincipalClass: NSApplication
         NSHumanReadableCopyright: "Copyright © 2026 ktam"
