@@ -15,24 +15,22 @@ macOS向けのMDXプレイヤーです。
 ### Homebrew（推奨）
 
 ```bash
-brew install --cask --no-quarantine ktam72/mp4m/mp4m
+brew install --cask ktam72/mp4m/mp4m
+xattr -dr com.apple.quarantine /Applications/mp4m.app
 ```
 
-更新時も `--no-quarantine` が必要です。
+更新時も `xattr` の実行が必要です（quarantine 属性が付き直すため）。
 
 ```bash
-brew upgrade --cask --no-quarantine mp4m
+brew upgrade --cask mp4m
+xattr -dr com.apple.quarantine /Applications/mp4m.app
 ```
 
-> **`--no-quarantine` を付け忘れると起動できません。**
+> **`xattr` を実行しないと起動できません。**
 > MP4M は ad-hoc 署名のみで Apple の公証（notarization）を受けていないため、
 > quarantine 属性が付いた状態では
 > 「"MP4M.app" は壊れているため開けません。」と表示されます（ファイルは壊れていません）。
-> その場合は次のコマンドで解除できます。
->
-> ```bash
-> xattr -dr com.apple.quarantine /Applications/mp4m.app
-> ```
+> なお `--no-quarantine` オプションは Homebrew 6.x で廃止されました。
 
 tap 単体の説明は [ktam72/homebrew-mp4m](https://github.com/ktam72/homebrew-mp4m) を参照してください。
 
